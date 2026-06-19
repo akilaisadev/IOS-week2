@@ -4,8 +4,8 @@ import Combine
 struct LightItUpView: View {
 
     @State private var score = 0
-    @State private var activeCard = 0
     @State private var timeRemaining = 60
+    @State private var activeCards: Set<Int> = []
 
     @AppStorage("lightItUpHighScore")
     private var highScore = 0
@@ -80,18 +80,23 @@ struct LightItUpView: View {
 
                         RoundedRectangle(cornerRadius: 12)
                             .fill(
-                                index == activeCard
+                                activeCards.contains(index)
                                 ? Color.blue
                                 : Color.gray.opacity(0.3)
                             )
                             .frame(width: 90, height: 90)
-                            .scaleEffect(index == activeCard ? 1.1 : 1.0)
+                            .scaleEffect(
+                                activeCards.contains(index)
+                                ? 1.1
+                                : 1.0
+                            )
+                            .animation(.easeInOut, value: activeCards)
                             .onTapGesture {
 
-                                if index == activeCard {
+                                if activeCards.contains(index) {
 
                                     score += 1
-                                    activeCard = Int.random(in: 0..<cardCount)
+                                    generateActiveCards()
 
                                 } else {
 
@@ -121,7 +126,7 @@ struct LightItUpView: View {
                         .font(.headline)
 
                     Text("\(score)")
-                        .font(.system(size: 50))
+                        .font(.system(size: 50, weight: .bold))
 
                     Divider()
 
@@ -132,6 +137,7 @@ struct LightItUpView: View {
                         .font(.title)
                 }
                 .padding()
+                .frame(width: 280)
                 .background(Color.gray.opacity(0.15))
                 .cornerRadius(20)
 
@@ -143,12 +149,15 @@ struct LightItUpView: View {
             }
         }
         .padding()
+        .onAppear {
+            generateActiveCards()
+        }
         .onReceive(timer) { _ in
 
             if timeRemaining > 0 {
 
                 timeRemaining -= 1
-                activeCard = Int.random(in: 0..<cardCount)
+                generateActiveCards()
             }
 
             if timeRemaining == 0 {
@@ -158,15 +167,32 @@ struct LightItUpView: View {
                 }
             }
         }
-        .onAppear {
-            activeCard = Int.random(in: 0..<cardCount)
+    }
+
+    func generateActiveCards() {
+
+        if timeRemaining > 15 {
+
+            activeCards = [
+                Int.random(in: 0..<cardCount)
+            ]
+
+        } else {
+
+            var cards: Set<Int> = []
+
+            while cards.count < 2 {
+                cards.insert(Int.random(in: 0..<cardCount))
+            }
+
+            activeCards = cards
         }
     }
 
     func restartGame() {
         score = 0
         timeRemaining = 60
-        activeCard = Int.random(in: 0..<3)
+        generateActiveCards()
     }
 }
 
