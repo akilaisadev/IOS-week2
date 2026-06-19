@@ -38,15 +38,34 @@ struct ContentView: View {
                 .clipShape(Circle())
 
             } else {
-
+                
                 Text("Game Over")
                     .font(.largeTitle)
 
-                Text("Final Score: \(score)")
-                    .font(.title2)
+                VStack(spacing: 15) {
 
-                Text("High Score: \(highScore)")
-                    .font(.title3)
+                    Text("Results")
+                        .font(.title)
+
+                    Text("Final Score")
+                        .font(.headline)
+
+                    Text("\(score)")
+                        .font(.system(size: 50, weight: .bold))
+
+                    Divider()
+
+                    Text("High Score")
+                        .font(.headline)
+
+                    Text("\(highScore)")
+                        .font(.title)
+
+                }
+                .padding()
+                .frame(width: 250)
+                .background(Color.gray.opacity(0.15))
+                .cornerRadius(20)
 
                 Button("Play Again") {
                     restartGame()
