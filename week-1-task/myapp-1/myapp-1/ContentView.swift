@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  ios-week1
+//  myapp-1
 //
 //  Created by Akila on 2026-06-19.
 //
