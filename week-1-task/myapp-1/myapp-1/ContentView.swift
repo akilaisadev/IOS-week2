@@ -15,7 +15,7 @@ struct ContentView: View {
 
     var body: some View {
 
-        VStack {
+        VStack(spacing: 20) {
 
             if timeRemaining > 0 {
 
@@ -52,9 +52,10 @@ struct ContentView: View {
                     restartGame()
                 }
                 .buttonStyle(.borderedProminent)
-                .position(x:300, y:150)
+                .padding(.top, 20)
             }
         }
+        .padding()
         .onReceive(timer) { _ in
 
             if timeRemaining > 0 {
