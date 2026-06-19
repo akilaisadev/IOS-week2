@@ -1,33 +1,78 @@
 import SwiftUI
+import Combine
 
 struct ContentView: View {
 
     @State private var score = 0
+    @State private var timeRemaining = 10
+    @State private var highScore = 0
+
+    let timer = Timer.publish(
+        every: 1,
+        on: .main,
+        in: .common
+    ).autoconnect()
 
     var body: some View {
 
-        VStack(spacing: 30) {
+        VStack {
 
-            Text("Tap Frenzy")
+            if timeRemaining > 0 {
+
+                Text("Tap Frenzy")
+                    .font(.largeTitle)
+
+                Text("Score: \(score)")
+                    .font(.title)
+
+                Text("Time: \(timeRemaining)")
+                    .font(.title2)
+
+                Button("TAP") {
+                    score += 1
+                }
                 .font(.largeTitle)
+                .foregroundColor(.white)
+                .frame(width: 300, height: 300)
+                .background(Color.blue)
+                .clipShape(Circle())
 
-            Text("Score: \(score)")
-                .font(.title)
+            } else {
 
-            Text("Time: 10")
-                .font(.title2)
+                Text("Game Over")
+                    .font(.largeTitle)
 
-            Button("TAP") {
-                score += 1
+                Text("Final Score: \(score)")
+                    .font(.title2)
+
+                Text("High Score: \(highScore)")
+                    .font(.title3)
+
+                Button("Play Again") {
+                    restartGame()
+                }
+                .buttonStyle(.borderedProminent)
+                .position(x:300, y:150)
             }
-            .font(.largeTitle)
-            .foregroundColor(.white)
-            .frame(width: 200, height: 200)
-            .background(Color.blue)
-            .clipShape(Circle())
-
         }
-        .padding()
+        .onReceive(timer) { _ in
+
+            if timeRemaining > 0 {
+                timeRemaining -= 1
+            }
+
+            if timeRemaining == 0 {
+
+                if score > highScore {
+                    highScore = score
+                }
+            }
+        }
+    }
+
+    func restartGame() {
+        score = 0
+        timeRemaining = 10
     }
 }
 
