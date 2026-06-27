@@ -1,7 +1,8 @@
-//
-//  QuizRush.swift
-//  myapp-1
-//
-//  Created by student3 on 2026-06-27.
-//
+import SwiftUI
+import Combine
 
+struct QuizRushView: View {
+    var body: some View {
+        Text("Hello, World!")
+    }
+}

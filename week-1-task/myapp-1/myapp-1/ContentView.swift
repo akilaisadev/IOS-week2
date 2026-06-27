@@ -33,6 +33,17 @@ struct ContentView: View {
                         .frame(width: 220, height: 60)
                 }
                 .buttonStyle(.borderedProminent)
+                
+                NavigationLink {
+
+                    QuizRushView()
+
+                } label: {
+
+                    Text("Quiz Rush")
+                        .frame(width: 220, height: 60)
+                }
+                .buttonStyle(.borderedProminent)
 
                 Spacer()
             }
