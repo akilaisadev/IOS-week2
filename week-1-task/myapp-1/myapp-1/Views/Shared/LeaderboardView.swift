@@ -91,8 +91,8 @@ struct LeaderboardView: View {
                             .cornerRadius(16)
                             .padding(.horizontal)
                     } else {
-                        VStack(spacing: 10) {
-                            ForEach(historyService.records.prefix(10)) { record in
+                        LazyVStack(spacing: 10) {
+                            ForEach(historyService.records) { record in
                                 HStack {
                                     ZStack {
                                         Circle()
