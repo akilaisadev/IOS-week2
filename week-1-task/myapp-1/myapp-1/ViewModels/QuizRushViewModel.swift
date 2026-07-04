@@ -98,6 +98,15 @@ class QuizRushViewModel: ObservableObject {
         }
     }
     
+    // Handles when question timer expires
+    func timeOut() {
+        guard selectedAnswer == nil else { return }
+        selectedAnswer = "⏰ TIME'S UP!"
+        isAnswerCorrect = false
+        score = max(0, score - 5)
+        streak = 0
+    }
+    
     // Restarts game by refetching trivia questions
     func restartGame() {
         Task {
@@ -105,3 +114,4 @@ class QuizRushViewModel: ObservableObject {
         }
     }
 }
+
