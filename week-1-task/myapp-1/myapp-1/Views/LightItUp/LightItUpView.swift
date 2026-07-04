@@ -137,7 +137,7 @@ struct LightItUpView: View {
                     }
                     .pickerStyle(.segmented)
                     .frame(width: 180)
-                    .onChange(of: selectedDuration) { _ in
+                    .onChange(of: selectedDuration) { _, _ in
                         restartGame()
                     }
                 }
