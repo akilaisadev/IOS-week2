@@ -9,8 +9,8 @@ import SwiftUI
 
 struct AnimatedBackground: View {
     var colors: [Color] = [
-        Color.blue.opacity(0.12),
-        Color.purple.opacity(0.12)
+        Color.blue.opacity(0.14),
+        Color.purple.opacity(0.18)
     ]
     
     var body: some View {

@@ -26,11 +26,12 @@ struct GameOverView: View {
                     .fontWeight(.bold)
             }
             
-            VStack(spacing: 16) {
+            VStack(spacing: 20) {
                 VStack(spacing: 4) {
                     Text("FINAL SCORE")
                         .font(.caption)
                         .fontWeight(.bold)
+                        .fontDesign(Font.Design.default)
                         .foregroundColor(.secondary)
                     
                     Text("\(score)")

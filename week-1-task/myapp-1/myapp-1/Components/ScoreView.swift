@@ -37,7 +37,7 @@ struct ScoreView: View {
                 .font(.subheadline)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
-                .background(Color.orange.opacity(0.2))
+                .background(Color.orange.opacity(0.1))
                 .foregroundColor(.orange)
                 .clipShape(Capsule())
             }
@@ -52,7 +52,7 @@ struct ScoreView: View {
                 .font(.subheadline)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
-                .background(Color.yellow.opacity(0.2))
+                .background(Color.yellow.opacity(0.1))
                 .foregroundColor(.yellow)
                 .clipShape(Capsule())
             }
