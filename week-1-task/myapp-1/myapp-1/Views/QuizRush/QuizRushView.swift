@@ -55,6 +55,7 @@ struct QuizRushView: View {
                     score: viewModel.score,
                     detail: "Max Streak: \(viewModel.streak)"
                 )
+                SoundManager.shared.playVictory()
             }
         }
         .onChange(of: viewModel.currentIndex) { _, _ in
@@ -93,6 +94,7 @@ struct QuizRushView: View {
             triggerShake()
             triggerFlash(.red)
             triggerStreakBanner("⏰ TIME'S UP! -5 PTS")
+            SoundManager.shared.playTimeOut()
         }
     }
     
@@ -286,14 +288,19 @@ struct QuizRushView: View {
                 
                 if viewModel.streak >= 3 {
                     triggerStreakBanner("🔥 \(viewModel.streak)x STREAK! +15 PTS!")
+                    SoundManager.shared.playStreakBonus()
                 } else if viewModel.streak == 2 {
                     triggerStreakBanner("⚡️ 2x STREAK! +10 PTS!")
+                    SoundManager.shared.playStreakBonus()
+                } else {
+                    SoundManager.shared.playQuizCorrect()
                 }
             } else {
                 // Wrong answer effects!
                 triggerShake()
                 triggerFlash(.red)
                 triggerStreakBanner("💥 WRONG ANSWER! -5 PTS")
+                SoundManager.shared.playQuizWrong()
             }
         }) {
             HStack {

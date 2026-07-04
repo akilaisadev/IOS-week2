@@ -212,6 +212,7 @@ struct LightItUpView: View {
             score += 1
             triggerFlash(.green)
             spawnNewLitCards()
+            SoundManager.shared.playCardCorrect()
         } else {
             score = max(0, score - 1)
             loseLife(reason: "Wrong Card!")
@@ -228,6 +229,7 @@ struct LightItUpView: View {
                 maxLevelReached = currentLevel
             }
             triggerLevelUpBanner("🚀 LEVEL UP! Level \(currentLevel)")
+            SoundManager.shared.playLevelUp()
         }
         
         tickCounter += 1
@@ -253,6 +255,7 @@ struct LightItUpView: View {
         withAnimation {
             isGameOver = true
         }
+        SoundManager.shared.playGameOver()
         if score > highScore {
             highScore = score
         }
@@ -286,6 +289,8 @@ struct LightItUpView: View {
         
         if lives <= 0 {
             triggerGameOver()
+        } else {
+            SoundManager.shared.playCardWrong()
         }
     }
     

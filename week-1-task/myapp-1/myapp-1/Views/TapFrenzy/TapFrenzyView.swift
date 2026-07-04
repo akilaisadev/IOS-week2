@@ -158,6 +158,7 @@ struct TapFrenzyView: View {
             comboMultiplier = 1
             isTrapActive = false
             triggerBonusMessage("TRAPPED! -3 PTS")
+            SoundManager.shared.playTrap()
             return
         }
         
@@ -184,6 +185,11 @@ struct TapFrenzyView: View {
             score += 5
             timeRemaining += 1
             triggerBonusMessage("⚡️ BONUS BURST! +5 PTS & +1s!")
+            SoundManager.shared.playBonus()
+        } else if comboMultiplier > 1 {
+            SoundManager.shared.playCombo(multiplier: comboMultiplier)
+        } else {
+            SoundManager.shared.playTap()
         }
         
         // Challenge 3: Move button to a random safe position inside the play area
@@ -206,6 +212,7 @@ struct TapFrenzyView: View {
             withAnimation {
                 isGameOver = true
             }
+            SoundManager.shared.playGameOver()
             if score > highScore {
                 highScore = score
             }
