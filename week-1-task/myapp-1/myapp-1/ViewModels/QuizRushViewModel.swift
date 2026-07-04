@@ -30,8 +30,8 @@ class QuizRushViewModel: ObservableObject {
     
     private let service: TriviaService
     
-    init(service: TriviaService = .shared) {
-        self.service = service
+    init(service: TriviaService? = nil) {
+        self.service = service ?? .shared
         Task {
             await loadQuestions()
         }
