@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 struct GameSession: Codable, Identifiable, Equatable {
     var id: UUID = UUID()
@@ -21,6 +22,17 @@ struct GameSession: Codable, Identifiable, Equatable {
         formatter.dateStyle = .short
         formatter.timeStyle = .short
         return formatter.string(from: timestamp)
+    }
+    
+    // helper to check if valid coordinates exist
+    var hasValidLocation: Bool {
+        latitude != nil && longitude != nil
+    }
+    
+    // computed 2D coordinate for MapKit integration
+    var coordinate: CLLocationCoordinate2D? {
+        guard let lat = latitude, let lon = longitude else { return nil }
+        return CLLocationCoordinate2D(latitude: lat, longitude: lon)
     }
     
     // compatibility properties for older views
