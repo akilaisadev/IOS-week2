@@ -154,9 +154,10 @@ struct LightItUpView: View {
                 Color.black.opacity(0.4)
                     .ignoresSafeArea()
                 
-                GameOverView(
+                ResultView(
                     score: score,
                     highScore: highScore,
+                    mode: .lightItUp,
                     onPlayAgain: restartGame,
                     onHome: { dismiss() },
                     onViewHistory: { showingHistory = true }
