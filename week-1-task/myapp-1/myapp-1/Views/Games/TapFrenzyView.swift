@@ -184,7 +184,7 @@ struct TapFrenzyView: View {
         if totalTaps % 10 == 0 {
             score += 5
             timeRemaining += 1
-            triggerBonusMessage("⚡️ BONUS BURST! +5 PTS & +1s!")
+            triggerBonusMessage("BONUS BURST! +5 PTS & +1s!")
             SoundManager.shared.playBonus()
         } else if comboMultiplier > 1 {
             SoundManager.shared.playCombo(multiplier: comboMultiplier)

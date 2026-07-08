@@ -93,7 +93,7 @@ struct QuizRushView: View {
             viewModel.timeOut()
             triggerShake()
             triggerFlash(.red)
-            triggerStreakBanner("⏰ TIME'S UP! -5 PTS")
+            triggerStreakBanner("TIME'S UP! -5 PTS")
             SoundManager.shared.playTimeOut()
         }
     }
@@ -183,12 +183,12 @@ struct QuizRushView: View {
                     .padding(.vertical, 8)
                     .background(
                         Capsule()
-                            .fill(banner.contains("🔥") || banner.contains("⚡️") ? Color.orange : Color.red)
+                            .fill(banner.contains("STREAK") ? Color.orange : Color.red)
                             .shadow(color: Color.black.opacity(0.25), radius: 6, x: 0, y: 3)
                     )
                     .transition(.scale.combined(with: .opacity))
-            } else if let selected = viewModel.selectedAnswer, selected == "⏰ TIME'S UP!" {
-                Text("⏰ TIME EXPIRED! -5 PTS")
+            } else if let selected = viewModel.selectedAnswer, selected == "TIME'S UP!" {
+                Text("TIME EXPIRED! -5 PTS")
                     .font(.headline)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
@@ -287,10 +287,10 @@ struct QuizRushView: View {
                 triggerFlash(.green)
                 
                 if viewModel.streak >= 3 {
-                    triggerStreakBanner("🔥 \(viewModel.streak)x STREAK! +15 PTS!")
+                    triggerStreakBanner("\(viewModel.streak)x STREAK! +15 PTS!")
                     SoundManager.shared.playStreakBonus()
                 } else if viewModel.streak == 2 {
-                    triggerStreakBanner("⚡️ 2x STREAK! +10 PTS!")
+                    triggerStreakBanner("2x STREAK! +10 PTS!")
                     SoundManager.shared.playStreakBonus()
                 } else {
                     SoundManager.shared.playQuizCorrect()
@@ -299,7 +299,7 @@ struct QuizRushView: View {
                 // Wrong answer effects!
                 triggerShake()
                 triggerFlash(.red)
-                triggerStreakBanner("💥 WRONG ANSWER! -5 PTS")
+                triggerStreakBanner("WRONG ANSWER! -5 PTS")
                 SoundManager.shared.playQuizWrong()
             }
         }) {
@@ -406,7 +406,7 @@ struct QuizRushView: View {
         guard let selected = viewModel.selectedAnswer else {
             return Color.purple.opacity(0.35)
         }
-        if selected == "⏰ TIME'S UP!" {
+        if selected == "TIME'S UP!" {
             return .red
         }
         return viewModel.isAnswerCorrect == true ? .green : .red
@@ -416,7 +416,7 @@ struct QuizRushView: View {
         guard let selected = viewModel.selectedAnswer else {
             return Color.purple.opacity(0.12)
         }
-        if selected == "⏰ TIME'S UP!" {
+        if selected == "TIME'S UP!" {
             return Color.red.opacity(0.4)
         }
         return viewModel.isAnswerCorrect == true ? Color.green.opacity(0.45) : Color.red.opacity(0.4)

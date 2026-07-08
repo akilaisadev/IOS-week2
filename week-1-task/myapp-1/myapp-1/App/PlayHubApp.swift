@@ -1,17 +1,18 @@
 //
-//  myapp_1App.swift
+//  PlayHubApp.swift
 //  myapp-1
 //
-//  Created by Akila on 2026-06-19.
+//  main app entry point for coursework
 //
 
 import SwiftUI
 
 @main
-struct myapp_1App: App {
+struct PlayHubApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
     }
 }
+
