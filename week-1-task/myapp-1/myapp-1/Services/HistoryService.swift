@@ -2,7 +2,7 @@
 //  HistoryService.swift
 //  myapp-1
 //
-//  Service responsible for persisting game history logs using UserDefaults local storage.
+//  service responsible for saving game sessions to user defaults
 //
 
 import SwiftUI
@@ -11,68 +11,90 @@ import Combine
 class HistoryService: ObservableObject {
     static let shared = HistoryService()
     
-    private let storageKey = "GameHubHistoryRecords"
+    private let sessionsKey = "GameHubSessions"
+    private let oldStorageKey = "GameHubHistoryRecords"
     
-    @Published private(set) var records: [GameRecord] = []
+    @Published private(set) var sessions: [GameSession] = []
+    
+    // compatibility alias for older views
+    var records: [GameSession] { sessions }
     
     private init() {
-        loadRecords()
+        loadSessions()
     }
     
-    // Loads records from local storage
-    private func loadRecords() {
-        guard let data = UserDefaults.standard.data(forKey: storageKey) else {
-            records = []
-            return
+    // load sessions from local storage with migration
+    private func loadSessions() {
+        if let data = UserDefaults.standard.data(forKey: sessionsKey) {
+            do {
+                sessions = try JSONDecoder().decode([GameSession].self, from: data)
+                return
+            } catch {
+                print("failed to decode sessions: \(error)")
+            }
         }
         
+        // check for legacy records and migrate
+        if let oldData = UserDefaults.standard.data(forKey: oldStorageKey) {
+            do {
+                sessions = try JSONDecoder().decode([GameSession].self, from: oldData)
+                saveSessions()
+                UserDefaults.standard.removeObject(forKey: oldStorageKey)
+                return
+            } catch {
+                print("failed to migrate legacy records: \(error)")
+            }
+        }
+        
+        sessions = []
+    }
+    
+    // save sessions to local storage
+    private func saveSessions() {
         do {
-            records = try JSONDecoder().decode([GameRecord].self, from: data)
+            let data = try JSONEncoder().encode(sessions)
+            UserDefaults.standard.set(data, forKey: sessionsKey)
         } catch {
-            print("Failed to decode game records: \(error)")
-            records = []
+            print("failed to save sessions: \(error)")
         }
     }
     
-    // Saves current records array to local storage
-    private func saveRecords() {
-        do {
-            let data = try JSONEncoder().encode(records)
-            UserDefaults.standard.set(data, forKey: storageKey)
-        } catch {
-            print("Failed to encode game records: \(error)")
-        }
+    // add session from older game views
+    func addRecord(gameType: GameMode, score: Int, detail: String) {
+        addSession(mode: gameType, score: score)
     }
     
-    // Adds a new completed game record and persists it immediately
-    func addRecord(gameType: GameType, score: Int, detail: String) {
-        let newRecord = GameRecord(
-            gameType: gameType,
+    // add new completed game session with coordinates
+    func addSession(mode: GameMode, score: Int, latitude: Double? = nil, longitude: Double? = nil) {
+        let newSession = GameSession(
+            mode: mode,
             score: score,
-            detail: detail,
-            date: Date()
+            timestamp: Date(),
+            latitude: latitude,
+            longitude: longitude
         )
-        // Insert at beginning so newest games appear first
-        records.insert(newRecord, at: 0)
-        saveRecords()
+        sessions.insert(newSession, at: 0)
+        saveSessions()
     }
     
-    // Retrieves records filtered by game type
-    func getRecords(for gameType: GameType?) -> [GameRecord] {
-        guard let type = gameType else {
-            return records
-        }
-        return records.filter { $0.gameType == type }
+    // get sessions filtered by mode
+    func getSessions(for mode: GameMode?) -> [GameSession] {
+        guard let m = mode else { return sessions }
+        return sessions.filter { $0.mode == m }
     }
     
-    // Returns total combined score across all games
+    // compatibility helper for old views
+    func getRecords(for gameType: GameMode?) -> [GameSession] {
+        getSessions(for: gameType)
+    }
+    
     var totalCombinedScore: Int {
-        records.reduce(0) { $0 + $1.score }
+        sessions.reduce(0) { $0 + $1.score }
     }
     
-    // Clears all history from local storage
     func clearHistory() {
-        records.removeAll()
-        UserDefaults.standard.removeObject(forKey: storageKey)
+        sessions.removeAll()
+        UserDefaults.standard.removeObject(forKey: sessionsKey)
+        UserDefaults.standard.removeObject(forKey: oldStorageKey)
     }
 }

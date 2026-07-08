@@ -9,24 +9,24 @@ import SwiftUI
 import Combine
 
 class StatsVM: ObservableObject {
-    @Published var records: [GameRecord] = []
+    @Published var sessions: [GameSession] = []
     
     init() {
-        loadRecords()
+        loadSessions()
     }
     
-    // load saved records from storage
-    func loadRecords() {
-        records = HistoryService.shared.records
+    // load saved sessions from storage
+    func loadSessions() {
+        sessions = HistoryService.shared.sessions
     }
     
     // total points across all modes
     var totalPoints: Int {
-        records.reduce(0) { $0 + $1.score }
+        sessions.reduce(0) { $0 + $1.score }
     }
     
     // personal best for specific mode
-    func bestScore(for type: GameType) -> Int {
-        records.filter { $0.gameType == type }.map { $0.score }.max() ?? 0
+    func bestScore(for mode: GameMode) -> Int {
+        sessions.filter { $0.mode == mode }.map { $0.score }.max() ?? 0
     }
 }
