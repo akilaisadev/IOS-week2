@@ -339,9 +339,10 @@ struct QuizRushView: View {
     
     // Game Over / Results Summary
     private var gameOverView: some View {
-        GameOverView(
+        ResultView(
             score: viewModel.score,
             highScore: viewModel.highScore,
+            mode: .quizRush,
             onPlayAgain: {
                 hasRecordedHistory = false
                 viewModel.restartGame()

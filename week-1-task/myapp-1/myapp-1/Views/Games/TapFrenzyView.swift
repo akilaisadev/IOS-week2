@@ -114,9 +114,10 @@ struct TapFrenzyView: View {
                 Color.black.opacity(0.4)
                     .ignoresSafeArea()
                 
-                GameOverView(
+                ResultView(
                     score: score,
                     highScore: highScore,
+                    mode: .tapFrenzy,
                     onPlayAgain: restartGame,
                     onHome: { dismiss() },
                     onViewHistory: { showingHistory = true }
