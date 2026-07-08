@@ -30,6 +30,7 @@ class LocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     // request location permission from user
     func requestPermission() {
+        manager.requestWhenInUseAuthorization()
         manager.startUpdatingLocation()
     }
     
@@ -52,7 +53,7 @@ class LocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let loc = locations.last else { return }
+        guard let loc = locations.first else { return }
         latitude = loc.coordinate.latitude
         longitude = loc.coordinate.longitude
     }
