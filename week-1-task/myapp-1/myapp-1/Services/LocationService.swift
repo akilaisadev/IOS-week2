@@ -24,7 +24,7 @@ class LocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     override private init() {
         super.init()
-        manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+        manager.desiredAccuracy = kCLLocationAccuracyBest
         authStatus = manager.authorizationStatus
     }
     
@@ -53,7 +53,7 @@ class LocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let loc = locations.first else { return }
+        guard let loc = locations.last else { return }
         latitude = loc.coordinate.latitude
         longitude = loc.coordinate.longitude
     }
