@@ -32,6 +32,21 @@ class StatsVM: ObservableObject {
         sessions.count
     }
     
+    // average score per game
+    var averageScore: Int {
+        totalGames > 0 ? totalPoints / totalGames : 0
+    }
+    
+    // most played game mode
+    var favoriteMode: GameMode? {
+        GameMode.allCases.max(by: { gamesPlayed(for: $0) < gamesPlayed(for: $1) })
+    }
+    
+    // most recent game sessions (up to 5)
+    var recentSessions: [GameSession] {
+        Array(sessions.suffix(5).reversed())
+    }
+    
     // personal best for specific mode
     func bestScore(for mode: GameMode) -> Int {
         sessions.filter { $0.mode == mode }.map { $0.score }.max() ?? 0

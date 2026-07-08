@@ -21,8 +21,10 @@ struct StatsTab: View {
                         if statsVM.totalGames == 0 {
                             emptyStateView
                         } else {
-                            summaryMetricsView
+                            summaryMetricsGrid
                             bestScoresChartView
+                            totalPointsChartView
+                            recentGamesView
                             modeBreakdownView
                         }
                     }
@@ -57,11 +59,33 @@ struct StatsTab: View {
         .padding(.top, 20)
     }
     
-    // top summary cards for total games and points
-    private var summaryMetricsView: some View {
-        HStack(spacing: 16) {
-            metricCard(title: "Total Games", value: "\(statsVM.totalGames)", icon: "gamecontroller.fill", color: .blue)
-            metricCard(title: "Total Points", value: "\(statsVM.totalPoints)", icon: "star.fill", color: .purple)
+    // 2x2 grid of top summary metrics
+    private var summaryMetricsGrid: some View {
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+            metricCard(
+                title: "Total Games",
+                value: "\(statsVM.totalGames)",
+                icon: "gamecontroller.fill",
+                color: .blue
+            )
+            metricCard(
+                title: "Total Points",
+                value: "\(statsVM.totalPoints)",
+                icon: "star.fill",
+                color: .purple
+            )
+            metricCard(
+                title: "Avg Score",
+                value: "\(statsVM.averageScore)",
+                icon: "chart.line.uptrend.xyaxis",
+                color: .green
+            )
+            metricCard(
+                title: "Favorite Mode",
+                value: statsVM.favoriteMode?.title ?? "None",
+                icon: statsVM.favoriteMode?.iconName ?? "heart.fill",
+                color: statsVM.favoriteMode?.color ?? .orange
+            )
         }
     }
     
@@ -85,8 +109,79 @@ struct StatsTab: View {
                     }
                 }
             }
-            .frame(height: 200)
+            .frame(height: 180)
             .padding(.vertical, 8)
+        }
+        .padding()
+        .background(Color(.secondarySystemBackground))
+        .cornerRadius(12)
+    }
+    
+    // bar chart comparing total points accumulated per game mode
+    private var totalPointsChartView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Total Points per Mode")
+                .font(.headline)
+            
+            Chart {
+                ForEach(GameMode.allCases) { mode in
+                    BarMark(
+                        x: .value("Mode", mode.title),
+                        y: .value("Total Points", statsVM.totalScore(for: mode))
+                    )
+                    .foregroundStyle(mode.color.opacity(0.8))
+                    .annotation(position: .top) {
+                        Text("\(statsVM.totalScore(for: mode))")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            .frame(height: 180)
+            .padding(.vertical, 8)
+        }
+        .padding()
+        .background(Color(.secondarySystemBackground))
+        .cornerRadius(12)
+    }
+    
+    // list of recently completed game sessions
+    private var recentGamesView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Recent Games")
+                .font(.headline)
+            
+            ForEach(statsVM.recentSessions) { session in
+                HStack(spacing: 12) {
+                    Image(systemName: session.mode.iconName)
+                        .foregroundColor(session.mode.color)
+                        .font(.title3)
+                        .frame(width: 32, height: 32)
+                        .background(session.mode.color.opacity(0.15))
+                        .clipShape(Circle())
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(session.mode.title)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                        
+                        Text(session.timestamp.formatted(date: .abbreviated, time: .shortened))
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Text("\(session.score) pts")
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                }
+                .padding(.vertical, 4)
+                
+                if session.id != statsVM.recentSessions.last?.id {
+                    Divider()
+                }
+            }
         }
         .padding()
         .background(Color(.secondarySystemBackground))
@@ -140,11 +235,14 @@ struct StatsTab: View {
                 Text(title)
                     .font(.caption)
                     .foregroundColor(.secondary)
+                    .lineLimit(1)
             }
             
             Text(value)
-                .font(.title2)
+                .font(.title3)
                 .fontWeight(.bold)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
