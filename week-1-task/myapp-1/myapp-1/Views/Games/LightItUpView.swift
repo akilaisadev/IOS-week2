@@ -167,6 +167,7 @@ struct LightItUpView: View {
         }
         .navigationTitle("Light It Up")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: { showingHistory = true }) {

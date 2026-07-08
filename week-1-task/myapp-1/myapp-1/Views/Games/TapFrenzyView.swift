@@ -127,6 +127,7 @@ struct TapFrenzyView: View {
         }
         .navigationTitle("Tap Frenzy")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: { showingHistory = true }) {
