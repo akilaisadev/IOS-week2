@@ -261,10 +261,11 @@ struct LightItUpView: View {
         }
         if !hasRecordedHistory {
             hasRecordedHistory = true
-            HistoryService.shared.addRecord(
-                gameType: .lightItUp,
+            HistoryService.shared.addSession(
+                mode: .lightItUp,
                 score: score,
-                detail: "Reached Level \(maxLevelReached) (\(selectedDuration)s Mode)"
+                latitude: LocationService.shared.currentLatitude,
+                longitude: LocationService.shared.currentLongitude
             )
         }
     }
