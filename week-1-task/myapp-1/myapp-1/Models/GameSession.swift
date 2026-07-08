@@ -15,6 +15,7 @@ struct GameSession: Codable, Identifiable, Equatable {
     let timestamp: Date
     var latitude: Double? = nil
     var longitude: Double? = nil
+    var duration: TimeInterval? = nil
     
     // formatted date string for UI display
     var formattedDate: String {
@@ -22,6 +23,33 @@ struct GameSession: Codable, Identifiable, Equatable {
         formatter.dateStyle = .short
         formatter.timeStyle = .short
         return formatter.string(from: timestamp)
+    }
+    
+    // computed total seconds played (using stored duration or estimating based on mode and score)
+    var timePlayedSeconds: Int {
+        if let dur = duration {
+            return max(1, Int(dur))
+        }
+        switch mode {
+        case .tapFrenzy:
+            return 30 + max(0, score / 10 * 3)
+        case .lightItUp:
+            return 45 + max(0, score * 2)
+        case .quizRush:
+            return 50 + max(0, score / 2)
+        }
+    }
+    
+    // formatted duration string for display
+    var formattedDuration: String {
+        let seconds = timePlayedSeconds
+        let minutes = seconds / 60
+        let remSeconds = seconds % 60
+        if minutes > 0 {
+            return "\(minutes)m \(remSeconds)s"
+        } else {
+            return "\(remSeconds)s"
+        }
     }
     
     // helper to check if valid coordinates exist

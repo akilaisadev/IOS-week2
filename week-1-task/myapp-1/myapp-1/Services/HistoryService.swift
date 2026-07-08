@@ -60,18 +60,19 @@ class HistoryService: ObservableObject {
     }
     
     // add session from older game views
-    func addRecord(gameType: GameMode, score: Int, detail: String) {
-        addSession(mode: gameType, score: score)
+    func addRecord(gameType: GameMode, score: Int, detail: String, duration: TimeInterval? = nil) {
+        addSession(mode: gameType, score: score, duration: duration)
     }
     
-    // add new completed game session with coordinates
-    func addSession(mode: GameMode, score: Int, latitude: Double? = nil, longitude: Double? = nil) {
+    // add new completed game session with coordinates and optional duration
+    func addSession(mode: GameMode, score: Int, latitude: Double? = nil, longitude: Double? = nil, duration: TimeInterval? = nil) {
         let newSession = GameSession(
             mode: mode,
             score: score,
             timestamp: Date(),
             latitude: latitude,
-            longitude: longitude
+            longitude: longitude,
+            duration: duration
         )
         sessions.insert(newSession, at: 0)
         saveSessions()

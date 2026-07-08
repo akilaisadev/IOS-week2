@@ -2,7 +2,7 @@
 //  StatsTab.swift
 //  myapp-1
 //
-//  tab view displaying game statistics and charts
+//  tab view displaying comprehensive game statistics, time played metrics, and interactive charts
 //
 
 import SwiftUI
@@ -54,6 +54,7 @@ struct StatsTab: View {
                 }
             }
             .navigationTitle("Stats")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
     
@@ -92,7 +93,7 @@ struct StatsTab: View {
         .padding(.top, 20)
     }
     
-    // dynamic summary metrics grid adapting to selected game mode
+    // dynamic 6-card summary metrics grid including time played metrics
     private var summaryMetricsGrid: some View {
         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
             if let mode = selectedMode.gameMode {
@@ -120,6 +121,18 @@ struct StatsTab: View {
                     icon: "chart.line.uptrend.xyaxis",
                     color: .green
                 )
+                metricCard(
+                    title: "Total Time",
+                    value: statsVM.formattedTimePlayed(for: mode),
+                    icon: "clock.fill",
+                    color: .indigo
+                )
+                metricCard(
+                    title: "Avg Duration",
+                    value: statsVM.formattedAverageDuration(for: mode),
+                    icon: "timer",
+                    color: .cyan
+                )
             } else {
                 metricCard(
                     title: "Total Games",
@@ -145,28 +158,52 @@ struct StatsTab: View {
                     icon: statsVM.favoriteMode?.iconName ?? "heart.fill",
                     color: statsVM.favoriteMode?.color ?? .orange
                 )
+                metricCard(
+                    title: "Time Played",
+                    value: statsVM.formattedTimePlayed(for: nil),
+                    icon: "clock.fill",
+                    color: .indigo
+                )
+                metricCard(
+                    title: "Avg Duration",
+                    value: statsVM.formattedAverageDuration(for: nil),
+                    icon: "timer",
+                    color: .cyan
+                )
             }
         }
     }
     
-    // container switching between overview charts and dedicated mode session charts
+    // container switching between overview charts and dedicated mode charts
     @ViewBuilder
     private var chartsContainerView: some View {
         if let mode = selectedMode.gameMode {
             dedicatedModeChartView(for: mode)
+            dedicatedModeTimeChartView(for: mode)
         } else {
             bestScoresChartView
             totalPointsChartView
+            totalTimePlayedChartView
         }
     }
     
-    // dedicated bar chart showing recent attempt progression for a specific game mode
+    // dedicated bar chart showing recent attempt score progression for a specific game mode
     private func dedicatedModeChartView(for mode: GameMode) -> some View {
         let history = statsVM.historySessions(for: mode)
         
         return VStack(alignment: .leading, spacing: 12) {
-            Text("\(mode.title) Score Progression")
-                .font(.headline)
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(mode.title) Score Progression")
+                        .font(.headline)
+                    Text("Points scored across recent attempts")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                Image(systemName: "chart.bar.fill")
+                    .foregroundColor(mode.color)
+            }
             
             if history.isEmpty {
                 Text("No sessions recorded yet for \(mode.title)")
@@ -197,11 +234,68 @@ struct StatsTab: View {
         .cornerRadius(12)
     }
     
+    // dedicated bar chart showing session duration progression for a specific game mode
+    private func dedicatedModeTimeChartView(for mode: GameMode) -> some View {
+        let history = statsVM.historySessions(for: mode)
+        
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(mode.title) Session Durations")
+                        .font(.headline)
+                    Text("Time played per recent attempt")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                Image(systemName: "timer")
+                    .foregroundColor(.cyan)
+            }
+            
+            if history.isEmpty {
+                Text("No sessions recorded yet for \(mode.title)")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity, minHeight: 140)
+            } else {
+                Chart {
+                    ForEach(Array(history.enumerated()), id: \.element.id) { index, session in
+                        BarMark(
+                            x: .value("Attempt", "Game \(index + 1)"),
+                            y: .value("Seconds", session.timePlayedSeconds)
+                        )
+                        .foregroundStyle(Color.cyan.opacity(0.85))
+                        .annotation(position: .top) {
+                            Text(session.formattedDuration)
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                .frame(height: 180)
+                .padding(.vertical, 8)
+            }
+        }
+        .padding()
+        .background(Color(.secondarySystemBackground))
+        .cornerRadius(12)
+    }
+    
     // bar chart comparing personal best scores across game modes
     private var bestScoresChartView: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Personal Bests by Mode")
-                .font(.headline)
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Personal Bests by Mode")
+                        .font(.headline)
+                    Text("Highest single-game score per mode")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                Image(systemName: "trophy.fill")
+                    .foregroundColor(.orange)
+            }
             
             Chart {
                 ForEach(GameMode.allCases) { mode in
@@ -228,8 +322,18 @@ struct StatsTab: View {
     // bar chart comparing total points accumulated per game mode
     private var totalPointsChartView: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Total Points per Mode")
-                .font(.headline)
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Total Points per Mode")
+                        .font(.headline)
+                    Text("Cumulative points across all sessions")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                Image(systemName: "star.fill")
+                    .foregroundColor(.purple)
+            }
             
             Chart {
                 ForEach(GameMode.allCases) { mode in
@@ -253,13 +357,57 @@ struct StatsTab: View {
         .cornerRadius(12)
     }
     
+    // bar chart comparing total time played per game mode in games overview
+    private var totalTimePlayedChartView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Total Time Played by Mode")
+                        .font(.headline)
+                    Text("Cumulative duration across all sessions")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                Image(systemName: "clock.fill")
+                    .foregroundColor(.indigo)
+            }
+            
+            Chart {
+                ForEach(GameMode.allCases) { mode in
+                    BarMark(
+                        x: .value("Mode", mode.title),
+                        y: .value("Seconds", statsVM.totalTimePlayedSeconds(for: mode))
+                    )
+                    .foregroundStyle(mode.color.opacity(0.85))
+                    .annotation(position: .top) {
+                        Text(statsVM.formattedTimePlayed(for: mode))
+                            .font(.caption2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            .frame(height: 180)
+            .padding(.vertical, 8)
+        }
+        .padding()
+        .background(Color(.secondarySystemBackground))
+        .cornerRadius(12)
+    }
+    
     // list of recently completed game sessions filtered by mode
     private var recentGamesView: some View {
         let sessions = statsVM.recentSessions(for: selectedMode.gameMode)
         
         return VStack(alignment: .leading, spacing: 12) {
-            Text(selectedMode == .all ? "Recent Games (All)" : "Recent Games (\(selectedMode.rawValue))")
-                .font(.headline)
+            HStack {
+                Text(selectedMode == .all ? "Recent Games (All)" : "Recent Games (\(selectedMode.rawValue))")
+                    .font(.headline)
+                Spacer()
+                Image(systemName: "clock.arrow.circlepath")
+                    .foregroundColor(.secondary)
+            }
             
             if sessions.isEmpty {
                 Text("No sessions recorded yet")
@@ -277,9 +425,16 @@ struct StatsTab: View {
                             .clipShape(Circle())
                         
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(session.mode.title)
-                                .font(.subheadline)
-                                .fontWeight(.medium)
+                            HStack(spacing: 6) {
+                                Text(session.mode.title)
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                
+                                Text("• \(session.formattedDuration)")
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.indigo)
+                            }
                             
                             Text(session.timestamp.formatted(date: .abbreviated, time: .shortened))
                                 .font(.caption2)
@@ -305,7 +460,7 @@ struct StatsTab: View {
         .cornerRadius(12)
     }
     
-    // breakdown of games played and total scores per mode
+    // breakdown of games played, time duration, and total scores per mode
     private var modeBreakdownView: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Mode Breakdown")
@@ -323,7 +478,7 @@ struct StatsTab: View {
                     Spacer()
                     
                     VStack(alignment: .trailing, spacing: 2) {
-                        Text("\(statsVM.gamesPlayed(for: mode)) games")
+                        Text("\(statsVM.gamesPlayed(for: mode)) games • \(statsVM.formattedTimePlayed(for: mode))")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                         Text("\(statsVM.totalScore(for: mode)) pts total")

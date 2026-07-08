@@ -26,6 +26,7 @@ struct SettingsTab: View {
                 .scrollContentBackground(.hidden)
             }
             .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.inline)
             .alert("Reset All Statistics?", isPresented: $showingResetAlert) {
                 Button("Reset All", role: .destructive) {
                     withAnimation {
