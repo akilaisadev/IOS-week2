@@ -9,10 +9,18 @@
 
 import AVFoundation
 import UIKit
+import Combine
 
 @MainActor
-class SoundManager: NSObject {
+class SoundManager: NSObject, ObservableObject {
     static let shared = SoundManager()
+    
+    // published mute toggle backed by user defaults
+    @Published var isMuted: Bool = UserDefaults.standard.bool(forKey: "SoundManagerIsMuted") {
+        didSet {
+            UserDefaults.standard.set(isMuted, forKey: "SoundManagerIsMuted")
+        }
+    }
     
     // Audio players mapped by sound type
     private var players: [SoundType: AVAudioPlayer] = [:]
@@ -84,7 +92,7 @@ class SoundManager: NSObject {
     }
     
     private func play(_ type: SoundType) {
-        guard let player = players[type] else { return }
+        guard !isMuted, let player = players[type] else { return }
         if player.isPlaying {
             player.currentTime = 0
         }
