@@ -32,7 +32,7 @@ class StatsVM: ObservableObject {
         sessions.count
     }
     
-    // average score per game
+    // average score across all modes
     var averageScore: Int {
         totalGames > 0 ? totalPoints / totalGames : 0
     }
@@ -42,7 +42,7 @@ class StatsVM: ObservableObject {
         GameMode.allCases.max(by: { gamesPlayed(for: $0) < gamesPlayed(for: $1) })
     }
     
-    // most recent game sessions (up to 5)
+    // most recent game sessions across all modes (up to 5)
     var recentSessions: [GameSession] {
         Array(sessions.suffix(5).reversed())
     }
@@ -60,5 +60,44 @@ class StatsVM: ObservableObject {
     // count of games played in a specific mode
     func gamesPlayed(for mode: GameMode) -> Int {
         sessions.filter { $0.mode == mode }.count
+    }
+    
+    // MARK: - Filtered Helper Methods for Dedicated Mode Tabs
+    
+    // filtered sessions by optional mode
+    func filteredSessions(for mode: GameMode?) -> [GameSession] {
+        guard let mode = mode else { return sessions }
+        return sessions.filter { $0.mode == mode }
+    }
+    
+    // total points for optional mode
+    func totalPoints(for mode: GameMode?) -> Int {
+        filteredSessions(for: mode).reduce(0) { $0 + $1.score }
+    }
+    
+    // total games played for optional mode
+    func gamesPlayed(for mode: GameMode?) -> Int {
+        filteredSessions(for: mode).count
+    }
+    
+    // average score for optional mode
+    func averageScore(for mode: GameMode?) -> Int {
+        let count = gamesPlayed(for: mode)
+        return count > 0 ? totalPoints(for: mode) / count : 0
+    }
+    
+    // best score for optional mode
+    func bestScore(for mode: GameMode?) -> Int {
+        filteredSessions(for: mode).map { $0.score }.max() ?? 0
+    }
+    
+    // recent sessions for optional mode (up to 5)
+    func recentSessions(for mode: GameMode?) -> [GameSession] {
+        Array(filteredSessions(for: mode).suffix(5).reversed())
+    }
+    
+    // recent session history (chronological order up to 10 for bar chart progression)
+    func historySessions(for mode: GameMode) -> [GameSession] {
+        Array(sessions.filter { $0.mode == mode }.suffix(10))
     }
 }
