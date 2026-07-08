@@ -24,14 +24,12 @@ class LocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     override private init() {
         super.init()
-        // forgot manager.delegate = self here!
         manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
         authStatus = manager.authorizationStatus
     }
     
     // request location permission from user
     func requestPermission() {
-        // forgot manager.requestWhenInUseAuthorization() before starting!
         manager.startUpdatingLocation()
     }
     
