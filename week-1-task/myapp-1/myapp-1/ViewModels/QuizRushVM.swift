@@ -1,17 +1,17 @@
 //
-//  QuizRushViewModel.swift
+//  QuizRushVM.swift
 //  myapp-1
 //
-//  ViewModel managing all logic, state, and API fetching for Week 3 Quiz Rush.
+//  view model managing trivia questions and score for quiz rush
 //
 
 import SwiftUI
 import Combine
 
 @MainActor
-class QuizRushViewModel: ObservableObject {
+class QuizRushVM: ObservableObject {
     
-    // Published states observed by the View
+    // ui states observed by view
     @Published var questions: [TriviaQuestion] = []
     @Published var currentIndex: Int = 0
     @Published var score: Int = 0
@@ -21,8 +21,9 @@ class QuizRushViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     @Published var isGameOver: Bool = false
     
-    // Tracks current question interaction
+    // track answer selection
     @Published var selectedAnswer: String? = nil
+
     @Published var isAnswerCorrect: Bool? = nil
     
     // Persist high score specifically for Quiz Rush
@@ -98,10 +99,10 @@ class QuizRushViewModel: ObservableObject {
         }
     }
     
-    // Handles when question timer expires
+    // handle timer expiration
     func timeOut() {
         guard selectedAnswer == nil else { return }
-        selectedAnswer = "⏰ TIME'S UP!"
+        selectedAnswer = "TIME'S UP!"
         isAnswerCorrect = false
         score = max(0, score - 5)
         streak = 0
@@ -114,4 +115,8 @@ class QuizRushViewModel: ObservableObject {
         }
     }
 }
+
+// backward compatibility alias
+typealias QuizRushViewModel = QuizRushVM
+
 

@@ -1,14 +1,13 @@
 //
-//  HomeView.swift
+//  HomeTab.swift
 //  myapp-1
 //
-//  The unified Home Screen providing clean navigation to all three coursework mini-games
-//  and the combined Arcade Trophy Room / Leaderboard hub.
+//  home screen tab showing our 3 coursework mini games and trophy room
 //
 
 import SwiftUI
 
-struct HomeView: View {
+struct HomeTab: View {
     @ObservedObject private var historyService = HistoryService.shared
     
     var body: some View {
@@ -132,5 +131,9 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView()
+    HomeTab()
 }
+
+// backward compatibility alias
+typealias HomeView = HomeTab
+

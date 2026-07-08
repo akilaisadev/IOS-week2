@@ -228,7 +228,7 @@ struct LightItUpView: View {
             if currentLevel > maxLevelReached {
                 maxLevelReached = currentLevel
             }
-            triggerLevelUpBanner("🚀 LEVEL UP! Level \(currentLevel)")
+            triggerLevelUpBanner("LEVEL UP! Level \(currentLevel)")
             SoundManager.shared.playLevelUp()
         }
         
