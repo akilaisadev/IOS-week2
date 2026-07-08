@@ -100,4 +100,40 @@ class StatsVM: ObservableObject {
     func historySessions(for mode: GameMode) -> [GameSession] {
         Array(sessions.filter { $0.mode == mode }.suffix(10))
     }
+    
+    // total time played across all sessions in seconds for optional mode
+    func totalTimePlayedSeconds(for mode: GameMode?) -> Int {
+        filteredSessions(for: mode).reduce(0) { $0 + $1.timePlayedSeconds }
+    }
+    
+    // total time played across sessions for a specific non-optional game mode
+    func totalTimePlayedSeconds(for mode: GameMode) -> Int {
+        sessions.filter { $0.mode == mode }.reduce(0) { $0 + $1.timePlayedSeconds }
+    }
+    
+    // total time played formatted string (e.g., "12m 30s")
+    func formattedTimePlayed(for mode: GameMode?) -> String {
+        let total = totalTimePlayedSeconds(for: mode)
+        let minutes = total / 60
+        let seconds = total % 60
+        if minutes > 0 {
+            return "\(minutes)m \(seconds)s"
+        } else {
+            return "\(seconds)s"
+        }
+    }
+    
+    // average duration per game for optional mode
+    func formattedAverageDuration(for mode: GameMode?) -> String {
+        let count = gamesPlayed(for: mode)
+        guard count > 0 else { return "0s" }
+        let avgSeconds = totalTimePlayedSeconds(for: mode) / count
+        let minutes = avgSeconds / 60
+        let seconds = avgSeconds % 60
+        if minutes > 0 {
+            return "\(minutes)m \(seconds)s"
+        } else {
+            return "\(seconds)s"
+        }
+    }
 }

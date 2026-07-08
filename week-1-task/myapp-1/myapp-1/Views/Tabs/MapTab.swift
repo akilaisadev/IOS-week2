@@ -53,6 +53,7 @@ struct MapTab: View {
                 .padding(.bottom, 16)
             }
             .navigationTitle("Map")
+            .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 recenterMap()
             }

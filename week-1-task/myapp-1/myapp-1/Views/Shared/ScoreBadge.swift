@@ -17,7 +17,7 @@ struct ScoreBadge: View {
     }
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 6) {
             HStack(spacing: 6) {
                 Image(systemName: isNewBest ? "crown.fill" : "star.fill")
                     .foregroundColor(isNewBest ? .yellow : mode.color)
@@ -26,17 +26,17 @@ struct ScoreBadge: View {
                     .fontWeight(.bold)
                     .foregroundColor(isNewBest ? .orange : .secondary)
             }
-            .padding(.horizontal, 12)
+            .padding(.horizontal, 10)
             .padding(.vertical, 4)
             .background(isNewBest ? Color.yellow.opacity(0.15) : Color(.secondarySystemBackground))
-            .cornerRadius(12)
+            .cornerRadius(10)
             
             Text("\(score)")
-                .font(.system(size: 56, weight: .heavy, design: .rounded))
+                .font(.system(size: 46, weight: .heavy, design: .rounded))
                 .foregroundColor(.primary)
-                .shadow(color: mode.color.opacity(0.2), radius: 6, x: 0, y: 3)
+                .shadow(color: mode.color.opacity(0.2), radius: 4, x: 0, y: 2)
             
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 Image(systemName: "trophy.fill")
                     .foregroundColor(.yellow)
                     .font(.subheadline)
@@ -46,10 +46,11 @@ struct ScoreBadge: View {
                     .foregroundColor(.secondary)
             }
         }
-        .padding(20)
+        .padding(.vertical, 14)
+        .padding(.horizontal, 16)
         .frame(maxWidth: .infinity)
         .background(Color(.secondarySystemBackground))
-        .cornerRadius(20)
+        .cornerRadius(16)
     }
 }
 
