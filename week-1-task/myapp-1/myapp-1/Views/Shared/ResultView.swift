@@ -28,16 +28,16 @@ struct ResultView: View {
     }
     
     var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 16) {
             // header icon and celebratory title
-            VStack(spacing: 8) {
+            VStack(spacing: 6) {
                 Image(systemName: isNewBest ? "trophy.fill" : "flag.checkered")
-                    .font(.system(size: 52))
+                    .font(.system(size: 40))
                     .foregroundColor(isNewBest ? .yellow : mode.color)
-                    .shadow(color: (isNewBest ? Color.yellow : mode.color).opacity(0.3), radius: 8, x: 0, y: 4)
+                    .shadow(color: (isNewBest ? Color.yellow : mode.color).opacity(0.3), radius: 6, x: 0, y: 3)
                 
                 Text(isNewBest ? "New Personal Best!" : "Game Completed")
-                    .font(.title)
+                    .font(.title2)
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
             }
@@ -46,7 +46,7 @@ struct ResultView: View {
             ScoreBadge(score: score, highScore: highScore, mode: mode)
             
             // action buttons container including native ShareLink
-            VStack(spacing: 12) {
+            VStack(spacing: 10) {
                 // native share button
                 ShareLink(
                     item: shareText,
@@ -59,11 +59,11 @@ struct ResultView: View {
                             .fontWeight(.semibold)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
+                    .padding(.vertical, 12)
                     .background(Color.orange)
                     .foregroundColor(.white)
-                    .cornerRadius(14)
-                    .shadow(color: Color.orange.opacity(0.3), radius: 6, x: 0, y: 3)
+                    .cornerRadius(12)
+                    .shadow(color: Color.orange.opacity(0.3), radius: 4, x: 0, y: 2)
                 }
                 
                 // play again primary button
@@ -83,7 +83,7 @@ struct ResultView: View {
                                 .fontWeight(.semibold)
                         }
                         .foregroundColor(mode.color)
-                        .padding(.vertical, 8)
+                        .padding(.vertical, 4)
                     }
                 }
                 
@@ -95,17 +95,18 @@ struct ResultView: View {
                             .fontWeight(.semibold)
                     }
                     .foregroundColor(.secondary)
-                    .padding(.vertical, 8)
+                    .padding(.vertical, 4)
                 }
             }
         }
-        .padding(24)
+        .padding(20)
         .background(
-            RoundedRectangle(cornerRadius: 24)
+            RoundedRectangle(cornerRadius: 20)
                 .fill(Color(.systemBackground))
-                .shadow(color: Color.black.opacity(0.18), radius: 24, x: 0, y: 12)
+                .shadow(color: Color.black.opacity(0.18), radius: 20, x: 0, y: 10)
         )
-        .padding(24)
+        .padding(.horizontal, 28)
+        .frame(maxWidth: 400)
     }
 }
 
