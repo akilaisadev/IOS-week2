@@ -20,21 +20,21 @@ struct TapFrenzyView: View {
     // Persist high score specifically for Tap Frenzy
     @AppStorage("tapFrenzyHighScore") private var highScore = 0
     
-    // Challenge 1: Combo Multiplier tracking
+    // Combo Multiplier tracking
     @State private var comboCount = 0
     @State private var comboMultiplier = 1
     @State private var maxComboAchieved = 1
     @State private var lastTapTime: Date = Date()
     
-    // Challenge 2: Trap Colour state
+    // Trap Colour state
     @State private var isTrapActive = false
     @State private var trapDuration = 0
     
-    // Challenge 3 & 4: Moving & Shrinking Target
+    // Moving & Shrinking Target
     @State private var buttonOffset: CGSize = .zero
     @State private var totalTaps = 0
     
-    // Challenge 5: Bonus Burst message display
+    // Bonus Burst message display
     @State private var bonusMessage: String? = nil
     
     // History Sheet & recording state
@@ -142,7 +142,7 @@ struct TapFrenzyView: View {
         }
     }
     
-    // Calculates dynamic button size based on total taps (Challenge 4)
+    // Calculates dynamic button size based on total taps
     private var buttonDiameter: CGFloat {
         let baseSize: CGFloat = 210
         let shrinkAmount = CGFloat(totalTaps) * 4
@@ -152,7 +152,7 @@ struct TapFrenzyView: View {
     private func handleButtonTap() {
         let now = Date()
         
-        // Challenge 2: If tapped while red trap is active, penalize points
+        // If tapped while red trap is active, penalize points
         if isTrapActive {
             score = max(0, score - 3)
             comboCount = 0
@@ -165,7 +165,7 @@ struct TapFrenzyView: View {
         
         totalTaps += 1
         
-        // Challenge 1: Check time elapsed since last tap for combo chain
+        // Check time elapsed since last tap for combo chain
         let timeSinceLastTap = now.timeIntervalSince(lastTapTime)
         if timeSinceLastTap < 0.6 {
             comboCount += 1
@@ -181,7 +181,7 @@ struct TapFrenzyView: View {
         
         score += 1 * comboMultiplier
         
-        // Challenge 5: Every 10 taps awards a bonus burst
+        // Every 10 taps awards a bonus burst
         if totalTaps % 10 == 0 {
             score += 5
             timeRemaining += 1
@@ -193,7 +193,7 @@ struct TapFrenzyView: View {
             SoundManager.shared.playTap()
         }
         
-        // Challenge 3: Move button to a random safe position inside the play area
+        // Move button to a random safe position inside the play area
         withAnimation(.easeInOut(duration: 0.2)) {
             buttonOffset = CGSize(
                 width: CGFloat.random(in: -90...90),
