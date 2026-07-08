@@ -50,10 +50,11 @@ struct QuizRushView: View {
         .onChange(of: viewModel.isGameOver) { _, gameOver in
             if gameOver && !hasRecordedHistory {
                 hasRecordedHistory = true
-                HistoryService.shared.addRecord(
-                    gameType: .quizRush,
+                HistoryService.shared.addSession(
+                    mode: .quizRush,
                     score: viewModel.score,
-                    detail: "Max Streak: \(viewModel.streak)"
+                    latitude: LocationService.shared.currentLatitude,
+                    longitude: LocationService.shared.currentLongitude
                 )
                 SoundManager.shared.playVictory()
             }

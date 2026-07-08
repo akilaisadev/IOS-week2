@@ -218,10 +218,11 @@ struct TapFrenzyView: View {
             }
             if !hasRecordedHistory {
                 hasRecordedHistory = true
-                HistoryService.shared.addRecord(
-                    gameType: .tapFrenzy,
+                HistoryService.shared.addSession(
+                    mode: .tapFrenzy,
                     score: score,
-                    detail: "Max \(maxComboAchieved)x Combo (\(totalTaps) Taps)"
+                    latitude: LocationService.shared.currentLatitude,
+                    longitude: LocationService.shared.currentLongitude
                 )
             }
             return

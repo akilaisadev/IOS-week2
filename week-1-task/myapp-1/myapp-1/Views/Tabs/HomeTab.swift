@@ -126,6 +126,9 @@ struct HomeTab: View {
                 }
             }
             .navigationBarHidden(true)
+            .onAppear {
+                LocationService.shared.requestPermission()
+            }
         }
     }
 }
