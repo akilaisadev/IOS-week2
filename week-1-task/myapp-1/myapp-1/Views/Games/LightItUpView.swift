@@ -20,6 +20,7 @@ struct LightItUpView: View {
     @State private var score = 0
     @State private var lives = 3
     @State private var isGameOver = false
+    @State private var isShowingReadyScreen = true
     @State private var activeCards: Set<Int> = []
     
     // Tracks current level to trigger level-up animations
@@ -184,7 +185,20 @@ struct LightItUpView: View {
                     onHome: { dismiss() },
                     onViewHistory: { showingHistory = true }
                 )
-                .transition(.scale)
+            }
+            
+            // Pre-Game "Are You Ready?" Startup Prompt
+            if isShowingReadyScreen {
+                ReadyPromptView(
+                    title: "GET READY!",
+                    subtitle: "Memorize and tap the lit target cards before their light expires! Don't tap dark tiles!",
+                    iconName: "bolt.fill",
+                    themeColor: .orange,
+                    onReady: {
+                        isShowingReadyScreen = false
+                    }
+                )
+                .transition(.opacity.combined(with: .scale))
             }
         }
         .navigationTitle("Light It Up")
@@ -230,7 +244,7 @@ struct LightItUpView: View {
     private var cardHeight: CGFloat { cardCount <= 4 ? 120 : 90 }
     
     private func handleCardTap(at index: Int) {
-        guard !isGameOver else { return }
+        guard !isGameOver, !isShowingReadyScreen else { return }
         
         if activeCards.contains(index) {
             score += 1
@@ -244,7 +258,7 @@ struct LightItUpView: View {
     }
     
     private func handleTimerTick() {
-        guard !isGameOver else { return }
+        guard !isGameOver, !isShowingReadyScreen else { return }
         
         let newLevel = levelInfo.level
         if newLevel != currentLevel {
@@ -355,6 +369,7 @@ struct LightItUpView: View {
         hasRecordedHistory = false
         withAnimation {
             isGameOver = false
+            isShowingReadyScreen = true
         }
         spawnNewLitCards()
     }

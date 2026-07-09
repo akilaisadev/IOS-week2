@@ -11,6 +11,7 @@ struct SettingsTab: View {
     @StateObject private var notificationService = NotificationService.shared
     @StateObject private var soundManager = SoundManager.shared
     @State private var showingResetAlert = false
+    @AppStorage("moveTrophyRoomToBottom") private var moveTrophyRoomToBottom = false
     
     var body: some View {
         NavigationStack {
@@ -20,6 +21,7 @@ struct SettingsTab: View {
                 Form {
                     notificationsSection
                     audioSection
+                    layoutSection
                     dataSection
                     aboutSection
                 }
@@ -86,6 +88,20 @@ struct SettingsTab: View {
             Text("Audio & Feedback")
         } footer: {
             Text("Control game sound effects when playing rounds.")
+        }
+    }
+    
+    // section controlling home screen card ordering
+    private var layoutSection: some View {
+        Section {
+            Toggle(isOn: $moveTrophyRoomToBottom) {
+                Label("Trophy Room at Bottom", systemImage: "arrow.up.arrow.down")
+            }
+            .tint(.orange)
+        } header: {
+            Text("Home Layout")
+        } footer: {
+            Text("When enabled, the Trophy Room & Leaderboard card is moved to the bottom below the games list. When off, it returns to the top.")
         }
     }
     
