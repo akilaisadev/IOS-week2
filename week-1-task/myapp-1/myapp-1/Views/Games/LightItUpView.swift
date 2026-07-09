@@ -49,35 +49,57 @@ struct LightItUpView: View {
             AnimatedBackground(colors: [Color.orange.opacity(0.18), Color.yellow.opacity(0.15)])
             
             VStack(spacing: 16) {
-                // Top header: Score, Lives, High Score
-                HStack {
-                    ScoreView(score: score)
-                    
-                    Spacer()
-                    
-                    // 3-Life System Heart Display
-                    HStack(spacing: 4) {
-                        ForEach(1...3, id: \.self) { heart in
-                            Image(systemName: heart <= lives ? "heart.fill" : "heart")
-                                .foregroundColor(.red)
-                                .font(.title2)
-                        }
+                // Top header bar: Score, High Score, Timer, Lives & Level Badge
+                VStack(spacing: 12) {
+                    // Row 1: Balanced Score & High Score
+                    HStack {
+                        ScoreView(score: score)
+                        Spacer()
+                        HighScoreView(highScore: highScore)
                     }
-                    .padding(12)
-                    .background(Color(.systemBackground))
-                    .cornerRadius(14)
-                    .shadow(radius: 4)
                     
-                    Spacer()
-                    
-                    HighScoreView(highScore: highScore)
-                }
-                .padding(.horizontal)
-                
-                // Timer and Level Badge
-                HStack {
+                    // Row 2: Full-Width Timer Bar for maximum readability
                     TimerView(timeRemaining: Int(ceil(Double(timeRemaining))), totalTime: selectedDuration)
-                    LevelBadge(levelText: "Level \(currentLevel): \(levelName)", badgeColor: levelColor)
+                    
+                    // Row 3: Perfectly Aligned 3-Life Heart Display & Single-Line Level Pill
+                    HStack {
+                        // 3-Life System Heart Display
+                        HStack(spacing: 6) {
+                            ForEach(1...3, id: \.self) { heart in
+                                Image(systemName: heart <= lives ? "heart.fill" : "heart")
+                                    .foregroundColor(heart <= lives ? .red : .gray.opacity(0.3))
+                                    .font(.title3)
+                            }
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(Color(.systemBackground))
+                        .cornerRadius(14)
+                        .shadow(color: Color.orange.opacity(0.12), radius: 4, x: 0, y: 2)
+                        
+                        Spacer()
+                        
+                        // Single-line Level Badge
+                        HStack(spacing: 6) {
+                            Image(systemName: "star.fill")
+                                .foregroundColor(levelColor)
+                            Text("Level \(currentLevel): \(levelName)")
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                                .foregroundColor(levelColor)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.85)
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(Color(.systemBackground))
+                        .cornerRadius(14)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .stroke(levelColor.opacity(0.4), lineWidth: 1.5)
+                        )
+                        .shadow(color: levelColor.opacity(0.15), radius: 4, x: 0, y: 2)
+                    }
                 }
                 .padding(.horizontal)
                 
