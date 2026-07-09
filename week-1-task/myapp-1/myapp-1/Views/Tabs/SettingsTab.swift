@@ -49,7 +49,7 @@ struct SettingsTab: View {
                 Label("Daily Reminders", systemImage: "bell.fill")
             }
             .tint(.blue)
-            .onChange(of: notificationService.isEnabled) { _ in
+            .onChange(of: notificationService.isEnabled) { _, _ in
                 if notificationService.isEnabled {
                     notificationService.scheduleDailyChallenge(at: notificationService.reminderTime)
                 } else {
@@ -64,7 +64,7 @@ struct SettingsTab: View {
                 ) {
                     Label("Reminder Time", systemImage: "clock.fill")
                 }
-                .onChange(of: notificationService.reminderTime) { _ in
+                .onChange(of: notificationService.reminderTime) { _, _ in
                     if notificationService.isEnabled {
                         notificationService.scheduleDailyChallenge(at: notificationService.reminderTime)
                     }
@@ -136,16 +136,10 @@ struct SettingsTab: View {
             HStack {
                 Label("Coursework", systemImage: "graduationcap.fill")
                 Spacer()
-                Text("iOS Week 4 Project")
+                Text("iOS 4 Week Project")
                     .foregroundColor(.secondary)
             }
             
-            HStack {
-                Label("Storage Engine", systemImage: "internaldrive.fill")
-                Spacer()
-                Text("UserDefaults JSON")
-                    .foregroundColor(.secondary)
-            }
         } header: {
             Text("About")
         }
