@@ -136,16 +136,10 @@ struct SettingsTab: View {
             HStack {
                 Label("Coursework", systemImage: "graduationcap.fill")
                 Spacer()
-                Text("iOS Week 4 Project")
+                Text("iOS 4 Week Project")
                     .foregroundColor(.secondary)
             }
             
-            HStack {
-                Label("Storage Engine", systemImage: "internaldrive.fill")
-                Spacer()
-                Text("UserDefaults JSON")
-                    .foregroundColor(.secondary)
-            }
         } header: {
             Text("About")
         }
