@@ -49,7 +49,7 @@ struct SettingsTab: View {
                 Label("Daily Reminders", systemImage: "bell.fill")
             }
             .tint(.blue)
-            .onChange(of: notificationService.isEnabled) { _ in
+            .onChange(of: notificationService.isEnabled) { _, _ in
                 if notificationService.isEnabled {
                     notificationService.scheduleDailyChallenge(at: notificationService.reminderTime)
                 } else {
@@ -64,7 +64,7 @@ struct SettingsTab: View {
                 ) {
                     Label("Reminder Time", systemImage: "clock.fill")
                 }
-                .onChange(of: notificationService.reminderTime) { _ in
+                .onChange(of: notificationService.reminderTime) { _, _ in
                     if notificationService.isEnabled {
                         notificationService.scheduleDailyChallenge(at: notificationService.reminderTime)
                     }

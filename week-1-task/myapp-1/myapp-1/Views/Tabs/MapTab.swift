@@ -14,10 +14,12 @@ struct MapTab: View {
     @State private var selectedMode: ModeSelection = .all
     @State private var selectedSession: GameSession? = nil
     
-    // default center coordinate around Colombo (6.9271, 79.8612)
-    @State private var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 6.9271, longitude: 79.8612),
-        span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+    // default camera position around Colombo (6.9271, 79.8612)
+    @State private var cameraPosition: MapCameraPosition = .region(
+        MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 6.9271, longitude: 79.8612),
+            span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+        )
     )
     
     var body: some View {
@@ -57,7 +59,7 @@ struct MapTab: View {
             .onAppear {
                 recenterMap()
             }
-            .onChange(of: selectedMode) { _ in
+            .onChange(of: selectedMode) { _, _ in
                 selectedSession = nil
                 recenterMap()
             }
@@ -75,33 +77,37 @@ struct MapTab: View {
     
     // interactive map view plotting sessions
     private var mapView: some View {
-        Map(coordinateRegion: $region, annotationItems: sessionsWithLocation) { session in
-            MapAnnotation(coordinate: session.coordinate!) {
-                Button {
-                    withAnimation {
-                        selectedSession = session
-                    }
-                } label: {
-                    VStack(spacing: 0) {
-                        Image(systemName: session.mode.iconName)
-                            .font(.caption)
-                            .foregroundColor(.white)
-                            .padding(8)
-                            .background(
-                                Circle()
-                                    .fill(session.mode.color)
-                                    .overlay(
+        Map(position: $cameraPosition) {
+            ForEach(sessionsWithLocation) { session in
+                if let coordinate = session.coordinate {
+                    Annotation(session.mode.title, coordinate: coordinate) {
+                        Button {
+                            withAnimation {
+                                selectedSession = session
+                            }
+                        } label: {
+                            VStack(spacing: 0) {
+                                Image(systemName: session.mode.iconName)
+                                    .font(.caption)
+                                    .foregroundColor(.white)
+                                    .padding(8)
+                                    .background(
                                         Circle()
-                                            .stroke(selectedSession?.id == session.id ? Color.primary : Color.white, lineWidth: selectedSession?.id == session.id ? 3 : 1.5)
+                                            .fill(session.mode.color)
+                                            .overlay(
+                                                Circle()
+                                                    .stroke(selectedSession?.id == session.id ? Color.primary : Color.white, lineWidth: selectedSession?.id == session.id ? 3 : 1.5)
+                                            )
                                     )
-                            )
-                            .shadow(radius: 4)
-                        
-                        Image(systemName: "triangle.fill")
-                            .font(.system(size: 10))
-                            .foregroundColor(session.mode.color)
-                            .rotationEffect(.degrees(180))
-                            .offset(y: -3)
+                                    .shadow(radius: 4)
+                                
+                                Image(systemName: "triangle.fill")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(session.mode.color)
+                                    .rotationEffect(.degrees(180))
+                                    .offset(y: -3)
+                            }
+                        }
                     }
                 }
             }
@@ -216,16 +222,20 @@ struct MapTab: View {
     // center camera region around mapped sessions or default location
     private func recenterMap() {
         if let firstSession = sessionsWithLocation.first, let coordinate = firstSession.coordinate {
-            region = MKCoordinateRegion(
-                center: coordinate,
-                span: MKCoordinateSpan(latitudeDelta: 0.08, longitudeDelta: 0.08)
-            )
+            withAnimation {
+                cameraPosition = .region(MKCoordinateRegion(
+                    center: coordinate,
+                    span: MKCoordinateSpan(latitudeDelta: 0.08, longitudeDelta: 0.08)
+                ))
+            }
         } else {
             // fallback to Colombo coordinates
-            region = MKCoordinateRegion(
-                center: CLLocationCoordinate2D(latitude: 6.9271, longitude: 79.8612),
-                span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
-            )
+            withAnimation {
+                cameraPosition = .region(MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: 6.9271, longitude: 79.8612),
+                    span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+                ))
+            }
         }
     }
 }
