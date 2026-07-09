@@ -22,6 +22,7 @@ struct QuizRushView: View {
     @State private var cardRotation: Double = 0
     @State private var flashColor: Color = .clear
     @State private var streakBanner: String? = nil
+    @State private var isShowingReadyScreen = true
     
     // Timer firing every 1 second for question countdown
     let gameTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -34,6 +35,20 @@ struct QuizRushView: View {
             flashColor.opacity(0.35)
                 .ignoresSafeArea()
                 .allowsHitTesting(false)
+            
+            // Pre-Game "Are You Ready?" Startup Prompt
+            if isShowingReadyScreen {
+                ReadyPromptView(
+                    title: "GET READY!",
+                    subtitle: "Answer 10 fast trivia questions! Chain streaks for massive bonus points!",
+                    iconName: "sparkles",
+                    themeColor: .purple,
+                    onReady: {
+                        isShowingReadyScreen = false
+                    }
+                )
+                .transition(.opacity.combined(with: .scale))
+            }
         }
         .navigationTitle("Quiz Rush")
         .navigationBarTitleDisplayMode(.inline)
@@ -84,7 +99,7 @@ struct QuizRushView: View {
     }
     
     private func handleTimerTick() {
-        guard !viewModel.isLoading, viewModel.errorMessage == nil, !viewModel.isGameOver, viewModel.selectedAnswer == nil else { return }
+        guard !viewModel.isLoading, viewModel.errorMessage == nil, !viewModel.isGameOver, !isShowingReadyScreen, viewModel.selectedAnswer == nil else { return }
         
         if timeRemaining > 0 {
             timeRemaining -= 1
@@ -146,6 +161,7 @@ struct QuizRushView: View {
             
             PrimaryButton(title: "Retry", iconName: "arrow.clockwise", backgroundColor: .purple) {
                 hasRecordedHistory = false
+                isShowingReadyScreen = true
                 viewModel.restartGame()
             }
             .frame(width: 200)
@@ -346,6 +362,7 @@ struct QuizRushView: View {
             mode: .quizRush,
             onPlayAgain: {
                 hasRecordedHistory = false
+                isShowingReadyScreen = true
                 viewModel.restartGame()
             },
             onHome: { dismiss() },

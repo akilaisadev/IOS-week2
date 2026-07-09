@@ -16,6 +16,7 @@ struct TapFrenzyView: View {
     @State private var score = 0
     @State private var timeRemaining = 10
     @State private var isGameOver = false
+    @State private var isShowingReadyScreen = true
     
     // Persist high score specifically for Tap Frenzy
     @AppStorage("tapFrenzyHighScore") private var highScore = 0
@@ -124,6 +125,20 @@ struct TapFrenzyView: View {
                 )
                 .transition(.scale)
             }
+            
+            // Pre-Game "Are You Ready?" Startup Prompt
+            if isShowingReadyScreen {
+                ReadyPromptView(
+                    title: "GET READY!",
+                    subtitle: "Tap the circle as fast as you can to chain combos! Watch out for red traps!",
+                    iconName: "hand.tap.fill",
+                    themeColor: .blue,
+                    onReady: {
+                        isShowingReadyScreen = false
+                    }
+                )
+                .transition(.opacity.combined(with: .scale))
+            }
         }
         .navigationTitle("Tap Frenzy")
         .navigationBarTitleDisplayMode(.inline)
@@ -151,6 +166,7 @@ struct TapFrenzyView: View {
     }
     
     private func handleButtonTap() {
+        guard !isGameOver, !isShowingReadyScreen else { return }
         let now = Date()
         
         // If tapped while red trap is active, penalize points
@@ -204,7 +220,7 @@ struct TapFrenzyView: View {
     }
     
     private func handleTimerTick() {
-        guard !isGameOver else { return }
+        guard !isGameOver, !isShowingReadyScreen else { return }
         
         if timeRemaining > 0 {
             timeRemaining -= 1
@@ -271,6 +287,7 @@ struct TapFrenzyView: View {
         hasRecordedHistory = false
         withAnimation {
             isGameOver = false
+            isShowingReadyScreen = true
         }
     }
 }
