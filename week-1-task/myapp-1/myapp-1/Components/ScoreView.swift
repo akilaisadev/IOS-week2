@@ -53,7 +53,7 @@ struct ScoreView: View {
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
                 .background(Color.yellow.opacity(0.1))
-                .foregroundColor(.yellow)
+                .foregroundColor(.blue)
                 .clipShape(Capsule())
             }
         }

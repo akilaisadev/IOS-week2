@@ -22,7 +22,7 @@ struct ReadyPromptView: View {
             Color.black.opacity(0.55)
                 .ignoresSafeArea()
             
-            VStack(spacing: 24) {
+            VStack(spacing: 20) {
                 // Animated Icon Header
                 ZStack {
                     Circle()
@@ -42,7 +42,7 @@ struct ReadyPromptView: View {
                 }
                 
                 // Title & Instructions
-                VStack(spacing: 10) {
+                VStack(spacing: 20) {
                     Text(title)
                         .font(.system(size: 28, weight: .black, design: .rounded))
                         .foregroundColor(.primary)
@@ -65,7 +65,7 @@ struct ReadyPromptView: View {
                     HStack(spacing: 10) {
                         Image(systemName: "play.fill")
                             .font(.headline)
-                        Text("I'M READY - START!")
+                        Text("I'M READY START!")
                             .font(.system(size: 18, weight: .bold, design: .rounded))
                     }
                     .foregroundColor(.white)
