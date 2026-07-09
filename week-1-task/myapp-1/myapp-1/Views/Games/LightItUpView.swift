@@ -46,7 +46,7 @@ struct LightItUpView: View {
     
     var body: some View {
         ZStack {
-            AnimatedBackground(colors: [levelColor.opacity(0.15), Color.black.opacity(0.8)])
+            AnimatedBackground(colors: [Color.orange.opacity(0.18), Color.yellow.opacity(0.15)])
             
             VStack(spacing: 16) {
                 // Top header: Score, Lives, High Score
@@ -105,14 +105,14 @@ struct LightItUpView: View {
                         ForEach(0..<cardCount, id: \.self) { index in
                             let isLit = activeCards.contains(index)
                             
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(isLit ? levelColor : Color.gray.opacity(0.25))
+                            RoundedRectangle(cornerRadius: 18)
+                                .fill(isLit ? AnyShapeStyle(levelColor) : AnyShapeStyle(Color(.systemBackground)))
                                 .frame(height: cardHeight)
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .stroke(isLit ? Color.white : Color.clear, lineWidth: 3)
+                                    RoundedRectangle(cornerRadius: 18)
+                                        .stroke(isLit ? Color.white : Color.orange.opacity(0.25), lineWidth: isLit ? 3 : 1.5)
                                 )
-                                .shadow(color: isLit ? levelColor.opacity(0.7) : Color.clear, radius: 12, x: 0, y: 4)
+                                .shadow(color: isLit ? levelColor.opacity(0.6) : Color.orange.opacity(0.12), radius: isLit ? 12 : 6, x: 0, y: isLit ? 6 : 3)
                                 .scaleEffect(isLit ? 1.05 : 1.0)
                                 .animation(.spring(response: 0.25), value: isLit)
                                 .onTapGesture {
@@ -191,13 +191,13 @@ struct LightItUpView: View {
         let progress = Double(elapsed) / Double(selectedDuration)
         
         if progress < 0.25 {
-            return (1, "Warmup", 3, 1.5, .green)
+            return (1, "Warmup", 3, 1.5, .orange)
         } else if progress < 0.50 {
-            return (2, "Accelerate", 4, 1.2, .blue)
+            return (2, "Accelerate", 4, 1.2, Color(red: 1.0, green: 0.55, blue: 0.15))
         } else if progress < 0.75 {
-            return (3, "Overdrive", 6, 1.0, .purple)
+            return (3, "Overdrive", 6, 1.0, Color(red: 1.0, green: 0.38, blue: 0.28))
         } else {
-            return (4, "Frenzy", 9, 0.8, .orange)
+            return (4, "Frenzy", 9, 0.8, Color(red: 0.96, green: 0.22, blue: 0.32))
         }
     }
     
