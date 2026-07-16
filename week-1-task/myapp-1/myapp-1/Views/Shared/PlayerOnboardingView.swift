@@ -12,6 +12,7 @@ struct PlayerOnboardingView: View {
     @AppStorage("hasEnteredPlayerDetails") private var hasEnteredPlayerDetails = false
     @AppStorage("playerName") private var playerName = "Player 1"
     @State private var inputName = ""
+    @State private var errorMessage: String? = nil
     
     var body: some View {
         NavigationStack {
@@ -31,13 +32,38 @@ struct PlayerOnboardingView: View {
                 }
                 .padding(.horizontal)
                 
-                TextField("Gamer Tag (e.g. ShadowTap)", text: $inputName)
-                    .textFieldStyle(.roundedBorder)
-                    .padding(.horizontal)
+                VStack(alignment: .leading, spacing: 6) {
+                    TextField("Gamer Tag (2-16 chars)", text: $inputName)
+                        .textFieldStyle(.roundedBorder)
+                        .onChange(of: inputName) { _, newValue in
+                            let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+                            if !trimmed.isEmpty && (trimmed.count < 2 || trimmed.count > 16) {
+                                withAnimation { errorMessage = "Name must be 2-16 characters" }
+                            } else {
+                                withAnimation { errorMessage = nil }
+                            }
+                        }
+                    
+                    if let error = errorMessage {
+                        HStack(spacing: 5) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.red)
+                            Text(error)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                    }
+                }
+                .padding(.horizontal)
                 
                 Button {
                     let trimmed = inputName.trimmingCharacters(in: .whitespacesAndNewlines)
-                    playerName = trimmed.isEmpty ? "Player 1" : trimmed
+                    if trimmed.isEmpty || trimmed.count < 2 || trimmed.count > 16 {
+                        withAnimation { errorMessage = "Please enter a valid name (2-16 chars)" }
+                        return
+                    }
+                    playerName = trimmed
                     hasEnteredPlayerDetails = true
                     dismiss()
                 } label: {
