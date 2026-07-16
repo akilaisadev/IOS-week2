@@ -13,7 +13,7 @@ struct HTMLEntityDecoder {
     static func decode(_ string: String) -> String {
         var result = string
         
-        // Dictionary mapping common HTML entity codes to their string characters.
+    //decode
         let entities: [String: String] = [
             "&quot;": "\"",
             "&#039;": "'",

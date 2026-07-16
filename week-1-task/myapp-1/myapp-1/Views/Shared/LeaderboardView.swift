@@ -19,11 +19,11 @@ struct LeaderboardView: View {
         ScrollView {
             VStack(spacing: 24) {
                 // Total Combined Score Hero Card
-                VStack(spacing: 12) {
+                VStack(spacing: 20) {
                     Image(systemName: "crown.fill")
                         .font(.system(size: 50))
                         .foregroundColor(.yellow)
-                        .shadow(color: .yellow.opacity(0.6), radius: 10, x: 0, y: 5)
+                        .shadow(color: .yellow.opacity(0.6), radius: 25, x: 0, y: 5)
                     
                     Text("TOTAL COMBINED SCORE")
                         .font(.caption)
