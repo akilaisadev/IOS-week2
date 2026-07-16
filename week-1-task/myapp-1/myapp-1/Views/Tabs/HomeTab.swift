@@ -10,6 +10,9 @@ import SwiftUI
 struct HomeTab: View {
     @ObservedObject private var historyService = HistoryService.shared
     @AppStorage("moveTrophyRoomToBottom") private var moveTrophyRoomToBottom = false
+    @AppStorage("hasEnteredPlayerDetails") private var hasEnteredPlayerDetails = false
+    @AppStorage("playerName") private var playerName = "Player 1"
+    @State private var showingOnboarding = false
     
     var body: some View {
         NavigationStack {
@@ -40,8 +43,15 @@ struct HomeTab: View {
                 }
             }
             .navigationBarHidden(true)
+            .sheet(isPresented: $showingOnboarding) {
+                PlayerOnboardingView()
+                    .interactiveDismissDisabled()
+            }
             .onAppear {
                 LocationService.shared.requestPermission()
+                if !hasEnteredPlayerDetails {
+                    showingOnboarding = true
+                }
             }
         }
     }
@@ -58,7 +68,7 @@ struct HomeTab: View {
             Text("GameHub")
                 .font(.system(size: 36, weight: .heavy, design: .rounded))
             
-            Text("iOS Mini-Game Collection")
+            Text(playerName == "Player 1" || playerName.isEmpty ? "iOS Mini-Game Collection" : "Welcome back, \(playerName)!")
                 .font(.subheadline)
                 .fontWeight(.medium)
                 .foregroundColor(.secondary)

@@ -12,6 +12,7 @@ struct SettingsTab: View {
     @StateObject private var soundManager = SoundManager.shared
     @State private var showingResetAlert = false
     @AppStorage("moveTrophyRoomToBottom") private var moveTrophyRoomToBottom = false
+    @AppStorage("playerName") private var playerName = "Player 1"
     
     var body: some View {
         NavigationStack {
@@ -19,6 +20,7 @@ struct SettingsTab: View {
                 AnimatedBackground()
                 
                 Form {
+                    profileSection
                     notificationsSection
                     audioSection
                     layoutSection
@@ -39,6 +41,17 @@ struct SettingsTab: View {
             } message: {
                 Text("This action will permanently delete all recorded game sessions, scores, and map locations. This cannot be undone.")
             }
+        }
+    }
+    
+    // section allowing player profile management
+    private var profileSection: some View {
+        Section {
+            TextField("Gamer Tag", text: $playerName)
+        } header: {
+            Text("Player Profile")
+        } footer: {
+            Text("Your gamer tag is shown on your home dashboard and shared high score cards.")
         }
     }
     
