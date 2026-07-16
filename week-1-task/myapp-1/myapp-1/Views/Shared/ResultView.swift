@@ -17,16 +17,18 @@ struct ResultView: View {
     
     @State private var showingActions = false
     @State private var canInteract = false
+    @AppStorage("playerName") private var playerName = "Player 1"
     
     var isNewBest: Bool {
         score >= highScore && score > 0
     }
     
     var shareText: String {
+        let namePrefix = (playerName == "Player 1" || playerName.isEmpty) ? "I" : playerName
         if isNewBest {
-            return "I just achieved a new personal best of \(score) points in \(mode.title) on PlayHub! Can you beat my score?"
+            return "\(namePrefix) just achieved a new personal best of \(score) points in \(mode.title) on PlayHub! Can you beat my score?"
         } else {
-            return "I just scored \(score) points in \(mode.title) on PlayHub! Can you beat my score?"
+            return "\(namePrefix) just scored \(score) points in \(mode.title) on PlayHub! Can you beat my score?"
         }
     }
     
