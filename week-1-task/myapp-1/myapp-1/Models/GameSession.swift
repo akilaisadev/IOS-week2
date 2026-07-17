@@ -23,6 +23,7 @@ struct GameSession: Codable, Identifiable, Equatable {
     }
     
     var timePlayedSeconds: Int {
+        // fallback if duration is missing
         if let dur = duration {
             return max(1, Int(dur))
         }

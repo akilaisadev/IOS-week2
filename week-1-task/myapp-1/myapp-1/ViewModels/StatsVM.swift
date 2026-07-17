@@ -32,6 +32,7 @@ class StatsVM: ObservableObject {
     }
     
     var favoriteMode: GameMode? {
+        // find most played mode
         GameMode.allCases.max(by: { gamesPlayed(for: $0) < gamesPlayed(for: $1) })
     }
     
