@@ -16,7 +16,6 @@ class LightItUpVM: ObservableObject {
     @Published var currentLevel = 1
     @Published var activeCards: Set<Int> = []
     
-    // reset state for a new game
     func resetGame(duration: Int) {
         score = 0
         lives = 3

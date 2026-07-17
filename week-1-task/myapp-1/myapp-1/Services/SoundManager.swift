@@ -1,10 +1,5 @@
 //
-//  SoundManager.swift
-//  myapp-1
-//
-//  Self-contained audio and haptic feedback manager for all coursework mini-games.
-//  Synthesizes 16-bit PCM WAV audio buffers in memory to ensure 100% reliability
-//  without requiring external binary asset files or Xcode bundle modifications.
+//  SoundManager.swift - myapp-1 (self-contained PCM audio and haptics manager)
 //
 
 import AVFoundation
@@ -15,41 +10,31 @@ import Combine
 class SoundManager: NSObject, ObservableObject {
     static let shared = SoundManager()
     
-    // published mute toggle backed by user defaults
     @Published var isMuted: Bool = UserDefaults.standard.bool(forKey: "SoundManagerIsMuted") {
         didSet {
             UserDefaults.standard.set(isMuted, forKey: "SoundManagerIsMuted")
         }
     }
     
-    // Audio players mapped by sound type
     private var players: [SoundType: AVAudioPlayer] = [:]
     
-    // Haptic feedback generators
     private let lightImpact = UIImpactFeedbackGenerator(style: .light)
     private let mediumImpact = UIImpactFeedbackGenerator(style: .medium)
     private let heavyImpact = UIImpactFeedbackGenerator(style: .heavy)
     private let notificationFeedback = UINotificationFeedbackGenerator()
     
     enum SoundType: CaseIterable {
-        // Tap Frenzy
         case tap
         case comboTap
         case trap
         case bonus
-        
-        // Light It Up
         case cardCorrect
         case cardWrong
         case levelUp
-        
-        // Quiz Rush
         case quizCorrect
         case quizWrong
         case streakBonus
         case timeOut
-        
-        // General
         case gameOver
         case victory
     }
@@ -99,9 +84,6 @@ class SoundManager: NSObject, ObservableObject {
         player.play()
     }
     
-    // MARK: - Public Play Methods with Haptics
-    
-    // Tap Frenzy Sounds
     func playTap() {
         play(.tap)
         lightImpact.impactOccurred()
@@ -123,7 +105,6 @@ class SoundManager: NSObject, ObservableObject {
         notificationFeedback.notificationOccurred(.success)
     }
     
-    // Light It Up Sounds
     func playCardCorrect() {
         play(.cardCorrect)
         lightImpact.impactOccurred()
@@ -139,7 +120,6 @@ class SoundManager: NSObject, ObservableObject {
         notificationFeedback.notificationOccurred(.success)
     }
     
-    // Quiz Rush Sounds
     func playQuizCorrect() {
         play(.quizCorrect)
         notificationFeedback.notificationOccurred(.success)
@@ -160,7 +140,6 @@ class SoundManager: NSObject, ObservableObject {
         notificationFeedback.notificationOccurred(.warning)
     }
     
-    // General / Shared Sounds
     func playGameOver() {
         play(.gameOver)
         notificationFeedback.notificationOccurred(.error)
@@ -171,11 +150,8 @@ class SoundManager: NSObject, ObservableObject {
         notificationFeedback.notificationOccurred(.success)
     }
     
-    // MARK: - Audio Synthesis Engine
-    
     private func generateAudioData(for type: SoundType) -> Data? {
         switch type {
-        // Tap Frenzy
         case .tap:
             return createWavData(frequencies: [600.0, 800.0], durations: [0.03, 0.04], waveType: .sine, volume: 0.35)
         case .comboTap:
@@ -185,7 +161,6 @@ class SoundManager: NSObject, ObservableObject {
         case .bonus:
             return createWavData(frequencies: [523.25, 659.25, 783.99, 1046.50], durations: [0.06, 0.06, 0.06, 0.15], waveType: .triangle, volume: 0.45)
             
-        // Light It Up
         case .cardCorrect:
             return createWavData(frequencies: [783.99, 1046.50], durations: [0.04, 0.08], waveType: .sine, volume: 0.35)
         case .cardWrong:
@@ -193,7 +168,6 @@ class SoundManager: NSObject, ObservableObject {
         case .levelUp:
             return createWavData(frequencies: [440.0, 554.37, 659.25, 880.0], durations: [0.07, 0.07, 0.07, 0.2], waveType: .triangle, volume: 0.45)
             
-        // Quiz Rush
         case .quizCorrect:
             return createWavData(frequencies: [587.33, 880.0], durations: [0.07, 0.14], waveType: .sine, volume: 0.4)
         case .quizWrong:
@@ -203,7 +177,6 @@ class SoundManager: NSObject, ObservableObject {
         case .timeOut:
             return createWavData(frequencies: [400.0, 0.0, 400.0], durations: [0.08, 0.04, 0.12], waveType: .square, volume: 0.4)
             
-        // General
         case .gameOver:
             return createWavData(frequencies: [400.0, 350.0, 300.0, 250.0], durations: [0.08, 0.08, 0.08, 0.25], waveType: .triangle, volume: 0.45)
         case .victory:
@@ -235,8 +208,6 @@ class SoundManager: NSObject, ObservableObject {
                     case .sawtooth:
                         val = 2.0 * (t * freq - floor(t * freq + 0.5))
                     }
-                } else {
-                    // Silence (e.g., pause between alarm beeps)
                     val = 0.0
                 }
                 
@@ -268,13 +239,10 @@ class SoundManager: NSObject, ObservableObject {
         let chunkSize = 36 + dataSize
         
         var data = Data()
-        // "RIFF"
         data.append(contentsOf: [0x52, 0x49, 0x46, 0x46])
         var chunkLE = chunkSize.littleEndian
         data.append(Data(bytes: &chunkLE, count: 4))
-        // "WAVE"
         data.append(contentsOf: [0x57, 0x41, 0x56, 0x45])
-        // "fmt "
         data.append(contentsOf: [0x66, 0x6D, 0x74, 0x20])
         var subchunk1SizeLE = Int32(16).littleEndian
         data.append(Data(bytes: &subchunk1SizeLE, count: 4))
@@ -290,12 +258,10 @@ class SoundManager: NSObject, ObservableObject {
         data.append(Data(bytes: &blockAlignLE, count: 2))
         var bitsPerSampleLE = bitsPerSample.littleEndian
         data.append(Data(bytes: &bitsPerSampleLE, count: 2))
-        // "data"
         data.append(contentsOf: [0x64, 0x61, 0x74, 0x61])
         var dataSizeLE = dataSize.littleEndian
         data.append(Data(bytes: &dataSizeLE, count: 4))
         
-        // Append PCM samples with explicit little-endian conversion
         var sampleBytes = [UInt8](repeating: 0, count: samples.count * 2)
         sampleBytes.withUnsafeMutableBufferPointer { ptr in
             for (i, sample) in samples.enumerated() {

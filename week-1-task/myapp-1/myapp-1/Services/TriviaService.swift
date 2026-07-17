@@ -32,7 +32,6 @@ class TriviaService {
     
     private let endpointURL = "https://opentdb.com/api.php?amount=10&type=multiple"
     
-    // Fetches 10 multiple choice questions using modern async/await and URLSession
     func fetchQuestions() async throws -> [TriviaQuestion] {
         guard let url = URL(string: endpointURL) else {
             throw TriviaServiceError.invalidURL
@@ -47,7 +46,6 @@ class TriviaService {
             
             let apiResponse = try JSONDecoder().decode(TriviaAPIResponse.self, from: data)
             
-            // Map raw DTOs into clean domain models
             return apiResponse.results.map { TriviaQuestion(from: $0) }
         } catch let decodingError as DecodingError {
             throw TriviaServiceError.decodingError(decodingError)

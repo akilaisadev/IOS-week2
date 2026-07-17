@@ -2,8 +2,6 @@
 //  LightItUpView.swift
 //  myapp-1
 //
-//  Week 2 assignment: Grid reflex game with 4 progressive difficulty levels,
-//  level-up animations, flash overlays, duration settings, 3-life system, and session history.
 //
 
 import SwiftUI
@@ -46,19 +44,19 @@ struct LightItUpView: View {
             AnimatedBackground(colors: [Color.orange.opacity(0.18), Color.yellow.opacity(0.15)])
             
             VStack(spacing: 16) {
-                // Top header bar: Score, High Score, Timer, Lives & Level Badge
+               
                 VStack(spacing: 12) {
-                    // Row 1: Balanced Score & High Score
+                   
                     HStack {
                         ScoreView(score: score)
                         Spacer()
                         HighScoreView(highScore: highScore)
                     }
                     
-                    // Row 2: Full-Width Timer Bar for maximum readability
+                 
                     TimerView(timeRemaining: Int(ceil(Double(timeRemaining))), totalTime: selectedDuration)
                     
-                    // Row 3: Perfectly Aligned 3-Life Heart Display & Single-Line Level Pill
+                   
                     HStack {
                         // 3-Life System Heart Display
                         HStack(spacing: 6) {

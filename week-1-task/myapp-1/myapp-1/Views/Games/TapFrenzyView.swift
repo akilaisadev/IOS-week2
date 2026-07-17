@@ -1,9 +1,5 @@
 //
-//  TapFrenzyView.swift
-//  myapp-1
-//
-//  Week 1 assignment: Fast-paced reflex game with 10-second timer, combo multipliers,
-//  traps, moving targets, shrinking button size, bonus bursts, and dedicated session history.
+//  TapFrenzyView.swift 
 //
 
 import SwiftUI

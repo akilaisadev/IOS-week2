@@ -18,7 +18,6 @@ struct LeaderboardView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                // Total Combined Score Hero Card
                 VStack(spacing: 20) {
                     Image(systemName: "crown.fill")
                         .font(.system(size: 50))
@@ -44,8 +43,6 @@ struct LeaderboardView: View {
                         .shadow(color: Color.black.opacity(0.08), radius: 10, x: 0, y: 5)
                 )
                 .padding(.horizontal)
-                
-                // High Scores Breakdown per Game Mode
                 VStack(alignment: .leading, spacing: 14) {
                     Text("GAME HIGH SCORES")
                         .font(.caption)
@@ -60,8 +57,6 @@ struct LeaderboardView: View {
                     }
                     .padding(.horizontal)
                 }
-                
-                // Recent Activity Log section
                 VStack(alignment: .leading, spacing: 14) {
                     HStack {
                         Text("RECENT ACTIVITY LOG")
@@ -146,8 +141,6 @@ struct LeaderboardView: View {
             Text("This will delete all saved session logs from local storage.")
         }
     }
-    
-    // Helper view for displaying individual game mode high score badges
     private func highScoreRow(title: String, icon: String, color: Color, score: Int) -> some View {
         HStack {
             Image(systemName: icon)

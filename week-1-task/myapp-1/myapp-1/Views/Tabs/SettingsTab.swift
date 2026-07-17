@@ -57,8 +57,6 @@ struct SettingsTab: View {
             }
         }
     }
-    
-    // section allowing player profile management with validation & instant animated save feedback
     private var profileSection: some View {
         Section {
             VStack(alignment: .leading, spacing: 6) {
@@ -69,8 +67,6 @@ struct SettingsTab: View {
                     .onSubmit {
                         forceSaveOnExit()
                     }
-                
-                // Animated feedback row right under the textbox
                 if case .saving = saveStatus {
                     HStack(spacing: 6) {
                         ProgressView()
@@ -148,8 +144,6 @@ struct SettingsTab: View {
         }
         withAnimation { saveStatus = .idle }
     }
-    
-    // section managing local daily challenge reminders
     private var notificationsSection: some View {
         Section {
             Toggle(isOn: $notificationService.isEnabled) {
@@ -183,8 +177,6 @@ struct SettingsTab: View {
             Text("Receive a daily reminder to play your favorite game mode and beat your personal best.")
         }
     }
-    
-    // section controlling audio and haptic feedback
     private var audioSection: some View {
         Section {
             Toggle(isOn: $soundManager.isMuted) {
@@ -197,8 +189,6 @@ struct SettingsTab: View {
             Text("Control game sound effects when playing rounds.")
         }
     }
-    
-    // section controlling home screen card ordering
     private var layoutSection: some View {
         Section {
             Toggle(isOn: $moveTrophyRoomToBottom) {
@@ -211,8 +201,6 @@ struct SettingsTab: View {
             Text("When enabled, the Trophy Room & Leaderboard card is moved to the bottom below the games list. When off, it returns to the top.")
         }
     }
-    
-    // section for managing persistent storage and resetting history
     private var dataSection: some View {
         Section {
             Button(role: .destructive) {
@@ -229,8 +217,6 @@ struct SettingsTab: View {
             Text("Permanently erase all stored game records, high scores, and map pins.")
         }
     }
-    
-    // section detailing project information
     private var aboutSection: some View {
         Section {
             HStack {

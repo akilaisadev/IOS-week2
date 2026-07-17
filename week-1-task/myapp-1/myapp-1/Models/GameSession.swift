@@ -17,7 +17,6 @@ struct GameSession: Codable, Identifiable, Equatable {
     var longitude: Double? = nil
     var duration: TimeInterval? = nil
     
-    // formatted date string for UI display
     var formattedDate: String {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
@@ -25,7 +24,6 @@ struct GameSession: Codable, Identifiable, Equatable {
         return formatter.string(from: timestamp)
     }
     
-    // computed total seconds played (using stored duration or estimating based on mode and score)
     var timePlayedSeconds: Int {
         if let dur = duration {
             return max(1, Int(dur))
@@ -40,7 +38,6 @@ struct GameSession: Codable, Identifiable, Equatable {
         }
     }
     
-    // formatted duration string for display
     var formattedDuration: String {
         let seconds = timePlayedSeconds
         let minutes = seconds / 60
@@ -52,22 +49,18 @@ struct GameSession: Codable, Identifiable, Equatable {
         }
     }
     
-    // helper to check if valid coordinates exist
     var hasValidLocation: Bool {
         latitude != nil && longitude != nil
     }
     
-    // computed 2D coordinate for MapKit integration
     var coordinate: CLLocationCoordinate2D? {
         guard let lat = latitude, let lon = longitude else { return nil }
         return CLLocationCoordinate2D(latitude: lat, longitude: lon)
     }
     
-    // compatibility properties for older views
     var gameType: GameMode { mode }
     var date: Date { timestamp }
     var detail: String { "Score: \(score)" }
 }
 
-// backward compatibility alias
 typealias GameRecord = GameSession

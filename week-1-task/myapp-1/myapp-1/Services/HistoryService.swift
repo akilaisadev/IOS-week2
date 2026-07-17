@@ -16,14 +16,12 @@ class HistoryService: ObservableObject {
     
     @Published private(set) var sessions: [GameSession] = []
     
-    // compatibility alias for older views
     var records: [GameSession] { sessions }
     
     private init() {
         loadSessions()
     }
     
-    // load sessions from local storage with migration
     private func loadSessions() {
         if let data = UserDefaults.standard.data(forKey: sessionsKey) {
             do {
@@ -34,7 +32,6 @@ class HistoryService: ObservableObject {
             }
         }
         
-        // check for legacy records and migrate
         if let oldData = UserDefaults.standard.data(forKey: oldStorageKey) {
             do {
                 sessions = try JSONDecoder().decode([GameSession].self, from: oldData)
@@ -49,7 +46,6 @@ class HistoryService: ObservableObject {
         sessions = []
     }
     
-    // save sessions to local storage
     private func saveSessions() {
         do {
             let data = try JSONEncoder().encode(sessions)
@@ -59,12 +55,10 @@ class HistoryService: ObservableObject {
         }
     }
     
-    // add session from older game views
     func addRecord(gameType: GameMode, score: Int, detail: String, duration: TimeInterval? = nil) {
         addSession(mode: gameType, score: score, duration: duration)
     }
     
-    // add new completed game session with coordinates and optional duration
     func addSession(mode: GameMode, score: Int, latitude: Double? = nil, longitude: Double? = nil, duration: TimeInterval? = nil) {
         let newSession = GameSession(
             mode: mode,
@@ -78,13 +72,11 @@ class HistoryService: ObservableObject {
         saveSessions()
     }
     
-    // get sessions filtered by mode
     func getSessions(for mode: GameMode?) -> [GameSession] {
         guard let m = mode else { return sessions }
         return sessions.filter { $0.mode == m }
     }
     
-    // compatibility helper for old views
     func getRecords(for gameType: GameMode?) -> [GameSession] {
         getSessions(for: gameType)
     }

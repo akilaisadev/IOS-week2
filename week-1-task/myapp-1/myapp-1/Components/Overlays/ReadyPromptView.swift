@@ -2,8 +2,7 @@
 //  ReadyPromptView.swift
 //  myapp-1
 //
-//  A sleek, high-visual-hierarchy "Are You Ready?" startup overlay
-//  that ensures the gamer is prepared before the game timer starts.
+//  A sleek "Are You Ready?" startup overlay to prepare the gamer before starting.
 //
 
 import SwiftUI
@@ -23,7 +22,6 @@ struct ReadyPromptView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 20) {
-                // Animated Icon Header
                 ZStack {
                     Circle()
                         .fill(themeColor.opacity(0.18))
@@ -41,7 +39,6 @@ struct ReadyPromptView: View {
                         .shadow(color: themeColor.opacity(0.5), radius: 6)
                 }
                 
-                // Title & Instructions
                 VStack(spacing: 20) {
                     Text(title)
                         .font(.system(size: 28, weight: .black, design: .rounded))
@@ -56,7 +53,6 @@ struct ReadyPromptView: View {
                         .padding(.horizontal, 16)
                 }
                 
-                // Big Action Button
                 Button(action: {
                     withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
                         onReady()
