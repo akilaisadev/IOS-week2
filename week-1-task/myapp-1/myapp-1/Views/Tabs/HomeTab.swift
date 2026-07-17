@@ -42,15 +42,20 @@ struct HomeTab: View {
                     .animation(.spring(response: 0.45, dampingFraction: 0.8), value: moveTrophyRoomToBottom)
                 }
             }
+            .blur(radius: showingOnboarding ? 8 : 0)
+            .disabled(showingOnboarding)
             .navigationBarHidden(true)
-            .sheet(isPresented: $showingOnboarding) {
+            .sheet(isPresented: $showingOnboarding, onDismiss: {
+                LocationService.shared.requestPermission()
+            }) {
                 PlayerOnboardingView()
                     .interactiveDismissDisabled()
             }
             .onAppear {
-                LocationService.shared.requestPermission()
                 if !hasEnteredPlayerDetails {
                     showingOnboarding = true
+                } else {
+                    LocationService.shared.requestPermission()
                 }
             }
         }
