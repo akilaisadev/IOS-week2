@@ -4,6 +4,28 @@ PlayHub is a native iOS application built with SwiftUI as part of the iOS develo
 
 ---
 
+## Application Showcase
+
+### Core Application Tabs
+
+| Home Lobby & Arcade | Statistics & Analytics | Interactive Geolocation Map |
+| :---: | :---: | :---: |
+| <img src="images/home-tab.png" width="240" alt="Home Tab - Game Selection"> | <img src="images/stats-tab.png" width="240" alt="Statistics & Charts Dashboard"> | <img src="images/map-tab.png" width="240" alt="Interactive Map & GPS Pins"> |
+
+### Profile & Settings
+
+| Player Setup & Onboarding | Preferences & Notifications |
+| :---: | :---: |
+| <img src="images/onboarding.png" width="240" alt="Player Setup & Onboarding"> | <img src="images/settings-tab.png" width="240" alt="App Settings & Notifications"> |
+
+### Development Environment
+
+| Xcode & iOS Simulator Integration |
+| :---: |
+| <img src="images/xcode-preview.png" width="720" alt="Xcode IDE & Simulator Preview"> |
+
+---
+
 ## Project Architecture & Tech Stack
 
 * **UI Framework**: SwiftUI (`TabView`, `NavigationStack`, `SwiftUI Charts`)
