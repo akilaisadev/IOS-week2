@@ -12,26 +12,22 @@ import Combine
 struct LightItUpView: View {
     @Environment(\.dismiss) private var dismiss
     
-    // Configurable game duration options (30, 60, or 90 seconds)
     @State private var selectedDuration = 60
     @State private var timeRemaining = 60
     
-    // Core game state
     @State private var score = 0
     @State private var lives = 3
     @State private var isGameOver = false
     @State private var isShowingReadyScreen = true
+    @State private var countdownRemaining: Int? = nil
     @State private var activeCards: Set<Int> = []
     
-    // Tracks current level to trigger level-up animations
     @State private var currentLevel = 1
     @State private var maxLevelReached = 1
     @State private var levelUpBanner: String? = nil
     
-    // Screen flash animation state
     @State private var flashColor: Color = .clear
     
-    // Sub-second timer tracking for individual card light expiration
     @State private var cardTimeRemaining: Double = 1.5
     @State private var tickCounter = 0
     
@@ -167,12 +163,13 @@ struct LightItUpView: View {
                 .padding(.bottom, 8)
             }
             .padding(.top)
+            .blur(radius: (isShowingReadyScreen || countdownRemaining != nil) ? 8 : 0)
+            .disabled(isShowingReadyScreen || countdownRemaining != nil)
             
             flashColor.opacity(0.3)
                 .ignoresSafeArea()
                 .allowsHitTesting(false)
             
-            // Game Over Screen
             if isGameOver {
                 Color.black.opacity(0.4)
                     .ignoresSafeArea()
@@ -187,7 +184,6 @@ struct LightItUpView: View {
                 )
             }
             
-            // Pre-Game "Are You Ready?" Startup Prompt
             if isShowingReadyScreen {
                 ReadyPromptView(
                     title: "GET READY!",
@@ -195,10 +191,16 @@ struct LightItUpView: View {
                     iconName: "bolt.fill",
                     themeColor: .orange,
                     onReady: {
-                        isShowingReadyScreen = false
+                        withAnimation {
+                            isShowingReadyScreen = false
+                            countdownRemaining = 3
+                            tickCounter = 0
+                        }
                     }
                 )
                 .transition(.opacity.combined(with: .scale))
+            } else if let countdown = countdownRemaining {
+                CountdownOverlayView(countdown: countdown, themeColor: .orange)
             }
         }
         .navigationTitle("Light It Up")
@@ -244,7 +246,7 @@ struct LightItUpView: View {
     private var cardHeight: CGFloat { cardCount <= 4 ? 120 : 90 }
     
     private func handleCardTap(at index: Int) {
-        guard !isGameOver, !isShowingReadyScreen else { return }
+        guard !isGameOver, !isShowingReadyScreen, countdownRemaining == nil else { return }
         
         if activeCards.contains(index) {
             score += 1
@@ -259,6 +261,23 @@ struct LightItUpView: View {
     
     private func handleTimerTick() {
         guard !isGameOver, !isShowingReadyScreen else { return }
+        
+        if let countdown = countdownRemaining {
+            tickCounter += 1
+            if tickCounter % 10 == 0 {
+                if countdown > 0 {
+                    withAnimation {
+                        countdownRemaining = countdown - 1
+                    }
+                } else {
+                    withAnimation {
+                        countdownRemaining = nil
+                    }
+                    spawnNewLitCards()
+                }
+            }
+            return
+        }
         
         let newLevel = levelInfo.level
         if newLevel != currentLevel {
@@ -369,9 +388,9 @@ struct LightItUpView: View {
         hasRecordedHistory = false
         withAnimation {
             isGameOver = false
+            countdownRemaining = nil
             isShowingReadyScreen = true
         }
-        spawnNewLitCards()
     }
 }
 
