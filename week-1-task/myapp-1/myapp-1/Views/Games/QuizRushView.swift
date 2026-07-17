@@ -15,7 +15,6 @@ struct QuizRushView: View {
     @State private var showingHistory = false
     @State private var hasRecordedHistory = false
     
-    // Timer & creative card effect states
     @State private var timeRemaining = 15
     @State private var shakeOffset: CGFloat = 0
     @State private var cardScale: CGFloat = 1.0
@@ -23,20 +22,21 @@ struct QuizRushView: View {
     @State private var flashColor: Color = .clear
     @State private var streakBanner: String? = nil
     @State private var isShowingReadyScreen = true
+    @State private var countdownRemaining: Int? = nil
     
-    // Timer firing every 1 second for question countdown
     let gameTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     var body: some View {
         ZStack {
             AnimatedBackground(colors: [Color.purple.opacity(0.18), Color.indigo.opacity(0.18)])
             mainContent()
+                .blur(radius: (isShowingReadyScreen || countdownRemaining != nil) ? 8 : 0)
+                .disabled(isShowingReadyScreen || countdownRemaining != nil)
             
             flashColor.opacity(0.35)
                 .ignoresSafeArea()
                 .allowsHitTesting(false)
             
-            // Pre-Game "Are You Ready?" Startup Prompt
             if isShowingReadyScreen {
                 ReadyPromptView(
                     title: "GET READY!",
@@ -44,10 +44,15 @@ struct QuizRushView: View {
                     iconName: "sparkles",
                     themeColor: .purple,
                     onReady: {
-                        isShowingReadyScreen = false
+                        withAnimation {
+                            isShowingReadyScreen = false
+                            countdownRemaining = 3
+                        }
                     }
                 )
                 .transition(.opacity.combined(with: .scale))
+            } else if let countdown = countdownRemaining {
+                CountdownOverlayView(countdown: countdown, themeColor: .purple)
             }
         }
         .navigationTitle("Quiz Rush")
@@ -100,6 +105,19 @@ struct QuizRushView: View {
     
     private func handleTimerTick() {
         guard !viewModel.isLoading, viewModel.errorMessage == nil, !viewModel.isGameOver, !isShowingReadyScreen, viewModel.selectedAnswer == nil else { return }
+        
+        if let countdown = countdownRemaining {
+            if countdown > 0 {
+                withAnimation {
+                    countdownRemaining = countdown - 1
+                }
+            } else {
+                withAnimation {
+                    countdownRemaining = nil
+                }
+            }
+            return
+        }
         
         if timeRemaining > 0 {
             timeRemaining -= 1
@@ -161,6 +179,7 @@ struct QuizRushView: View {
             
             PrimaryButton(title: "Retry", iconName: "arrow.clockwise", backgroundColor: .purple) {
                 hasRecordedHistory = false
+                countdownRemaining = nil
                 isShowingReadyScreen = true
                 viewModel.restartGame()
             }
@@ -362,6 +381,7 @@ struct QuizRushView: View {
             mode: .quizRush,
             onPlayAgain: {
                 hasRecordedHistory = false
+                countdownRemaining = nil
                 isShowingReadyScreen = true
                 viewModel.restartGame()
             },
