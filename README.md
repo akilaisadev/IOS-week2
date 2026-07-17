@@ -77,6 +77,7 @@ PlayHub is a native iOS application built with SwiftUI as part of the iOS develo
 myapp-1/
 ├── App/
 │   └── PlayHubApp.swift             # Application entry point and service initialization
+├── Assets.xcassets/                 # Asset catalog containing app icons and accent color definitions
 ├── Components/
 │   ├── AnimatedBackground.swift     # Reusable dynamic animated gradient background
 │   ├── GameOverView.swift           # Reusable game over modal and overlay
