@@ -58,7 +58,6 @@ struct ResultView: View {
         }
     }
     
-    // initial stage displaying high score badge and safe continuation
     private var scoreScreen: some View {
         VStack(spacing: 16) {
             VStack(spacing: 6) {
@@ -96,10 +95,8 @@ struct ResultView: View {
         }
     }
     
-    // second stage containing navigation actions and native ShareLink
     private var actionsScreen: some View {
         VStack(spacing: 16) {
-            // top bar with back navigation
             HStack {
                 Button {
                     showingActions = false
@@ -130,7 +127,6 @@ struct ResultView: View {
             }
             .padding(.bottom, 2)
             
-            // compact summary bar
             HStack {
                 Text("Final Score: \(score)")
                     .font(.headline)
@@ -149,9 +145,7 @@ struct ResultView: View {
             .background(Color(.secondarySystemBackground))
             .cornerRadius(10)
             
-            // action buttons container including native ShareLink
             VStack(spacing: 10) {
-                // native share button
                 ShareLink(
                     item: shareText,
                     subject: Text("\(mode.title) Score: \(score) pts"),
@@ -170,7 +164,6 @@ struct ResultView: View {
                     .shadow(color: Color.orange.opacity(0.3), radius: 4, x: 0, y: 2)
                 }
                 
-                // play again primary button
                 PrimaryButton(
                     title: "Play Again",
                     iconName: "arrow.counterclockwise",
@@ -178,7 +171,6 @@ struct ResultView: View {
                     action: onPlayAgain
                 )
                 
-                // view history secondary action
                 if let onViewHistory = onViewHistory {
                     Button(action: onViewHistory) {
                         HStack {
@@ -191,7 +183,6 @@ struct ResultView: View {
                     }
                 }
                 
-                // return home action
                 Button(action: onHome) {
                     HStack {
                         Image(systemName: "house.fill")

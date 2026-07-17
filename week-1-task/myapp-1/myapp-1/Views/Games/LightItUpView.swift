@@ -29,14 +29,11 @@ struct LightItUpView: View {
     @State private var cardTimeRemaining: Double = 1.5
     @State private var tickCounter = 0
     
-    // Persist high score specifically for Light It Up
     @AppStorage("lightItUpHighScore") private var highScore = 0
     
-    // History sheet & recording state
     @State private var showingHistory = false
     @State private var hasRecordedHistory = false
     
-    // Timer firing every 0.1 seconds for precise card light timing and countdown
     let gameTimer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
     
     var body: some View {
@@ -58,7 +55,6 @@ struct LightItUpView: View {
                     
                    
                     HStack {
-                        // 3-Life System Heart Display
                         HStack(spacing: 6) {
                             ForEach(1...3, id: \.self) { heart in
                                 Image(systemName: heart <= lives ? "heart.fill" : "heart")
@@ -73,8 +69,6 @@ struct LightItUpView: View {
                         .shadow(color: Color.orange.opacity(0.12), radius: 4, x: 0, y: 2)
                         
                         Spacer()
-                        
-                        // Single-line Level Badge
                         HStack(spacing: 6) {
                             Image(systemName: "star.fill")
                                 .foregroundColor(levelColor)
@@ -97,8 +91,6 @@ struct LightItUpView: View {
                     }
                 }
                 .padding(.horizontal)
-                
-                // Level-Up Celebration Banner
                 if let banner = levelUpBanner {
                     Text(banner)
                         .font(.headline)
@@ -112,8 +104,6 @@ struct LightItUpView: View {
                 }
                 
                 Spacer()
-                
-                // Interactive Card Grid
                 if !isGameOver {
                     LazyVGrid(
                         columns: Array(repeating: GridItem(.flexible()), count: gridColumns),
@@ -141,8 +131,6 @@ struct LightItUpView: View {
                 }
                 
                 Spacer()
-                
-                // Duration configuration picker
                 HStack {
                     Text("Duration:")
                         .font(.subheadline)
