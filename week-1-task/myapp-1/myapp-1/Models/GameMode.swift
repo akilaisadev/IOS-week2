@@ -2,8 +2,6 @@
 //  GameMode.swift
 //  myapp-1
 //
-//  enum representing our 3 coursework game modes
-//
 
 import SwiftUI
 
@@ -33,5 +31,4 @@ enum GameMode: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-// backward compatibility alias
 typealias GameType = GameMode

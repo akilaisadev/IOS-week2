@@ -2,8 +2,6 @@
 //  LightItUpVM.swift
 //  myapp-1
 //
-//  view model for light it up grid reflex game
-//
 
 import SwiftUI
 import Combine
@@ -16,7 +14,6 @@ class LightItUpVM: ObservableObject {
     @Published var currentLevel = 1
     @Published var activeCards: Set<Int> = []
     
-    // reset state for a new game
     func resetGame(duration: Int) {
         score = 0
         lives = 3

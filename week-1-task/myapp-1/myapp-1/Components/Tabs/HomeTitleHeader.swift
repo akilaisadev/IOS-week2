@@ -2,8 +2,6 @@
 //  HomeTitleHeader.swift
 //  myapp-1
 //
-//  Houses the hero title banner and the Trophy Room / Leaderboard card for the Home tab.
-//
 
 import SwiftUI
 

@@ -2,8 +2,6 @@
 //  LevelBadge.swift
 //  myapp-1
 //
-//  Displays the current game difficulty level or status badge.
-//
 
 import SwiftUI
 

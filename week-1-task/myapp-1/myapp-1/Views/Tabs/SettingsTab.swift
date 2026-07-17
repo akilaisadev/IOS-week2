@@ -2,8 +2,6 @@
 //  SettingsTab.swift
 //  myapp-1
 //
-//  tab view for application settings and preferences
-//
 
 import SwiftUI
 
@@ -58,7 +56,6 @@ struct SettingsTab: View {
         }
     }
     
-    // section allowing player profile management with validation & instant animated save feedback
     private var profileSection: some View {
         Section {
             VStack(alignment: .leading, spacing: 6) {
@@ -70,7 +67,6 @@ struct SettingsTab: View {
                         forceSaveOnExit()
                     }
                 
-                // Animated feedback row right under the textbox
                 if case .saving = saveStatus {
                     HStack(spacing: 6) {
                         ProgressView()
@@ -149,7 +145,6 @@ struct SettingsTab: View {
         withAnimation { saveStatus = .idle }
     }
     
-    // section managing local daily challenge reminders
     private var notificationsSection: some View {
         Section {
             Toggle(isOn: $notificationService.isEnabled) {
@@ -184,7 +179,6 @@ struct SettingsTab: View {
         }
     }
     
-    // section controlling audio and haptic feedback
     private var audioSection: some View {
         Section {
             Toggle(isOn: $soundManager.isMuted) {
@@ -198,7 +192,6 @@ struct SettingsTab: View {
         }
     }
     
-    // section controlling home screen card ordering
     private var layoutSection: some View {
         Section {
             Toggle(isOn: $moveTrophyRoomToBottom) {
@@ -212,7 +205,6 @@ struct SettingsTab: View {
         }
     }
     
-    // section for managing persistent storage and resetting history
     private var dataSection: some View {
         Section {
             Button(role: .destructive) {
@@ -230,7 +222,6 @@ struct SettingsTab: View {
         }
     }
     
-    // section detailing project information
     private var aboutSection: some View {
         Section {
             HStack {

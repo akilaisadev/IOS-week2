@@ -2,8 +2,6 @@
 //  HomeGamesSection.swift
 //  myapp-1
 //
-//  Houses the navigation cards leading to the 3 coursework games (Tap Frenzy, Light It Up, Quiz Rush).
-//
 
 import SwiftUI
 

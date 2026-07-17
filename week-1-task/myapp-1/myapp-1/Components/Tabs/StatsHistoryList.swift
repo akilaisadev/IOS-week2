@@ -2,8 +2,6 @@
 //  StatsHistoryList.swift
 //  myapp-1
 //
-//  Component responsible for displaying the recent game history list and per-mode statistical breakdowns.
-//
 
 import SwiftUI
 

@@ -2,8 +2,6 @@
 //  PlayerProfileSection.swift
 //  myapp-1
 //
-//  Encapsulates player profile settings, real-time debounced validation, and animated saving status.
-//
 
 import SwiftUI
 

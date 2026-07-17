@@ -2,9 +2,6 @@
 //  QuizRushView.swift
 //  myapp-1
 //
-//  Week 3 assignment: MVVM trivia game fetching 10 questions from OpenTDB API,
-//  handling loading/error states, answer verification, history logging, and streak tracking.
-//
 
 import SwiftUI
 import Combine
@@ -124,7 +121,6 @@ struct QuizRushView: View {
         }
         
         if timeRemaining == 0 {
-            // Time expired!
             viewModel.timeOut()
             triggerShake()
             triggerFlash(.red)
@@ -133,7 +129,6 @@ struct QuizRushView: View {
         }
     }
     
-    // Clean ViewBuilder breaking up the conditional view branches for fast compiler type checking
     @ViewBuilder
     private func mainContent() -> some View {
         if viewModel.isLoading {
@@ -149,7 +144,6 @@ struct QuizRushView: View {
         }
     }
     
-    // Loading State View
     private var loadingView: some View {
         VStack(spacing: 16) {
             ProgressView()
@@ -160,7 +154,6 @@ struct QuizRushView: View {
         }
     }
     
-    // Error State View with Retry action
     private func errorView(message: String) -> some View {
         VStack(spacing: 20) {
             Image(systemName: "exclamationmark.triangle.fill")
@@ -188,10 +181,8 @@ struct QuizRushView: View {
         .padding()
     }
     
-    // Active Gameplay View for current question
     private func gameplayView(for question: TriviaQuestion) -> some View {
         VStack(spacing: 18) {
-            // Header: Score, Streak, High Score, Timer, Level Badge
             VStack(spacing: 12) {
                 HStack {
                     ScoreView(score: viewModel.score, streak: viewModel.streak)
@@ -210,7 +201,6 @@ struct QuizRushView: View {
             }
             .padding(.horizontal)
             
-            // Streak or Status Banner
             if let banner = streakBanner {
                 Text(banner)
                     .font(.headline)
@@ -235,7 +225,6 @@ struct QuizRushView: View {
                     .clipShape(Capsule())
                     .transition(.scale.combined(with: .opacity))
             } else {
-                // Category Tag
                 HStack {
                     Image(systemName: "sparkles")
                         .foregroundColor(.purple)
@@ -250,7 +239,6 @@ struct QuizRushView: View {
                 .frame(height: 24)
             }
             
-            // Question Card with Creative Effects
             VStack(alignment: .leading, spacing: 14) {
                 Text(question.questionText)
                     .font(.title3)
@@ -275,7 +263,6 @@ struct QuizRushView: View {
             .offset(x: shakeOffset)
             .padding(.horizontal)
             
-            // Multiple Choice Answer Options
             VStack(spacing: 12) {
                 ForEach(question.allAnswers, id: \.self) { answer in
                     answerButton(for: answer, correct: question.correctAnswer)
@@ -286,7 +273,6 @@ struct QuizRushView: View {
             
             Spacer()
             
-            // Next Question Button (shown after an answer is picked or timeout)
             if viewModel.selectedAnswer != nil {
                 PrimaryButton(
                     title: (viewModel.currentIndex + 1 < viewModel.questions.count) ? "Next Question" : "See Results",
@@ -305,7 +291,6 @@ struct QuizRushView: View {
         .padding(.top)
     }
     
-    // Individual answer button builder
     private func answerButton(for answer: String, correct: String) -> some View {
         let isSelected = (answer == viewModel.selectedAnswer)
         let isCorrectAnswer = (answer == correct)
@@ -317,7 +302,6 @@ struct QuizRushView: View {
             }
             
             if answer == correct {
-                // Correct answer effects!
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
                     cardScale = 1.04
                 }
@@ -333,7 +317,6 @@ struct QuizRushView: View {
                     SoundManager.shared.playQuizCorrect()
                 }
             } else {
-                // Wrong answer effects!
                 triggerShake()
                 triggerFlash(.red)
                 triggerStreakBanner("WRONG ANSWER! -5 PTS")
@@ -373,7 +356,6 @@ struct QuizRushView: View {
         .disabled(hasAnswered)
     }
     
-    // Game Over / Results Summary
     private var gameOverView: some View {
         ResultView(
             score: viewModel.score,

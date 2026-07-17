@@ -2,8 +2,6 @@
 //  SettingsSections.swift
 //  myapp-1
 //
-//  Houses secondary configuration sections for notifications, audio, layout toggles, data reset, and about info.
-//
 
 import SwiftUI
 

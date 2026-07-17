@@ -2,8 +2,6 @@
 //  ScoreView.swift
 //  myapp-1
 //
-//  Displays the current game score and an optional multiplier badge.
-//
 
 import SwiftUI
 
@@ -27,7 +25,6 @@ struct ScoreView: View {
             
             Spacer()
             
-            // Shows a multiplier badge if the combo multiplier is greater than 1.
             if multiplier > 1 {
                 HStack(spacing: 4) {
                     Image(systemName: "flame.fill")
@@ -42,7 +39,6 @@ struct ScoreView: View {
                 .clipShape(Capsule())
             }
             
-            // Shows a streak badge if streak tracking is active.
             if let streak = streak, streak > 0 {
                 HStack(spacing: 4) {
                     Image(systemName: "bolt.fill")

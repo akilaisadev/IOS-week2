@@ -2,8 +2,6 @@
 //  CountdownOverlayView.swift
 //  myapp-1
 //
-//  Displays a pulsing 3-2-1-GO! countdown overlay before gameplay begins.
-//
 
 import SwiftUI
 

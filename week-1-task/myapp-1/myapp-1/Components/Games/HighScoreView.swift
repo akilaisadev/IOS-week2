@@ -2,8 +2,6 @@
 //  HighScoreView.swift
 //  myapp-1
 //
-//  Displays the stored high score with a trophy icon badge.
-//
 
 import SwiftUI
 

@@ -2,8 +2,6 @@
 //  AnimatedBackground.swift
 //  myapp-1
 //
-//  Provides a modern, subtle gradient background with dark mode support.
-//
 
 import SwiftUI
 

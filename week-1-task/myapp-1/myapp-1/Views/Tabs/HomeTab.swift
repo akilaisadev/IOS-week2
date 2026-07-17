@@ -2,8 +2,6 @@
 //  HomeTab.swift
 //  myapp-1
 //
-//  home screen tab showing our 3 coursework mini games and trophy room
-//
 
 import SwiftUI
 
@@ -21,10 +19,8 @@ struct HomeTab: View {
                 
                 ScrollView {
                     VStack(spacing: 24) {
-                        // Title Header
                         titleHeader
                         
-                        // Conditional layout based on moveTrophyRoomToBottom setting
                         if moveTrophyRoomToBottom {
                             gamesListSection
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -61,7 +57,6 @@ struct HomeTab: View {
         }
     }
     
-    // Title Header Section
     private var titleHeader: some View {
         VStack(spacing: 6) {
             Image(systemName: "gamecontroller.fill")
@@ -81,7 +76,6 @@ struct HomeTab: View {
         .padding(.top, 16)
     }
     
-    // Trophy Room / Leaderboard Hero Banner
     private var trophyRoomCard: some View {
         NavigationLink(destination: LeaderboardView()) {
             HStack(spacing: 16) {
@@ -127,7 +121,6 @@ struct HomeTab: View {
         .padding(.horizontal)
     }
     
-    // Game Navigation Cards Section
     private var gamesListSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("MY GAMES")
@@ -176,6 +169,5 @@ struct HomeTab: View {
     HomeTab()
 }
 
-// backward compatibility alias
 typealias HomeView = HomeTab
 

@@ -2,8 +2,6 @@
 //  ScoreBadge.swift
 //  myapp-1
 //
-//  reusable score display badge with celebratory styling
-//
 
 import SwiftUI
 

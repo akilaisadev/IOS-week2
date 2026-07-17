@@ -2,8 +2,6 @@
 //  NotificationService.swift
 //  myapp-1
 //
-//  service managing local daily challenge notifications using UNUserNotificationCenter
-//
 
 import Foundation
 import UserNotifications
@@ -28,14 +26,12 @@ class NotificationService: NSObject, ObservableObject {
         checkAuthorizationStatus()
     }
     
-    // load saved reminder preference from user defaults
     private func loadPreferences() {
         isEnabled = UserDefaults.standard.bool(forKey: enabledKey)
         
         if let savedTime = UserDefaults.standard.object(forKey: timeKey) as? Date {
             reminderTime = savedTime
         } else {
-            // default reminder time to 8:00 PM
             var components = DateComponents()
             components.hour = 20
             components.minute = 0
@@ -45,7 +41,6 @@ class NotificationService: NSObject, ObservableObject {
         }
     }
     
-    // check current notification authorization permissions
     func checkAuthorizationStatus() {
         center.getNotificationSettings { [weak self] settings in
             DispatchQueue.main.async {
@@ -54,7 +49,6 @@ class NotificationService: NSObject, ObservableObject {
         }
     }
     
-    // request permission from the user for local notifications
     func requestPermission(completion: ((Bool) -> Void)? = nil) {
         center.requestAuthorization(options: [.alert, .badge, .sound]) { [weak self] granted, error in
             DispatchQueue.main.async {
@@ -67,12 +61,9 @@ class NotificationService: NSObject, ObservableObject {
         }
     }
     
-    // schedule daily challenge notification at specified time
     func scheduleDailyChallenge(at date: Date) {
-        // cancel existing requests before scheduling a new one
         center.removeAllPendingNotificationRequests()
         
-        // update published property and persistence
         DispatchQueue.main.async {
             self.reminderTime = date
             self.isEnabled = true
@@ -80,7 +71,6 @@ class NotificationService: NSObject, ObservableObject {
             UserDefaults.standard.set(date, forKey: self.timeKey)
         }
         
-        // if not yet authorized, request permission first
         if !isAuthorized {
             requestPermission { granted in
                 if granted {
@@ -93,7 +83,6 @@ class NotificationService: NSObject, ObservableObject {
         createNotificationRequest(for: date)
     }
     
-    // helper to construct and register UNNotificationRequest
     private func createNotificationRequest(for date: Date) {
         let content = UNMutableNotificationContent()
         content.title = "Daily Challenge Ready!"
@@ -101,7 +90,6 @@ class NotificationService: NSObject, ObservableObject {
         content.sound = .default
         content.badge = 1
         
-        // extract hour and minute for daily repeating schedule
         let components = Calendar.current.dateComponents([.hour, .minute], from: date)
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
         
@@ -114,7 +102,6 @@ class NotificationService: NSObject, ObservableObject {
         }
     }
     
-    // cancel all scheduled daily challenge notifications
     func cancelDailyChallenge() {
         center.removeAllPendingNotificationRequests()
         
@@ -125,9 +112,7 @@ class NotificationService: NSObject, ObservableObject {
     }
 }
 
-// MARK: - UNUserNotificationCenterDelegate
 extension NotificationService: UNUserNotificationCenterDelegate {
-    // allow notifications to display banners and play sounds even when app is active in foreground
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.banner, .sound])
     }

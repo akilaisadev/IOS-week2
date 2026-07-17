@@ -2,8 +2,6 @@
 //  StatsChartsSection.swift
 //  myapp-1
 //
-//  Component responsible for displaying SwiftUI interactive bar charts across game modes and sessions.
-//
 
 import SwiftUI
 import Charts
