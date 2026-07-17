@@ -55,6 +55,11 @@ PlayHub is a native iOS application built with SwiftUI as part of the iOS develo
 myapp-1/
 ├── App/
 │   └── PlayHubApp.swift             # Application entry point and service initialization
+├── Components/
+│   ├── Common/                      # Universal styling & shared UI widgets (Buttons, Cards, Badges)
+│   ├── Games/                       # Shared gameplay HUD widgets (Score, HighScore, Timer)
+│   ├── Overlays/                    # Screen prompts & overlays (ReadyPrompt, GameOver, Countdown)
+│   └── Tabs/                        # Modular sub-sections for main navigation tabs
 ├── Models/
 │   ├── GameMode.swift               # Game type enumeration, colors, and icons
 │   ├── GameSession.swift            # Codable model representing completed games with coordinates
@@ -77,6 +82,7 @@ myapp-1/
     ├── Shared/
     │   ├── HistorySheetView.swift   # Modal list displaying past session scores
     │   ├── LeaderboardView.swift    # High score rankings display
+    │   ├── PlayerOnboardingView.swift # Initial player setup and name onboarding modal
     │   ├── ResultView.swift         # Post-game summary card and native ShareLink
     │   └── ScoreBadge.swift         # Reusable score display and personal best indicator
     └── Tabs/
