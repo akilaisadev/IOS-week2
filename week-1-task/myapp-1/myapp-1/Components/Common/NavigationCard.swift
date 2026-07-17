@@ -2,8 +2,6 @@
 //  NavigationCard.swift
 //  myapp-1
 //
-//  A rich card view used on the Home screen to launch mini-games.
-//
 
 import SwiftUI
 

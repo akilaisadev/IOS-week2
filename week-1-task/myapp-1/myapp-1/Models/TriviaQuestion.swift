@@ -2,8 +2,6 @@
 //  TriviaQuestion.swift
 //  myapp-1
 //
-//  Codable models matching the OpenTDB API response structure for multiple choice questions.
-//
 
 import Foundation
 
@@ -17,7 +15,6 @@ struct TriviaAPIResponse: Codable {
     }
 }
 
-// Data Transfer Object representing raw API data
 struct TriviaQuestionDTO: Codable {
     let category: String
     let difficulty: String
@@ -32,7 +29,6 @@ struct TriviaQuestionDTO: Codable {
     }
 }
 
-// Clean model used within the app UI and ViewModel
 struct TriviaQuestion: Identifiable {
     let id = UUID()
     let category: String
@@ -41,14 +37,13 @@ struct TriviaQuestion: Identifiable {
     let correctAnswer: String
     let allAnswers: [String]
     
-    // Initializes a clean TriviaQuestion from a raw DTO, decoding HTML entities and shuffling choices
     init(from dto: TriviaQuestionDTO) {
+        // fix weird html texts from the api
         self.category = HTMLEntityDecoder.decode(dto.category)
         self.difficulty = dto.difficulty.capitalized
         self.questionText = HTMLEntityDecoder.decode(dto.question)
         self.correctAnswer = HTMLEntityDecoder.decode(dto.correctAnswer)
         
-        // Combine incorrect answers and correct answer, decode them, and shuffle
         var decodedAnswers = dto.incorrectAnswers.map { HTMLEntityDecoder.decode($0) }
         decodedAnswers.append(self.correctAnswer)
         self.allAnswers = decodedAnswers.shuffled()

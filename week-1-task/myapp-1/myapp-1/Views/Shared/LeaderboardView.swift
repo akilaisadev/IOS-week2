@@ -2,8 +2,6 @@
 //  LeaderboardView.swift
 //  myapp-1
 //
-//  Arcade Trophy Room hub displaying overall combined scores and cross-game history.
-//
 
 import SwiftUI
 
@@ -18,7 +16,6 @@ struct LeaderboardView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                // Total Combined Score Hero Card
                 VStack(spacing: 20) {
                     Image(systemName: "crown.fill")
                         .font(.system(size: 50))
@@ -45,7 +42,6 @@ struct LeaderboardView: View {
                 )
                 .padding(.horizontal)
                 
-                // High Scores Breakdown per Game Mode
                 VStack(alignment: .leading, spacing: 14) {
                     Text("GAME HIGH SCORES")
                         .font(.caption)
@@ -61,7 +57,6 @@ struct LeaderboardView: View {
                     .padding(.horizontal)
                 }
                 
-                // Recent Activity Log section
                 VStack(alignment: .leading, spacing: 14) {
                     HStack {
                         Text("RECENT ACTIVITY LOG")
@@ -147,7 +142,6 @@ struct LeaderboardView: View {
         }
     }
     
-    // Helper view for displaying individual game mode high score badges
     private func highScoreRow(title: String, icon: String, color: Color, score: Int) -> some View {
         HStack {
             Image(systemName: icon)

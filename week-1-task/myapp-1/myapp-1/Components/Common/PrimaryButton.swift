@@ -2,8 +2,6 @@
 //  PrimaryButton.swift
 //  myapp-1
 //
-//  A reusable button component with customizable title, color, icon, and micro-animations.
-//
 
 import SwiftUI
 

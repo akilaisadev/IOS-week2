@@ -2,8 +2,6 @@
 //  TimerView.swift
 //  myapp-1
 //
-//  Displays the remaining game time with visual alerts when time is low.
-//
 
 import SwiftUI
 
@@ -11,13 +9,11 @@ struct TimerView: View {
     let timeRemaining: Int
     let totalTime: Int
     
-    // Calculates percentage remaining for progress bar
     private var progress: Double {
         guard totalTime > 0 else { return 0 }
         return Double(timeRemaining) / Double(totalTime)
     }
     
-    // Changes color to red when 3 or fewer seconds remain
     private var timerColor: Color {
         if timeRemaining <= 3 {
             return .red
@@ -43,7 +39,6 @@ struct TimerView: View {
                     .foregroundColor(timerColor)
             }
             
-            // Progress bar showing remaining time
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     Capsule()

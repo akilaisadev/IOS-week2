@@ -2,8 +2,6 @@
 //  StatsSummaryCard.swift
 //  myapp-1
 //
-//  Component responsible for displaying the 6-grid summary metrics (games played, points, bests, and durations).
-//
 
 import SwiftUI
 

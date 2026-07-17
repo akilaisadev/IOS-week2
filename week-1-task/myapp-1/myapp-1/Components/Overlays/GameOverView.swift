@@ -2,8 +2,6 @@
 //  GameOverView.swift
 //  myapp-1
 //
-//  A reusable game over summary card displaying scores and navigation actions.
-//
 
 import SwiftUI
 

@@ -2,9 +2,6 @@
 //  TapFrenzyView.swift
 //  myapp-1
 //
-//  Week 1 assignment: Fast-paced reflex game with 10-second timer, combo multipliers,
-//  traps, moving targets, shrinking button size, bonus bursts, and dedicated session history.
-//
 
 import SwiftUI
 import Combine
@@ -43,7 +40,6 @@ struct TapFrenzyView: View {
             AnimatedBackground(colors: [Color.blue.opacity(0.15), Color.cyan.opacity(0.15)])
             
             VStack(spacing: 20) {
-                // Top Header: Score, High Score, and Timer components
                 VStack(spacing: 12) {
                     HStack {
                         ScoreView(score: score, multiplier: comboMultiplier)
@@ -55,7 +51,6 @@ struct TapFrenzyView: View {
                 }
                 .padding(.horizontal)
                 
-                // Bonus Burst notification text
                 if let message = bonusMessage {
                     Text(message)
                         .font(.headline)
@@ -75,7 +70,6 @@ struct TapFrenzyView: View {
                 
                 Spacer()
                 
-                // Main Interactive Tap Button
                 if !isGameOver {
                     Button(action: handleButtonTap) {
                         VStack(spacing: 4) {
@@ -156,7 +150,6 @@ struct TapFrenzyView: View {
         }
     }
     
-    // Calculates dynamic button size based on total taps
     private var buttonDiameter: CGFloat {
         let baseSize: CGFloat = 210
         let shrinkAmount = CGFloat(totalTaps) * 4
@@ -167,7 +160,6 @@ struct TapFrenzyView: View {
         guard !isGameOver, !isShowingReadyScreen, countdownRemaining == nil else { return }
         let now = Date()
         
-        // If tapped while red trap is active, penalize points
         if isTrapActive {
             score = max(0, score - 3)
             comboCount = 0
@@ -180,7 +172,6 @@ struct TapFrenzyView: View {
         
         totalTaps += 1
         
-        // Check time elapsed since last tap for combo chain
         let timeSinceLastTap = now.timeIntervalSince(lastTapTime)
         if timeSinceLastTap < 0.6 {
             comboCount += 1
@@ -196,7 +187,6 @@ struct TapFrenzyView: View {
         
         score += 1 * comboMultiplier
         
-        // Every 10 taps awards a bonus burst
         if totalTaps % 10 == 0 {
             score += 5
             timeRemaining += 1
@@ -208,7 +198,6 @@ struct TapFrenzyView: View {
             SoundManager.shared.playTap()
         }
         
-        // Move button to a random safe position inside the play area
         withAnimation(.easeInOut(duration: 0.2)) {
             buttonOffset = CGSize(
                 width: CGFloat.random(in: -90...90),

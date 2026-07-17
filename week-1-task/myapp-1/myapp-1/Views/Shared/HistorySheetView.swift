@@ -2,8 +2,6 @@
 //  HistorySheetView.swift
 //  myapp-1
 //
-//  A dedicated history log sheet displaying past game results and timestamps.
-//
 
 import SwiftUI
 

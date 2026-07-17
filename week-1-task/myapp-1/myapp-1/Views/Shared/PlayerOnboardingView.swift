@@ -2,8 +2,6 @@
 //  PlayerOnboardingView.swift
 //  myapp-1
 //
-//  Minimal startup sheet prompting for player details on initial launch.
-//
 
 import SwiftUI
 

@@ -2,8 +2,6 @@
 //  PlayerProfileSection.swift
 //  myapp-1
 //
-//  Encapsulates player profile settings, real-time debounced validation, and animated saving status.
-//
 
 import SwiftUI
 
@@ -23,6 +21,7 @@ struct PlayerProfileSection: View {
             VStack(alignment: .leading, spacing: 6) {
                 TextField("Gamer Tag (2-16 chars)", text: $inputTag)
                     .onChange(of: inputTag) { _, newValue in
+                        // auto savin on type
                         validateAndSave(newValue)
                     }
                     .onSubmit {

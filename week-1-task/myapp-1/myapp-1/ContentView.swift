@@ -2,8 +2,6 @@
 //  ContentView.swift
 //  myapp-1
 //
-//  main tab view containing our 4 application tabs
-//
 
 import SwiftUI
 

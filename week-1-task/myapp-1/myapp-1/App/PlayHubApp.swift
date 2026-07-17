@@ -2,13 +2,12 @@
 //  PlayHubApp.swift
 //  myapp-1
 //
-//  main app entry point for coursework
-//
 
 import SwiftUI
 
 @main
 struct PlayHubApp: App {
+    // inject notification global obj
     @StateObject private var notificationService = NotificationService.shared
     
     var body: some Scene {
