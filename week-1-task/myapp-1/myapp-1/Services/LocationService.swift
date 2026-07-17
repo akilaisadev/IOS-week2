@@ -16,7 +16,7 @@ class LocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var longitude: Double? = nil
     @Published var authStatus: CLAuthorizationStatus = .notDetermined
     
-    // default colombo coords
+    // defult colombo coords
     let fallbackLat: Double = 6.9271
     let fallbackLon: Double = 79.8612
     

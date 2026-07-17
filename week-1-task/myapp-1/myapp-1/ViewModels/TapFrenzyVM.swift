@@ -15,6 +15,7 @@ class TapFrenzyVM: ObservableObject {
     @Published var isTrapActive = false
     @Published var bonusMessage: String? = nil
     
+    // clear evrything
     func resetGame() {
         score = 0
         timeRemaining = 10

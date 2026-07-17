@@ -38,6 +38,7 @@ struct TriviaQuestion: Identifiable {
     let allAnswers: [String]
     
     init(from dto: TriviaQuestionDTO) {
+        // fix weird html texts from the api
         self.category = HTMLEntityDecoder.decode(dto.category)
         self.difficulty = dto.difficulty.capitalized
         self.questionText = HTMLEntityDecoder.decode(dto.question)

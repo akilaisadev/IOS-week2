@@ -32,6 +32,7 @@ class NotificationService: NSObject, ObservableObject {
         if let savedTime = UserDefaults.standard.object(forKey: timeKey) as? Date {
             reminderTime = savedTime
         } else {
+            // set defalt to 8pm
             var components = DateComponents()
             components.hour = 20
             components.minute = 0

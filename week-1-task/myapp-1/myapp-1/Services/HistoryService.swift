@@ -30,7 +30,7 @@ class HistoryService: ObservableObject {
             }
         }
         
-        // load from old v1 storage
+        // load old v1 data so they dont loose scores
         if let oldData = UserDefaults.standard.data(forKey: oldStorageKey) {
             do {
                 sessions = try JSONDecoder().decode([GameSession].self, from: oldData)

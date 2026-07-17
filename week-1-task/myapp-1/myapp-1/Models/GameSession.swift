@@ -23,10 +23,10 @@ struct GameSession: Codable, Identifiable, Equatable {
     }
     
     var timePlayedSeconds: Int {
-        // fallback if duration is missing
         if let dur = duration {
             return max(1, Int(dur))
         }
+        // falback if time is missing
         switch mode {
         case .tapFrenzy:
             return 30 + max(0, score / 10 * 3)

@@ -21,7 +21,7 @@ struct PlayerProfileSection: View {
             VStack(alignment: .leading, spacing: 6) {
                 TextField("Gamer Tag (2-16 chars)", text: $inputTag)
                     .onChange(of: inputTag) { _, newValue in
-                        // auto save on type
+                        // auto savin on type
                         validateAndSave(newValue)
                     }
                     .onSubmit {

@@ -80,6 +80,7 @@ class SoundManager: NSObject, ObservableObject {
     }
     
     private func play(_ type: SoundType) {
+        // check mute bfore playing
         guard !isMuted, let player = players[type] else { return }
         if player.isPlaying {
             player.currentTime = 0
@@ -187,6 +188,7 @@ class SoundManager: NSObject, ObservableObject {
         }
     }
     
+    // generate audio data manually
     private func createWavData(frequencies: [Double], durations: [Double], waveType: WaveType, volume: Double) -> Data? {
         let sampleRate: Double = 44100.0
         var samples: [Int16] = []
