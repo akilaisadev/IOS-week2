@@ -59,7 +59,7 @@ struct CountdownOverlayView: View {
             .onAppear {
                 triggerPulse()
             }
-            .onChange(of: countdown) { _ in
+            .onChange(of: countdown) { _, _ in
                 triggerPulse()
             }
         }
