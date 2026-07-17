@@ -77,19 +77,33 @@ PlayHub is a native iOS application built with SwiftUI as part of the iOS develo
 myapp-1/
 ├── App/
 │   └── PlayHubApp.swift             # Application entry point and service initialization
+├── Components/
+│   ├── AnimatedBackground.swift     # Reusable dynamic animated gradient background
+│   ├── GameOverView.swift           # Reusable game over modal and overlay
+│   ├── HighScoreView.swift          # High score display badge component
+│   ├── LevelBadge.swift             # Level difficulty indicator badge
+│   ├── NavigationCard.swift         # Reusable interactive card for home navigation
+│   ├── PrimaryButton.swift          # Styled primary action button component
+│   ├── ReadyPromptView.swift        # Pre-game countdown and ready prompt overlay
+│   ├── ScoreView.swift              # Real-time score display component
+│   └── TimerView.swift              # Real-time countdown timer component
+├── ContentView.swift                # Main tab view container orchestrating the 4 core tabs
 ├── Models/
 │   ├── GameMode.swift               # Game type enumeration, colors, and icons
 │   ├── GameSession.swift            # Codable model representing completed games with coordinates
-│   ├── LightItUpModels.swift        # Card and grid state structures for memory matrix
-│   └── QuizModel.swift              # Question bank and trivia models
+│   └── TriviaQuestion.swift         # Trivia question data structure and answer option models
 ├── Services/
 │   ├── HistoryService.swift         # Singleton managing session persistence and filtering
 │   ├── LocationService.swift        # CoreLocation wrapper tracking real-time coordinates
 │   ├── NotificationService.swift    # UserNotifications wrapper managing daily challenge schedules
-│   └── SoundManager.swift           # Synthesized PCM WAV audio and haptic feedback controller
+│   ├── SoundManager.swift           # Synthesized PCM WAV audio and haptic feedback controller
+│   └── TriviaService.swift          # Service responsible for fetching and decoding live trivia questions
+├── Utilities/
+│   └── HTMLEntityDecoder.swift      # Utility helper for decoding HTML entities in trivia questions
 ├── ViewModels/
 │   ├── LightItUpVM.swift            # State machine and sequence logic for Light It Up
 │   ├── QuizRushVM.swift             # Question progression and timer logic for Quiz Rush
+│   ├── StatsVM.swift                # Analytics data filtering, chart calculations, and summary metrics
 │   └── TapFrenzyVM.swift            # Reflex arcade timing, combo, and trap calculations
 └── Views/
     ├── Games/
@@ -99,6 +113,7 @@ myapp-1/
     ├── Shared/
     │   ├── HistorySheetView.swift   # Modal list displaying past session scores
     │   ├── LeaderboardView.swift    # High score rankings display
+    │   ├── PlayerOnboardingView.swift # Onboarding screen for gamer tag and location setup
     │   ├── ResultView.swift         # Post-game summary card and native ShareLink
     │   └── ScoreBadge.swift         # Reusable score display and personal best indicator
     └── Tabs/
