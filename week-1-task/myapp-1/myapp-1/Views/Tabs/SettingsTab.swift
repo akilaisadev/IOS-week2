@@ -198,7 +198,7 @@ struct SettingsTab: View {
         } header: {
             Text("Home Layout")
         } footer: {
-            Text("When enabled, the Trophy Room & Leaderboard card is moved to the bottom below the games list. When off, it returns to the top.")
+            Text("When enabled, the Trophy Room card is moved to the bottom below the games list. When off, it returns to the top.")
         }
     }
     private var dataSection: some View {

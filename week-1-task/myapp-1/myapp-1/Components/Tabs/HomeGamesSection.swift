@@ -10,7 +10,7 @@ import SwiftUI
 struct HomeGamesSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("MY GAMES")
+            Text("MINI GAMES")
                 .font(.caption)
                 .fontWeight(.heavy)
                 .foregroundColor(.secondary)
@@ -20,7 +20,7 @@ struct HomeGamesSection: View {
                 NavigationLink(destination: TapFrenzyView()) {
                     NavigationCard(
                         title: "Tap Frenzy",
-                        subtitle: "High-speed reflex challenge with combo multipliers & traps.",
+                        subtitle: "Test your reflexes in this fast-paced tapping challenge.",
                         iconName: "hand.tap.fill",
                         accentColor: .blue
                     )
@@ -30,7 +30,7 @@ struct HomeGamesSection: View {
                 NavigationLink(destination: LightItUpView()) {
                     NavigationCard(
                         title: "Light It Up",
-                        subtitle: "Grid reflex game featuring 4 difficulty tiers & 3-life system.",
+                        subtitle: "Memorize and repeat the glowing patterns to survive.",
                         iconName: "sparkles",
                         accentColor: .orange
                     )
@@ -40,7 +40,7 @@ struct HomeGamesSection: View {
                 NavigationLink(destination: QuizRushView()) {
                     NavigationCard(
                         title: "Quiz Rush",
-                        subtitle: "Async/await live trivia questions powered by OpenTDB.",
+                        subtitle: "Race against the clock in this exciting live trivia game!",
                         iconName: "questionmark.bubble.fill",
                         accentColor: .purple
                     )
