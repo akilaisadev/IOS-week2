@@ -33,9 +33,12 @@ struct CountdownOverlayView: View {
     
     var body: some View {
         ZStack {
-            Color.black.opacity(0.5)
+            Rectangle()
+                .fill(.ultraThinMaterial)
                 .ignoresSafeArea()
-                .background(.ultraThinMaterial)
+            
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
             
             ZStack {
                 Circle()
@@ -46,8 +49,9 @@ struct CountdownOverlayView: View {
                     .animation(.easeOut(duration: 0.8), value: isScaled)
                 
                 Circle()
-                    .fill(.ultraThinMaterial)
+                    .fill(Color.white.opacity(0.15))
                     .frame(width: 140, height: 140)
+                    .background(Circle().fill(.ultraThinMaterial))
                     .shadow(color: displayColor.opacity(0.4), radius: 20, x: 0, y: 10)
                 
                 Circle()
