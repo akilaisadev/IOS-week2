@@ -70,6 +70,14 @@ class HistoryService: ObservableObject {
         )
         sessions.insert(newSession, at: 0)
         saveSessions()
+        
+        // Award coins, XP, and check milestones upon completing game session
+        let activePowerUp = PowerUpService.shared.consumeActivePowerUp()
+        let multiplier = (activePowerUp == .doubleCoins) ? 2 : 1
+        let earnedCoins = max(1, (score / 10)) * multiplier
+        WalletService.shared.addCoins(earnedCoins)
+        WalletService.shared.addXP(10)
+        AchievementService.shared.checkSessionAchievements(session: newSession, totalGamesPlayed: sessions.count)
     }
     
     func getSessions(for mode: GameMode?) -> [GameSession] {
