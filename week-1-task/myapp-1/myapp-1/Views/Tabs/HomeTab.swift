@@ -9,10 +9,12 @@ import SwiftUI
 
 struct HomeTab: View {
     @ObservedObject private var historyService = HistoryService.shared
+    @ObservedObject private var walletService = WalletService.shared
     @AppStorage("moveTrophyRoomToBottom") private var moveTrophyRoomToBottom = false
     @AppStorage("hasEnteredPlayerDetails") private var hasEnteredPlayerDetails = false
     @AppStorage("playerName") private var playerName = "Player 1"
     @State private var showingOnboarding = false
+    @State private var showingMarketplace = false
     
     var body: some View {
         NavigationStack {
@@ -21,6 +23,15 @@ struct HomeTab: View {
                 
                 ScrollView {
                     VStack(spacing: 24) {
+                        HStack {
+                            Spacer()
+                            CoinBadge(coins: walletService.wallet.coins) {
+                                showingMarketplace = true
+                            }
+                        }
+                        .padding(.horizontal)
+                        .padding(.top, 8)
+                        
                         titleHeader
                         if moveTrophyRoomToBottom {
                             gamesListSection
@@ -42,6 +53,9 @@ struct HomeTab: View {
             .blur(radius: showingOnboarding ? 8 : 0)
             .disabled(showingOnboarding)
             .navigationBarHidden(true)
+            .sheet(isPresented: $showingMarketplace) {
+                MarketplaceView()
+            }
             .sheet(isPresented: $showingOnboarding, onDismiss: {
                 LocationService.shared.requestPermission()
             }) {
