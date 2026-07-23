@@ -83,9 +83,8 @@ struct HomeTab: View {
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
                         }
                         
-                        Spacer(minLength: 90)
                     }
-                    .padding(.bottom, 90)
+                    .padding(.bottom, 120)
                     .animation(.spring(response: 0.45, dampingFraction: 0.8), value: moveTrophyRoomToBottom)
                 }
             }
