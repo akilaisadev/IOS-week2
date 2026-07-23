@@ -29,23 +29,22 @@ struct SettingsTab: View {
             ZStack {
                 AnimatedBackground()
                 
-                VStack(spacing: 0) {
+                Form {
                     WalletHeaderView()
-                        .padding(.horizontal)
-                        .padding(.top, 8)
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets())
+                        .padding(.bottom, 8)
                     
-                    Form {
-                        profileSection
-                        referralSection
-                        developerSection
-                        notificationsSection
-                        audioSection
-                        layoutSection
-                        dataSection
-                        aboutSection
-                    }
-                    .scrollContentBackground(.hidden)
+                    profileSection
+                    referralSection
+                    developerSection
+                    notificationsSection
+                    audioSection
+                    layoutSection
+                    dataSection
+                    aboutSection
                 }
+                .scrollContentBackground(.hidden)
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
