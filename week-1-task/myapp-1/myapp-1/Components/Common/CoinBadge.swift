@@ -13,12 +13,13 @@ struct CoinBadge: View {
         Button {
             action?()
         } label: {
-            HStack(spacing: 6) {
-                Text("🪙")
-                    .font(.system(size: 16))
+            HStack(spacing: 5) {
+                Image(systemName: "dollarsign.circle.fill")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(.yellow)
                 Text("\(coins)")
                     .font(.system(size: 15, weight: .bold, design: .rounded))
-                    .foregroundColor(.yellow)
+                    .foregroundColor(.white)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
