@@ -58,8 +58,12 @@ struct TimerView: View {
         .padding(12)
         .background(
             RoundedRectangle(cornerRadius: 14)
-                .fill(Color(.systemBackground))
-                .shadow(color: Color.black.opacity(0.06), radius: 5, x: 0, y: 2)
+                .fill(.ultraThinMaterial)
+                .shadow(color: Color.black.opacity(0.12), radius: 8, x: 0, y: 4)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(Color.white.opacity(0.2), lineWidth: 1)
         )
     }
 }

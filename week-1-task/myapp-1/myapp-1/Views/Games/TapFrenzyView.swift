@@ -49,26 +49,7 @@ struct TapFrenzyView: View {
                         ScoreView(score: score, multiplier: comboMultiplier)
                         Spacer()
                         
-                        if !isGameOver && !isShowingReadyScreen && marketplaceService.quantity(for: "booster_time_surge") > 0 {
-                            Button {
-                                if marketplaceService.consumeItem(id: "booster_time_surge") {
-                                    timeRemaining += 5
-                                    triggerBonusMessage("TIME SURGE! +5s")
-                                    SoundManager.shared.playBonus()
-                                }
-                            } label: {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "bolt.circle.fill")
-                                    Text("+5s")
-                                }
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 6)
-                                .background(Color.orange)
-                                .clipShape(Capsule())
-                            }
-                        }
+
                         
                         HighScoreView(highScore: highScore)
                     }
