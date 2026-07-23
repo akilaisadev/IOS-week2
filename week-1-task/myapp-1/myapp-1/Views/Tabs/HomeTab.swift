@@ -24,19 +24,22 @@ struct HomeTab: View {
                 
                 ScrollView {
                     VStack(spacing: 24) {
-                        HStack {
-                            HStack(spacing: 4) {
-                                Text("🔥")
-                                Text("Day \(streakService.currentStreak)")
-                                    .font(.system(size: 14, weight: .bold, design: .rounded))
-                                    .foregroundColor(.orange)
-                            }
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 6)
-                            .background(Color.orange.opacity(0.15))
-                            .clipShape(Capsule())
+                        HStack(spacing: 10) {
+                            StreakBadge(streakDays: streakService.currentStreak)
                             
                             Spacer()
+                            
+                            Button {
+                                showingMarketplace = true
+                            } label: {
+                                Image(systemName: "cart.fill")
+                                    .font(.system(size: 15, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .padding(8)
+                                    .background(Color.blue)
+                                    .clipShape(Circle())
+                                    .shadow(color: Color.blue.opacity(0.3), radius: 4, x: 0, y: 2)
+                            }
                             
                             CoinBadge(coins: walletService.wallet.coins) {
                                 showingMarketplace = true
@@ -124,20 +127,27 @@ struct HomeTab: View {
                 .fontWeight(.medium)
                 .foregroundColor(.secondary)
             
-            HStack(spacing: 6) {
-                Text("LEVEL \(walletService.wallet.level)")
-                    .font(.system(size: 11, weight: .black, design: .rounded))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(LinearGradient(colors: [.blue, .purple], startPoint: .leading, endPoint: .trailing))
-                    .clipShape(Capsule())
-                
-                Text("\(walletService.wallet.xp) XP")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(.secondary)
+            NavigationLink(destination: ProfileView()) {
+                HStack(spacing: 6) {
+                    Text("LEVEL \(walletService.wallet.level)")
+                        .font(.system(size: 11, weight: .black, design: .rounded))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(LinearGradient(colors: [.blue, .purple], startPoint: .leading, endPoint: .trailing))
+                        .clipShape(Capsule())
+                    
+                    Text("\(walletService.wallet.xp) XP")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.secondary)
+                    
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(.secondary)
+                }
+                .padding(.top, 2)
             }
-            .padding(.top, 2)
+            .buttonStyle(.plain)
         }
         .padding(.top, 16)
     }
