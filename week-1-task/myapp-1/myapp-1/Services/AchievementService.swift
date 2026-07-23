@@ -28,7 +28,11 @@ class AchievementService: ObservableObject {
             Achievement(id: "ach_light_it_up_master", title: "Reflex King", description: "Score 30+ points in Light It Up", iconName: "sparkles", coinReward: 50),
             Achievement(id: "ach_quiz_master", title: "Brainiac", description: "Score 10+ correct answers in Quiz Rush", iconName: "brain.head.profile", coinReward: 50),
             Achievement(id: "ach_10_games", title: "Dedicated Gamer", description: "Play 10 total game sessions", iconName: "gamecontroller.fill", coinReward: 100),
-            Achievement(id: "ach_referral_champion", title: "Social Butterfly", description: "Successfully refer a friend", iconName: "person.2.fill", coinReward: 50)
+            Achievement(id: "ach_50_games", title: "Marathon Gamer", description: "Play 50 total game sessions", iconName: "timer", coinReward: 200),
+            Achievement(id: "ach_referral_champion", title: "Social Butterfly", description: "Successfully refer a friend", iconName: "person.2.fill", coinReward: 50),
+            Achievement(id: "ach_score_200", title: "High Roller", description: "Score 200+ points in a single session", iconName: "flame.fill", coinReward: 150),
+            Achievement(id: "ach_quiz_master_pro", title: "Einstein", description: "Score 20+ correct answers in Quiz Rush", iconName: "brain", coinReward: 100),
+            Achievement(id: "ach_marketplace_spender", title: "Big Spender", description: "Make 5 purchases in the marketplace", iconName: "cart.fill", coinReward: 100)
         ]
     }
     
@@ -60,6 +64,7 @@ class AchievementService: ObservableObject {
         
         if session.score >= 50 { unlock("ach_score_50") }
         if session.score >= 100 { unlock("ach_score_100") }
+        if session.score >= 200 { unlock("ach_score_200") }
         
         switch session.mode {
         case .tapFrenzy:
@@ -68,9 +73,11 @@ class AchievementService: ObservableObject {
             if session.score >= 30 { unlock("ach_light_it_up_master") }
         case .quizRush:
             if session.score >= 10 { unlock("ach_quiz_master") }
+            if session.score >= 20 { unlock("ach_quiz_master_pro") }
         }
         
         if totalGamesPlayed >= 10 { unlock("ach_10_games") }
+        if totalGamesPlayed >= 50 { unlock("ach_50_games") }
     }
     
     func unlock(_ achievementID: String) {

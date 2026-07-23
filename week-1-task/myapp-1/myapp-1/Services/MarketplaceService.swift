@@ -42,6 +42,8 @@ class MarketplaceService: ObservableObject {
         }
     }
     
+    @AppStorage("totalItemsPurchased") private var totalItemsPurchased = 0
+    
     // Purchases marketplace item using WalletService balance
     func purchase(_ item: MarketplaceItem) -> Bool {
         if !item.isStackable && (ownedItems[item.id] ?? 0) > 0 {
@@ -52,6 +54,11 @@ class MarketplaceService: ObservableObject {
         if success {
             ownedItems[item.id] = (ownedItems[item.id] ?? 0) + 1
             saveInventory()
+            
+            totalItemsPurchased += 1
+            if totalItemsPurchased >= 5 {
+                AchievementService.shared.unlock("ach_marketplace_spender")
+            }
             return true
         }
         return false
