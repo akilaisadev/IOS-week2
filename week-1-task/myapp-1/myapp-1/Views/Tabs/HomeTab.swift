@@ -123,6 +123,21 @@ struct HomeTab: View {
                 .font(.subheadline)
                 .fontWeight(.medium)
                 .foregroundColor(.secondary)
+            
+            HStack(spacing: 6) {
+                Text("LEVEL \(walletService.wallet.level)")
+                    .font(.system(size: 11, weight: .black, design: .rounded))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(LinearGradient(colors: [.blue, .purple], startPoint: .leading, endPoint: .trailing))
+                    .clipShape(Capsule())
+                
+                Text("\(walletService.wallet.xp) XP")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.secondary)
+            }
+            .padding(.top, 2)
         }
         .padding(.top, 16)
     }
