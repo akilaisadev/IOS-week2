@@ -74,19 +74,18 @@ struct HomeTab: View {
                         if moveTrophyRoomToBottom {
                             gamesListSection
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
-                            trophyRoomCard
+                            quickStatsGrid
                                 .transition(.move(edge: .top).combined(with: .opacity))
-                            achievementsCard
                         } else {
-                            trophyRoomCard
+                            quickStatsGrid
                                 .transition(.move(edge: .top).combined(with: .opacity))
-                            achievementsCard
                             gamesListSection
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
                         }
                         
-                        Spacer(minLength: 40)
+                        Spacer(minLength: 90)
                     }
+                    .padding(.bottom, 90)
                     .animation(.spring(response: 0.45, dampingFraction: 0.8), value: moveTrophyRoomToBottom)
                 }
             }
@@ -151,6 +150,13 @@ struct HomeTab: View {
         }
         .padding(.top, 16)
     }
+    private var quickStatsGrid: some View {
+        VStack(spacing: 12) {
+            trophyRoomCard
+            achievementsCard
+        }
+    }
+    
     private var trophyRoomCard: some View {
         NavigationLink(destination: LeaderboardView()) {
             HStack(spacing: 16) {
