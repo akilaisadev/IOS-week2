@@ -29,6 +29,7 @@ struct SettingsTab: View {
                 
                 Form {
                     profileSection
+                    referralSection
                     notificationsSection
                     audioSection
                     layoutSection
@@ -144,6 +145,18 @@ struct SettingsTab: View {
         }
         withAnimation { saveStatus = .idle }
     }
+    private var referralSection: some View {
+        Section {
+            NavigationLink(destination: ReferralView()) {
+                Label("Referral & Rewards", systemImage: "person.2.gift.fill")
+            }
+        } header: {
+            Text("Rewards & Referral")
+        } footer: {
+            Text("Invite friends using your unique referral code to earn 50 bonus GameCoins.")
+        }
+    }
+    
     private var notificationsSection: some View {
         Section {
             Toggle(isOn: $notificationService.isEnabled) {
