@@ -69,6 +69,21 @@ struct SettingsTab: View {
     }
     private var profileSection: some View {
         Section {
+            NavigationLink(destination: ProfileView()) {
+                HStack(spacing: 12) {
+                    Image(systemName: "person.crop.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.blue)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("My Profile & Badges Shelf")
+                            .font(.headline)
+                        Text("Level \(walletService.wallet.level) • \(walletService.wallet.xp) XP")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            
             VStack(alignment: .leading, spacing: 6) {
                 TextField("Gamer Tag (2-16 chars)", text: $inputTag)
                     .onChange(of: inputTag) { _, newValue in
