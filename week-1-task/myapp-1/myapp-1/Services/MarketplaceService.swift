@@ -19,6 +19,7 @@ class MarketplaceService: ObservableObject {
         
         MarketplaceItem(id: "booster_life_refill", name: "Life Refill", description: "Restores +1 heart mid-game in Light It Up", iconName: "heart.circle.fill", category: .boosters, price: 80, badgeText: "+1 HEART", isStackable: true),
         MarketplaceItem(id: "booster_time_surge", name: "Time Surge", description: "Adds +5 seconds clock surge mid-round", iconName: "bolt.circle.fill", category: .boosters, price: 60, badgeText: "SURGE", isStackable: true),
+        MarketplaceItem(id: "booster_reveal_answer", name: "Reveal Answer", description: "Reveals the correct answer in Quiz Rush", iconName: "eye.fill", category: .boosters, price: 100, badgeText: "REVEAL", isStackable: true),
         
         MarketplaceItem(id: "frame_gold", name: "Gold Crown Frame", description: "Exclusive golden glow border for profile", iconName: "crown.fill", category: .cosmetics, price: 300, badgeText: "VIP", isStackable: false),
         MarketplaceItem(id: "frame_neon", name: "Neon Cyber Frame", description: "Vibrant neon ring frame", iconName: "bolt.fill", category: .cosmetics, price: 250, badgeText: "NEON", isStackable: false),

@@ -49,23 +49,10 @@ struct LightItUpView: View {
                         ScoreView(score: score)
                         Spacer()
                         
-                        if !isGameOver && !isShowingReadyScreen && marketplaceService.quantity(for: "booster_time_surge") > 0 {
-                            Button {
-                                if marketplaceService.consumeItem(id: "booster_time_surge") {
-                                    timeRemaining += 5
-                                    SoundManager.shared.playBonus()
-                                }
-                            } label: {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "bolt.circle.fill")
-                                    Text("+5s")
-                                }
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 6)
-                                .background(Color.orange)
-                                .clipShape(Capsule())
+                        if !isGameOver && !isShowingReadyScreen {
+                            BoosterHUDView(boosterID: "booster_time_surge", iconName: "bolt.fill", title: "+5s Surge", color: .purple) {
+                                timeRemaining += 5
+                                SoundManager.shared.playBonus()
                             }
                         }
                         
@@ -82,23 +69,10 @@ struct LightItUpView: View {
                                     .font(.title3)
                             }
                             
-                            if lives < 3 && !isGameOver && !isShowingReadyScreen && marketplaceService.quantity(for: "booster_life_refill") > 0 {
-                                Button {
-                                    if marketplaceService.consumeItem(id: "booster_life_refill") {
-                                        lives = min(3, lives + 1)
-                                        SoundManager.shared.playBonus()
-                                    }
-                                } label: {
-                                    HStack(spacing: 2) {
-                                        Text("+1")
-                                        Image(systemName: "heart.fill")
-                                    }
-                                        .font(.system(size: 11, weight: .bold))
-                                        .foregroundColor(.white)
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 4)
-                                        .background(Color.red)
-                                        .clipShape(Capsule())
+                            if lives < 3 && !isGameOver && !isShowingReadyScreen {
+                                BoosterHUDView(boosterID: "booster_life_refill", iconName: "heart.fill", title: "+1 Life", color: .red) {
+                                    lives = min(3, lives + 1)
+                                    SoundManager.shared.playBonus()
                                 }
                             }
                         }

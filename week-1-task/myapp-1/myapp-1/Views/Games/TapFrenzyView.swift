@@ -30,6 +30,8 @@ struct TapFrenzyView: View {
     @State private var bonusMessage: String? = nil
     @State private var showingHistory = false
     @State private var hasRecordedHistory = false
+    @State private var isShowingTimeSurgePrompt = false
+    @State private var hasUsedTimeSurge = false
     
     @State private var hasScoreShield = false
     @ObservedObject private var powerUpService = PowerUpService.shared
@@ -93,6 +95,15 @@ struct TapFrenzyView: View {
                 }
                 
                 Spacer()
+                
+                if !isGameOver && !isShowingReadyScreen {
+                    BoosterHUDView(boosterID: "booster_time_surge", iconName: "bolt.fill", title: "+5s Surge", color: .purple) {
+                        timeRemaining += 5
+                        triggerBonusMessage("TIME SURGE! +5s")
+                        SoundManager.shared.playBonus()
+                    }
+                    .padding(.bottom, 10)
+                }
                 
                 if !isGameOver {
                     Button(action: handleButtonTap) {
@@ -162,6 +173,37 @@ struct TapFrenzyView: View {
                     PowerUpSelectionView()
                 }
                 .transition(.opacity.combined(with: .scale))
+            } else if isShowingTimeSurgePrompt {
+                VStack(spacing: 16) {
+                    ReadyPromptView(
+                        title: "TIME'S UP!",
+                        subtitle: "Use a Time Surge to keep playing for +5 seconds?",
+                        iconName: "bolt.fill",
+                        themeColor: .purple,
+                        onReady: {
+                            if MarketplaceService.shared.consumeItem(id: "booster_time_surge") {
+                                timeRemaining += 5
+                                hasUsedTimeSurge = true
+                                triggerBonusMessage("TIME SURGE! +5s")
+                                SoundManager.shared.playBonus()
+                                withAnimation {
+                                    isShowingTimeSurgePrompt = false
+                                }
+                            }
+                        }
+                    )
+                    
+                    Button("No Thanks") {
+                        withAnimation {
+                            isShowingTimeSurgePrompt = false
+                            isGameOver = true
+                        }
+                    }
+                    .font(.headline)
+                    .foregroundColor(.gray)
+                    .padding(.top, 10)
+                }
+                .transition(.scale)
             } else if let countdown = countdownRemaining {
                 CountdownOverlayView(countdown: countdown, themeColor: .blue)
             }
@@ -269,6 +311,13 @@ struct TapFrenzyView: View {
         }
         
         if timeRemaining == 0 {
+            if !hasUsedTimeSurge && MarketplaceService.shared.quantity(for: "booster_time_surge") > 0 {
+                withAnimation {
+                    isShowingTimeSurgePrompt = true
+                }
+                return
+            }
+            
             withAnimation {
                 isGameOver = true
             }

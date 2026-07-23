@@ -271,6 +271,21 @@ struct QuizRushView: View {
             }
             .padding(.horizontal)
             
+            .padding(.horizontal)
+            
+            if viewModel.selectedAnswer == nil {
+                BoosterHUDView(boosterID: "booster_reveal_answer", iconName: "eye.fill", title: "Reveal Answer", color: .indigo) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                        viewModel.selectAnswer(question.correctAnswer)
+                        cardScale = 1.04
+                    }
+                    triggerFlash(.green)
+                    triggerStreakBanner("ANSWER REVEALED!")
+                    SoundManager.shared.playBonus()
+                }
+                .padding(.top, 10)
+            }
+            
             Spacer()
             
             if viewModel.selectedAnswer != nil {
