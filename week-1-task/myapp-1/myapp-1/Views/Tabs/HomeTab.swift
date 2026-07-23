@@ -38,9 +38,11 @@ struct HomeTab: View {
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
                             trophyRoomCard
                                 .transition(.move(edge: .top).combined(with: .opacity))
+                            achievementsCard
                         } else {
                             trophyRoomCard
                                 .transition(.move(edge: .top).combined(with: .opacity))
+                            achievementsCard
                             gamesListSection
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
                         }
@@ -128,6 +130,51 @@ struct HomeTab: View {
             .overlay(
                 RoundedRectangle(cornerRadius: 20)
                     .stroke(Color.yellow.opacity(0.4), lineWidth: 1.5)
+            )
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal)
+    }
+    
+    private var achievementsCard: some View {
+        NavigationLink(destination: AchievementsView()) {
+            HStack(spacing: 16) {
+                ZStack {
+                    Circle()
+                        .fill(Color.orange.opacity(0.25))
+                        .frame(width: 58, height: 58)
+                    Image(systemName: "medal.fill")
+                        .font(.system(size: 28))
+                        .foregroundColor(.orange)
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Game Achievements")
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .foregroundColor(.primary)
+                    
+                    Text("\(AchievementService.shared.achievements.filter { $0.isUnlocked }.count) / \(AchievementService.shared.achievements.count) Badges Unlocked")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.orange)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.headline)
+                    .foregroundColor(.secondary)
+            }
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color(.systemBackground))
+                    .shadow(color: Color.orange.opacity(0.15), radius: 8, x: 0, y: 4)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(Color.orange.opacity(0.3), lineWidth: 1.5)
             )
         }
         .buttonStyle(.plain)
