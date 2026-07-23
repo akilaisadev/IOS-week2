@@ -45,7 +45,7 @@ struct MapTab: View {
                     }
                 }
                 .padding(.top, 8)
-                .padding(.bottom, 16)
+                .padding(.bottom, 80)
             }
             .navigationTitle("Map")
             .navigationBarTitleDisplayMode(.inline)
