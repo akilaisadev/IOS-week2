@@ -10,7 +10,9 @@ class WalletService: ObservableObject {
     static let shared = WalletService()
     
     private let walletKey = "PlayerWalletData"
+    private let txKey = "PlayerWalletTransactionsData"
     @Published private(set) var wallet: PlayerWallet
+    @Published private(set) var transactions: [CoinTransaction] = []
     
     private init() {
         if let data = UserDefaults.standard.data(forKey: walletKey),
@@ -21,6 +23,7 @@ class WalletService: ObservableObject {
             self.wallet = PlayerWallet(coins: 100, xp: 0, level: 1, referralCode: code)
             save()
         }
+        loadTransactions()
     }
     
     func save() {
@@ -29,15 +32,36 @@ class WalletService: ObservableObject {
         }
     }
     
-    func addCoins(_ amount: Int) {
+    private func loadTransactions() {
+        if let data = UserDefaults.standard.data(forKey: txKey),
+           let decoded = try? JSONDecoder().decode([CoinTransaction].self, from: data) {
+            transactions = decoded
+        }
+    }
+    
+    private func logTransaction(amount: Int, reason: String) {
+        let tx = CoinTransaction(amount: amount, reason: reason, timestamp: Date())
+        transactions.insert(tx, at: 0)
+        if transactions.count > 50 { transactions.removeLast() }
+        if let data = try? JSONEncoder().encode(transactions) {
+            UserDefaults.standard.set(data, forKey: txKey)
+        }
+    }
+    
+    func addCoins(_ amount: Int, reason: String = "Earned Reward") {
         wallet.coins += amount
+        logTransaction(amount: amount, reason: reason)
         save()
     }
     
-    func spendCoins(_ amount: Int) -> Bool {
-        if wallet.isDeveloperMode { return true }
+    func spendCoins(_ amount: Int, reason: String = "Marketplace Purchase") -> Bool {
+        if wallet.isDeveloperMode {
+            logTransaction(amount: 0, reason: "\(reason) (Dev Free)")
+            return true
+        }
         guard wallet.coins >= amount else { return false }
         wallet.coins -= amount
+        logTransaction(amount: -amount, reason: reason)
         save()
         return true
     }
