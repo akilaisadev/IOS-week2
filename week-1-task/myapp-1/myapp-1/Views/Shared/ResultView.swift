@@ -18,6 +18,7 @@ struct ResultView: View {
     @State private var showingActions = false
     @State private var canInteract = false
     @AppStorage("playerName") private var playerName = "Player 1"
+    @ObservedObject private var achievementService = AchievementService.shared
     
     var isNewBest: Bool {
         score >= highScore && score > 0
@@ -33,24 +34,36 @@ struct ResultView: View {
     }
     
     var body: some View {
-        ZStack {
-            if !showingActions {
-                scoreScreen
-                    .transition(.opacity)
-            } else {
-                actionsScreen
-                    .transition(.opacity)
+        ZStack(alignment: .top) {
+            VStack {
+                if let ach = achievementService.recentlyUnlocked {
+                    AchievementToastView(achievement: ach) {
+                        achievementService.dismissToast()
+                    }
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .padding(.top, 10)
+                }
+                
+                ZStack {
+                    if !showingActions {
+                        scoreScreen
+                            .transition(.opacity)
+                    } else {
+                        actionsScreen
+                            .transition(.opacity)
+                    }
+                }
+                .padding(20)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color(.systemBackground))
+                        .shadow(color: Color.black.opacity(0.18), radius: 20, x: 0, y: 10)
+                )
+                .padding(.horizontal, 28)
+                .frame(maxWidth: 400)
+                .animation(.easeInOut(duration: 0.22), value: showingActions)
             }
         }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color(.systemBackground))
-                .shadow(color: Color.black.opacity(0.18), radius: 20, x: 0, y: 10)
-        )
-        .padding(.horizontal, 28)
-        .frame(maxWidth: 400)
-        .animation(.easeInOut(duration: 0.22), value: showingActions)
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 canInteract = true
