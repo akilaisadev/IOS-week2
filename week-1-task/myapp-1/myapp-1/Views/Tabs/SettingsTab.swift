@@ -22,21 +22,30 @@ struct SettingsTab: View {
     @State private var saveStatus: SaveStatus = .idle
     @State private var saveTask: DispatchWorkItem? = nil
     
+    @ObservedObject private var walletService = WalletService.shared
+    
     var body: some View {
         NavigationStack {
             ZStack {
                 AnimatedBackground()
                 
-                Form {
-                    profileSection
-                    referralSection
-                    notificationsSection
-                    audioSection
-                    layoutSection
-                    dataSection
-                    aboutSection
+                VStack(spacing: 0) {
+                    WalletHeaderView()
+                        .padding(.horizontal)
+                        .padding(.top, 8)
+                    
+                    Form {
+                        profileSection
+                        referralSection
+                        developerSection
+                        notificationsSection
+                        audioSection
+                        layoutSection
+                        dataSection
+                        aboutSection
+                    }
+                    .scrollContentBackground(.hidden)
                 }
-                .scrollContentBackground(.hidden)
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
@@ -154,6 +163,34 @@ struct SettingsTab: View {
             Text("Rewards & Referral")
         } footer: {
             Text("Invite friends using your unique referral code to earn 50 bonus GameCoins.")
+        }
+    }
+    
+    private var developerSection: some View {
+        Section {
+            Toggle(isOn: Binding(
+                get: { walletService.wallet.isDeveloperMode },
+                set: { _ in walletService.toggleDeveloperMode() }
+            )) {
+                Label("Developer Mode (Free Marketplace)", systemImage: "hammer.fill")
+            }
+            .tint(.red)
+            
+            if walletService.wallet.isDeveloperMode {
+                Button {
+                    walletService.grantDevCoins()
+                } label: {
+                    HStack {
+                        Label("Grant +10,000 Test Coins", systemImage: "plus.circle.fill")
+                            .foregroundColor(.orange)
+                        Spacer()
+                    }
+                }
+            }
+        } header: {
+            Text("Developer & Testing Controls")
+        } footer: {
+            Text("Developer Mode grants free purchases in the marketplace for quick testing.")
         }
     }
     
