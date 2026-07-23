@@ -34,6 +34,9 @@ struct LightItUpView: View {
     @State private var showingHistory = false
     @State private var hasRecordedHistory = false
     
+    @ObservedObject private var powerUpService = PowerUpService.shared
+    @ObservedObject private var marketplaceService = MarketplaceService.shared
+    
     let gameTimer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
     
     var body: some View {
@@ -41,25 +44,59 @@ struct LightItUpView: View {
             AnimatedBackground(colors: [Color.orange.opacity(0.18), Color.yellow.opacity(0.15)])
             
             VStack(spacing: 16) {
-               
                 VStack(spacing: 12) {
-                   
                     HStack {
                         ScoreView(score: score)
                         Spacer()
+                        
+                        if !isGameOver && !isShowingReadyScreen && marketplaceService.quantity(for: "booster_time_surge") > 0 {
+                            Button {
+                                if marketplaceService.consumeItem(id: "booster_time_surge") {
+                                    timeRemaining += 5
+                                    SoundManager.shared.playBonus()
+                                }
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "bolt.circle.fill")
+                                    Text("+5s")
+                                }
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 6)
+                                .background(Color.orange)
+                                .clipShape(Capsule())
+                            }
+                        }
+                        
                         HighScoreView(highScore: highScore)
                     }
                     
-                 
                     TimerView(timeRemaining: Int(ceil(Double(timeRemaining))), totalTime: selectedDuration)
                     
-                   
                     HStack {
                         HStack(spacing: 6) {
                             ForEach(1...3, id: \.self) { heart in
                                 Image(systemName: heart <= lives ? "heart.fill" : "heart")
                                     .foregroundColor(heart <= lives ? .red : .gray.opacity(0.3))
                                     .font(.title3)
+                            }
+                            
+                            if lives < 3 && !isGameOver && !isShowingReadyScreen && marketplaceService.quantity(for: "booster_life_refill") > 0 {
+                                Button {
+                                    if marketplaceService.consumeItem(id: "booster_life_refill") {
+                                        lives = min(3, lives + 1)
+                                        SoundManager.shared.playBonus()
+                                    }
+                                } label: {
+                                    Text("+1 ❤️")
+                                        .font(.system(size: 11, weight: .bold))
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 4)
+                                        .background(Color.red)
+                                        .clipShape(Capsule())
+                                }
                             }
                         }
                         .padding(.horizontal, 14)
@@ -171,19 +208,26 @@ struct LightItUpView: View {
             }
             
             if isShowingReadyScreen {
-                ReadyPromptView(
-                    title: "GET READY!",
-                    subtitle: "Memorize and tap the lit target cards before their light expires! Don't tap dark tiles!",
-                    iconName: "bolt.fill",
-                    themeColor: .orange,
-                    onReady: {
-                        withAnimation {
-                            isShowingReadyScreen = false
-                            countdownRemaining = 3
-                            tickCounter = 0
+                VStack(spacing: 16) {
+                    ReadyPromptView(
+                        title: "GET READY!",
+                        subtitle: "Memorize and tap the lit target cards before their light expires! Don't tap dark tiles!",
+                        iconName: "bolt.fill",
+                        themeColor: .orange,
+                        onReady: {
+                            if powerUpService.activePowerUp == .timeFreezer {
+                                timeRemaining += 5
+                            }
+                            withAnimation {
+                                isShowingReadyScreen = false
+                                countdownRemaining = 3
+                                tickCounter = 0
+                            }
                         }
-                    }
-                )
+                    )
+                    
+                    PowerUpSelectionView()
+                }
                 .transition(.opacity.combined(with: .scale))
             } else if let countdown = countdownRemaining {
                 CountdownOverlayView(countdown: countdown, themeColor: .orange)
