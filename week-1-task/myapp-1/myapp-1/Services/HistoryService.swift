@@ -1,8 +1,4 @@
-//
-//  HistoryService.swift
-//  myapp-1
-//
-//  service responsible for saving game sessions to user defaults
+//  HistoryService.swift - myapp-1 (Game session history and economy rewards)
 //
 
 import SwiftUI
