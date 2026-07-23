@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeTab: View {
     @ObservedObject private var historyService = HistoryService.shared
     @ObservedObject private var walletService = WalletService.shared
+    @ObservedObject private var streakService = StreakService.shared
     @AppStorage("moveTrophyRoomToBottom") private var moveTrophyRoomToBottom = false
     @AppStorage("hasEnteredPlayerDetails") private var hasEnteredPlayerDetails = false
     @AppStorage("playerName") private var playerName = "Player 1"
@@ -24,13 +25,47 @@ struct HomeTab: View {
                 ScrollView {
                     VStack(spacing: 24) {
                         HStack {
+                            HStack(spacing: 4) {
+                                Text("🔥")
+                                Text("Day \(streakService.currentStreak)")
+                                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                                    .foregroundColor(.orange)
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(Color.orange.opacity(0.15))
+                            .clipShape(Capsule())
+                            
                             Spacer()
+                            
                             CoinBadge(coins: walletService.wallet.coins) {
                                 showingMarketplace = true
                             }
                         }
                         .padding(.horizontal)
                         .padding(.top, 8)
+                        
+                        if let banner = streakService.streakBannerMessage {
+                            HStack {
+                                Text(banner)
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.white)
+                                Spacer()
+                                Button {
+                                    streakService.dismissBanner()
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundColor(.white.opacity(0.8))
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background(LinearGradient(colors: [.orange, .red], startPoint: .leading, endPoint: .trailing))
+                            .cornerRadius(14)
+                            .padding(.horizontal)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                        }
                         
                         titleHeader
                         if moveTrophyRoomToBottom {
