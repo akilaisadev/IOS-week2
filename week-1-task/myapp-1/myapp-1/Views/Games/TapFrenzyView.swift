@@ -28,9 +28,12 @@ struct TapFrenzyView: View {
     @State private var totalTaps = 0
     
     @State private var bonusMessage: String? = nil
-    
     @State private var showingHistory = false
     @State private var hasRecordedHistory = false
+    
+    @State private var hasScoreShield = false
+    @ObservedObject private var powerUpService = PowerUpService.shared
+    @ObservedObject private var marketplaceService = MarketplaceService.shared
     
     let gameTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
@@ -43,6 +46,28 @@ struct TapFrenzyView: View {
                     HStack {
                         ScoreView(score: score, multiplier: comboMultiplier)
                         Spacer()
+                        
+                        if !isGameOver && !isShowingReadyScreen && marketplaceService.quantity(for: "booster_time_surge") > 0 {
+                            Button {
+                                if marketplaceService.consumeItem(id: "booster_time_surge") {
+                                    timeRemaining += 5
+                                    triggerBonusMessage("TIME SURGE! +5s")
+                                    SoundManager.shared.playBonus()
+                                }
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "bolt.circle.fill")
+                                    Text("+5s")
+                                }
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 6)
+                                .background(Color.orange)
+                                .clipShape(Capsule())
+                            }
+                        }
+                        
                         HighScoreView(highScore: highScore)
                     }
                     
@@ -61,9 +86,9 @@ struct TapFrenzyView: View {
                         .clipShape(Capsule())
                         .transition(.scale.combined(with: .opacity))
                 } else {
-                    Text("Tap fast! Watch out for RED traps!")
+                    Text(hasScoreShield ? "🛡️ Score Shield Active!" : "Tap fast! Watch out for RED traps!")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(hasScoreShield ? .blue : .secondary)
                         .frame(height: 36)
                 }
                 
@@ -114,18 +139,28 @@ struct TapFrenzyView: View {
             }
             
             if isShowingReadyScreen {
-                ReadyPromptView(
-                    title: "GET READY!",
-                    subtitle: "Tap the circle as fast as you can to chain combos! Watch out for red traps!",
-                    iconName: "hand.tap.fill",
-                    themeColor: .blue,
-                    onReady: {
-                        withAnimation {
-                            isShowingReadyScreen = false
-                            countdownRemaining = 3
+                VStack(spacing: 16) {
+                    ReadyPromptView(
+                        title: "GET READY!",
+                        subtitle: "Tap the circle as fast as you can to chain combos! Watch out for red traps!",
+                        iconName: "hand.tap.fill",
+                        themeColor: .blue,
+                        onReady: {
+                            if powerUpService.activePowerUp == .timeFreezer {
+                                timeRemaining += 5
+                            }
+                            if powerUpService.activePowerUp == .scoreShield {
+                                hasScoreShield = true
+                            }
+                            withAnimation {
+                                isShowingReadyScreen = false
+                                countdownRemaining = 3
+                            }
                         }
-                    }
-                )
+                    )
+                    
+                    PowerUpSelectionView()
+                }
                 .transition(.opacity.combined(with: .scale))
             } else if let countdown = countdownRemaining {
                 CountdownOverlayView(countdown: countdown, themeColor: .blue)
@@ -160,6 +195,13 @@ struct TapFrenzyView: View {
         let now = Date()
         
         if isTrapActive {
+            if hasScoreShield {
+                hasScoreShield = false
+                isTrapActive = false
+                triggerBonusMessage("SHIELD BLOCKED TRAP!")
+                SoundManager.shared.playBonus()
+                return
+            }
             score = max(0, score - 3)
             comboCount = 0
             comboMultiplier = 1
