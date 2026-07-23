@@ -7,8 +7,8 @@ import SwiftUI
 
 struct MarketplaceView: View {
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject private var marketplaceService = MarketplaceService.shared
-    @ObservedObject private var walletService = WalletService.shared
+    @StateObject private var marketplaceService = MarketplaceService.shared
+    @StateObject private var walletService = WalletService.shared
     
     @State private var selectedCategory: MarketplaceCategory = .powerUps
     @State private var alertMessage: String? = nil

@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct HomeTab: View {
-    @ObservedObject private var historyService = HistoryService.shared
-    @ObservedObject private var walletService = WalletService.shared
-    @ObservedObject private var streakService = StreakService.shared
+    @StateObject private var historyService = HistoryService.shared
+    @StateObject private var walletService = WalletService.shared
+    @StateObject private var streakService = StreakService.shared
     @AppStorage("moveTrophyRoomToBottom") private var moveTrophyRoomToBottom = false
     @AppStorage("hasEnteredPlayerDetails") private var hasEnteredPlayerDetails = false
     @AppStorage("playerName") private var playerName = "Player 1"

@@ -10,7 +10,7 @@ import MapKit
 import CoreLocation
 
 struct MapTab: View {
-    @ObservedObject private var historyService = HistoryService.shared
+    @StateObject private var historyService = HistoryService.shared
     @State private var selectedMode: ModeSelection = .all
     @State private var selectedSession: GameSession? = nil
     @State private var cameraPosition: MapCameraPosition = .region(

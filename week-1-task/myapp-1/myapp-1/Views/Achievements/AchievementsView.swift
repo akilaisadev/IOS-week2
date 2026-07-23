@@ -6,7 +6,7 @@
 import SwiftUI
 
 struct AchievementsView: View {
-    @ObservedObject private var achievementService = AchievementService.shared
+    @StateObject private var achievementService = AchievementService.shared
     
     var body: some View {
         ScrollView {

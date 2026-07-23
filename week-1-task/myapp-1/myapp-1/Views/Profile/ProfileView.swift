@@ -3,10 +3,10 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @ObservedObject private var walletService = WalletService.shared
-    @ObservedObject private var achievementService = AchievementService.shared
-    @ObservedObject private var historyService = HistoryService.shared
-    @ObservedObject private var referralService = ReferralService.shared
+    @StateObject private var walletService = WalletService.shared
+    @StateObject private var achievementService = AchievementService.shared
+    @StateObject private var historyService = HistoryService.shared
+    @StateObject private var referralService = ReferralService.shared
     @AppStorage("playerName") private var playerName = "Player 1"
     
     @State private var selectedFrame: AvatarFrameStyle = .defaultFrame

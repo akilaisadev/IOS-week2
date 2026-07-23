@@ -34,8 +34,8 @@ struct TapFrenzyView: View {
     @State private var hasUsedTimeSurge = false
     
     @State private var hasScoreShield = false
-    @ObservedObject private var powerUpService = PowerUpService.shared
-    @ObservedObject private var marketplaceService = MarketplaceService.shared
+    @StateObject private var powerUpService = PowerUpService.shared
+    @StateObject private var marketplaceService = MarketplaceService.shared
     
     let gameTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     

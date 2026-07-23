@@ -22,7 +22,7 @@ struct SettingsTab: View {
     @State private var saveStatus: SaveStatus = .idle
     @State private var saveTask: DispatchWorkItem? = nil
     
-    @ObservedObject private var walletService = WalletService.shared
+    @StateObject private var walletService = WalletService.shared
     
     var body: some View {
         NavigationStack {
