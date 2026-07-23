@@ -88,19 +88,10 @@ struct TapFrenzyView: View {
                 
                 if !isGameOver {
                     Button(action: handleButtonTap) {
-                        VStack(spacing: 4) {
-                            Image(systemName: isTrapActive ? "exclamationmark.octagon.fill" : "hand.tap.fill")
-                                .font(.system(size: buttonDiameter * 0.25))
-                            
-                            Text(isTrapActive ? "TRAP!" : "TAP!")
-                                .font(.system(size: buttonDiameter * 0.18, weight: .black, design: .rounded))
-                        }
-                        .foregroundColor(.white)
-                        .frame(width: buttonDiameter, height: buttonDiameter)
-                        .background(
-                            Circle()
-                                .fill(isTrapActive ? Color.red : Color.blue)
-                                .shadow(color: (isTrapActive ? Color.red : Color.blue).opacity(0.5), radius: 15, x: 0, y: 8)
+                        TapFrenzyBallView(
+                            buttonDiameter: buttonDiameter,
+                            isTrapActive: isTrapActive,
+                            activeSkinId: marketplaceService.activeTapFrenzySkinId
                         )
                         .scaleEffect(isTrapActive ? 1.05 : 1.0)
                         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: buttonOffset)

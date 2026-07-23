@@ -9,6 +9,8 @@ enum MarketplaceCategory: String, Codable, CaseIterable, Identifiable {
     case powerUps = "Power-Ups"
     case boosters = "Boosters"
     case cosmetics = "Cosmetics"
+    case avatars = "Avatars"
+    case skins = "Skins"
     
     var id: String { rawValue }
 }

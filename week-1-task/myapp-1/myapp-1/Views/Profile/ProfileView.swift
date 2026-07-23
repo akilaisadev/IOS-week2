@@ -11,10 +11,15 @@ struct ProfileView: View {
     
     @State private var selectedFrame: AvatarFrameStyle = .defaultFrame
     
+    @State private var showingAvatarSelection = false
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                profileHeaderCard
+                ProfileAvatarHeader(selectedFrame: selectedFrame) {
+                    showingAvatarSelection = true
+                }
+                
                 xpProgressCard
                 statsOverviewGrid
                 achievementsShelfSection
@@ -26,52 +31,9 @@ struct ProfileView: View {
         }
         .navigationTitle("Player Profile")
         .navigationBarTitleDisplayMode(.inline)
-    }
-    
-    // Header card displaying avatar ring, gamer tag, and coin badge
-    private var profileHeaderCard: some View {
-        VStack(spacing: 12) {
-            ZStack {
-                Circle()
-                    .fill(LinearGradient(colors: selectedFrame.gradientColors, startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .frame(width: 90, height: 90)
-                
-                Circle()
-                    .fill(Color(.systemBackground))
-                    .frame(width: 80, height: 80)
-                
-                Image(systemName: "person.fill")
-                    .font(.system(size: 40))
-                    .foregroundColor(.primary)
-            }
-            .shadow(color: selectedFrame.gradientColors.first?.opacity(0.4) ?? .clear, radius: 10, x: 0, y: 5)
-            
-            VStack(spacing: 4) {
-                Text(playerName.isEmpty ? "Player 1" : playerName)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                
-                HStack(spacing: 6) {
-                    Text("LEVEL \(walletService.wallet.level)")
-                        .font(.system(size: 11, weight: .black, design: .rounded))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                        .background(LinearGradient(colors: [.blue, .purple], startPoint: .leading, endPoint: .trailing))
-                        .clipShape(Capsule())
-                    
-                    CoinBadge(coins: walletService.wallet.coins)
-                }
-            }
+        .sheet(isPresented: $showingAvatarSelection) {
+            AvatarSelectionSheet()
         }
-        .padding(20)
-        .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 22)
-                .fill(Color(.secondarySystemBackground))
-                .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 4)
-        )
-        .padding(.horizontal)
     }
     
     // XP progression bar showing level progression

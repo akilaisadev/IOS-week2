@@ -23,13 +23,28 @@ struct MarketplaceView: View {
                         .padding(.horizontal)
                         .padding(.top, 8)
                     
-                    Picker("Category", selection: $selectedCategory) {
-                        ForEach(MarketplaceCategory.allCases) { category in
-                            Text(category.rawValue).tag(category)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            ForEach(MarketplaceCategory.allCases) { category in
+                                Button {
+                                    withAnimation { selectedCategory = category }
+                                } label: {
+                                    Text(category.rawValue)
+                                        .font(.subheadline)
+                                        .fontWeight(.bold)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 8)
+                                        .background(
+                                            Capsule()
+                                                .fill(selectedCategory == category ? Color.purple : Color(.secondarySystemBackground))
+                                        )
+                                        .foregroundColor(selectedCategory == category ? .white : .primary)
+                                }
+                                .buttonStyle(.plain)
+                            }
                         }
+                        .padding(.horizontal)
                     }
-                    .pickerStyle(.segmented)
-                    .padding(.horizontal)
                     
                     ScrollView {
                         VStack(spacing: 14) {

@@ -96,6 +96,8 @@ struct MarketplaceItemCard: View {
         case .powerUps: return .green
         case .boosters: return .orange
         case .cosmetics: return .purple
+        case .avatars: return .blue
+        case .skins: return .red
         }
     }
 }
