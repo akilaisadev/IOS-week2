@@ -67,35 +67,42 @@ struct MapTab: View {
     }
     private var mapView: some View {
         Map(position: $cameraPosition) {
+            MapPolyline(coordinates: sessionsWithLocation.compactMap { $0.coordinate })
+                .stroke(Color.purple.opacity(0.5), style: StrokeStyle(lineWidth: 4, lineCap: .round, dash: [8, 8]))
+            
             ForEach(sessionsWithLocation) { session in
                 if let coordinate = session.coordinate {
+                    let isSelected = (selectedSession?.id == session.id)
+                    
                     Annotation(session.mode.title, coordinate: coordinate) {
                         Button {
-                            withAnimation {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                                 selectedSession = session
                             }
                         } label: {
                             VStack(spacing: 0) {
                                 Image(systemName: session.mode.iconName)
-                                    .font(.caption)
+                                    .font(.system(size: isSelected ? 20 : 14))
                                     .foregroundColor(.white)
-                                    .padding(8)
+                                    .padding(isSelected ? 12 : 8)
                                     .background(
                                         Circle()
                                             .fill(session.mode.color)
                                             .overlay(
                                                 Circle()
-                                                    .stroke(selectedSession?.id == session.id ? Color.primary : Color.white, lineWidth: selectedSession?.id == session.id ? 3 : 1.5)
+                                                    .stroke(Color.white, lineWidth: isSelected ? 3 : 1.5)
                                             )
+                                            .shadow(color: session.mode.color.opacity(0.5), radius: isSelected ? 8 : 4, x: 0, y: isSelected ? 4 : 2)
                                     )
-                                    .shadow(radius: 4)
                                 
                                 Image(systemName: "triangle.fill")
-                                    .font(.system(size: 10))
+                                    .font(.system(size: isSelected ? 14 : 10))
                                     .foregroundColor(session.mode.color)
                                     .rotationEffect(.degrees(180))
-                                    .offset(y: -3)
+                                    .offset(y: -2)
                             }
+                            .scaleEffect(isSelected ? 1.1 : 1.0)
+                            .animation(.spring(), value: isSelected)
                         }
                     }
                 }
@@ -112,9 +119,15 @@ struct MapTab: View {
         .pickerStyle(.segmented)
         .padding(.horizontal)
         .padding(.vertical, 6)
-        .background(Color(.systemBackground).opacity(0.9))
-        .cornerRadius(10)
-        .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(.ultraThinMaterial)
+                .shadow(color: Color.black.opacity(0.1), radius: 6, x: 0, y: 3)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+        )
         .padding(.horizontal)
     }
     private var emptyStateOverlay: some View {
@@ -194,9 +207,15 @@ struct MapTab: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(14)
-        .shadow(color: Color.black.opacity(0.15), radius: 6, x: 0, y: 3)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(.ultraThinMaterial)
+                .shadow(color: Color.black.opacity(0.12), radius: 10, x: 0, y: 5)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+        )
         .padding(.horizontal)
     }
     private func recenterMap() {
