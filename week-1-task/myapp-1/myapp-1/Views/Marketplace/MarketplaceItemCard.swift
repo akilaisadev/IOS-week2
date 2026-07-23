@@ -58,8 +58,9 @@ struct MarketplaceItemCard: View {
                             .foregroundColor(.gray)
                     } else {
                         HStack(spacing: 4) {
-                            Text("🪙")
+                            Image(systemName: "dollarsign.circle.fill")
                                 .font(.caption)
+                                .foregroundColor(.yellow)
                             Text(walletService.wallet.isDeveloperMode ? "FREE" : "\(item.price)")
                                 .font(.system(size: 14, weight: .bold, design: .rounded))
                         }

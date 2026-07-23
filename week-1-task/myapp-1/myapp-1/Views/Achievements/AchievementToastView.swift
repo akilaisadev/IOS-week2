@@ -38,8 +38,9 @@ struct AchievementToastView: View {
             Spacer()
             
             HStack(spacing: 4) {
-                Text("🪙")
+                Image(systemName: "dollarsign.circle.fill")
                     .font(.caption2)
+                    .foregroundColor(.yellow)
                 Text("+\(achievement.coinReward)")
                     .font(.system(size: 12, weight: .bold))
                     .foregroundColor(.orange)

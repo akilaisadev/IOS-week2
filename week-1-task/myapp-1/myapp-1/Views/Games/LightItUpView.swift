@@ -89,7 +89,10 @@ struct LightItUpView: View {
                                         SoundManager.shared.playBonus()
                                     }
                                 } label: {
-                                    Text("+1 ❤️")
+                                    HStack(spacing: 2) {
+                                        Text("+1")
+                                        Image(systemName: "heart.fill")
+                                    }
                                         .font(.system(size: 11, weight: .bold))
                                         .foregroundColor(.white)
                                         .padding(.horizontal, 8)

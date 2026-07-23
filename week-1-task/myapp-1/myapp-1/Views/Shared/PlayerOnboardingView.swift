@@ -31,7 +31,8 @@ struct PlayerOnboardingView: View {
                         .multilineTextAlignment(.center)
                     
                     HStack(spacing: 6) {
-                        Text("🪙")
+                        Image(systemName: "dollarsign.circle.fill")
+                            .foregroundColor(.yellow)
                         Text("100 Welcome Coins Awarded!")
                             .font(.system(size: 13, weight: .bold))
                             .foregroundColor(.yellow)

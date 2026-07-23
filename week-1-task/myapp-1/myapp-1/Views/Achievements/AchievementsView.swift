@@ -67,8 +67,9 @@ struct AchievementsView: View {
             }
             
             HStack(spacing: 4) {
-                Text("🪙")
+                Image(systemName: "dollarsign.circle.fill")
                     .font(.caption2)
+                    .foregroundColor(ach.isUnlocked ? .orange : .gray)
                 Text("+\(ach.coinReward)")
                     .font(.system(size: 12, weight: .bold))
                     .foregroundColor(ach.isUnlocked ? .orange : .gray)
