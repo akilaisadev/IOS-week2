@@ -71,6 +71,10 @@ class MarketplaceService: ObservableObject {
             return false
         }
         
+        if item.isStackable && (ownedItems[item.id] ?? 0) >= 10 {
+            return false
+        }
+        
         let success = WalletService.shared.spendCoins(item.price)
         if success {
             ownedItems[item.id] = (ownedItems[item.id] ?? 0) + 1

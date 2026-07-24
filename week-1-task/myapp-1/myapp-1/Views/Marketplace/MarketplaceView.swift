@@ -473,18 +473,26 @@ struct MarketplacePreviewSheet: View {
                     if quantityOwned > 0 {
                         Text("Currently Owned: **\(quantityOwned)**")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(quantityOwned >= 10 ? .red : .secondary)
                     }
                     
+                    let isMaxedOut = item.isStackable && quantityOwned >= 10
+                    
                     Button {
-                        onPurchase()
-                        dismiss()
+                        if !isMaxedOut {
+                            onPurchase()
+                            dismiss()
+                        }
                     } label: {
                         HStack {
-                            Text("Purchase for")
-                            Image(systemName: "dollarsign.circle.fill")
-                                .foregroundColor(.yellow)
-                            Text(walletService.wallet.isDeveloperMode ? "FREE" : "\(item.price)")
+                            if isMaxedOut {
+                                Text("Max Limit Reached")
+                            } else {
+                                Text("Purchase for")
+                                Image(systemName: "dollarsign.circle.fill")
+                                    .foregroundColor(.yellow)
+                                Text(walletService.wallet.isDeveloperMode ? "FREE" : "\(item.price)")
+                            }
                         }
                         .font(.system(size: 18, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
@@ -492,10 +500,11 @@ struct MarketplacePreviewSheet: View {
                         .padding(.vertical, 16)
                         .background(
                             Capsule()
-                                .fill(walletService.wallet.isDeveloperMode ? Color.red : Color.blue)
+                                .fill(isMaxedOut ? Color.gray : (walletService.wallet.isDeveloperMode ? Color.red : Color.blue))
                         )
-                        .shadow(color: (walletService.wallet.isDeveloperMode ? Color.red : Color.blue).opacity(0.4), radius: 8, x: 0, y: 4)
+                        .shadow(color: isMaxedOut ? Color.clear : (walletService.wallet.isDeveloperMode ? Color.red : Color.blue).opacity(0.4), radius: 8, x: 0, y: 4)
                     }
+                    .disabled(isMaxedOut)
                 }
             }
             .padding(.horizontal, 24)

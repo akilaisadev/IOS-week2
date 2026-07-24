@@ -12,14 +12,18 @@ struct BoosterHUDView: View {
     let color: Color
     let action: () -> Void
     
+    @State private var usesInCurrentRound = 0
+    let maxUses = 2
+    
     @ObservedObject private var marketplaceService = MarketplaceService.shared
     
     var body: some View {
         let count = marketplaceService.quantity(for: boosterID)
         
-        if count > 0 {
+        if count > 0 && usesInCurrentRound < maxUses {
             Button {
                 if marketplaceService.consumeItem(id: boosterID) {
+                    usesInCurrentRound += 1
                     action()
                 }
             } label: {
