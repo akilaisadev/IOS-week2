@@ -9,12 +9,15 @@ import SwiftUI
 
 @main
 struct PlayHubApp: App {
-    @StateObject private var notificationService = NotificationService.shared
-    @StateObject private var walletService = WalletService.shared
-    @StateObject private var marketplaceService = MarketplaceService.shared
-    @StateObject private var streakService = StreakService.shared
+    @ObservedObject private var notificationService = NotificationService.shared
+    @ObservedObject private var walletService = WalletService.shared
+    @ObservedObject private var marketplaceService = MarketplaceService.shared
+    @ObservedObject private var streakService = StreakService.shared
     
     init() {
+        if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
+            return
+        }
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.95)

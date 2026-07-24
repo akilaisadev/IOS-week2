@@ -37,9 +37,6 @@ struct CountdownOverlayView: View {
                 .fill(.ultraThinMaterial)
                 .ignoresSafeArea()
             
-            Color.black.opacity(0.4)
-                .ignoresSafeArea()
-            
             ZStack {
                 Circle()
                     .fill(displayColor.opacity(0.2))

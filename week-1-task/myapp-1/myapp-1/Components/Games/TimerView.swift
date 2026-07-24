@@ -27,44 +27,24 @@ struct TimerView: View {
     }
     
     var body: some View {
-        VStack(spacing: 6) {
-            HStack {
-                Image(systemName: "timer")
-                    .foregroundColor(timerColor)
-                Text("TIME")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundColor(.secondary)
-                Spacer()
-                Text("\(timeRemaining)s")
-                    .font(.system(size: 20, weight: .bold, design: .monospaced))
-                    .foregroundColor(timerColor)
-            }
-            
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    Capsule()
-                        .fill(Color.gray.opacity(0.2))
-                        .frame(height: 8)
-                    
-                    Capsule()
-                        .fill(timerColor)
-                        .frame(width: max(0, geometry.size.width * CGFloat(progress)), height: 8)
-                        .animation(.linear(duration: 1.0), value: timeRemaining)
+        AppCard(padding: AppTheme.Spacing.small) {
+            VStack(spacing: AppTheme.Spacing.extraSmall) {
+                HStack {
+                    Image(systemName: "timer")
+                        .foregroundColor(timerColor)
+                    Text("TIME")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    Spacer()
+                    Text("\(timeRemaining)s")
+                        .font(.system(size: 20, weight: .bold, design: .monospaced))
+                        .foregroundColor(timerColor)
                 }
+                
+                AppProgressBar(value: Double(timeRemaining), total: Double(totalTime), color: timerColor)
             }
-            .frame(height: 8)
         }
-        .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(.ultraThinMaterial)
-                .shadow(color: Color.black.opacity(0.12), radius: 8, x: 0, y: 4)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(Color.white.opacity(0.2), lineWidth: 1)
-        )
     }
 }
 

@@ -8,20 +8,23 @@ struct ProfileView: View {
     @ObservedObject private var historyService = HistoryService.shared
     @ObservedObject private var referralService = ReferralService.shared
     @AppStorage("playerName") private var playerName = "Player 1"
+    @ObservedObject private var marketplaceService = MarketplaceService.shared
+    @State private var showingInventory = false
     
-    @State private var selectedFrame: AvatarFrameStyle = .defaultFrame
-    
-    @State private var showingAvatarSelection = false
+    private var selectedFrame: AvatarFrameStyle {
+        AvatarFrameStyle.allCases.first(where: { $0.itemID == marketplaceService.activeFrameId }) ?? .defaultFrame
+    }
     
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
                 ProfileAvatarHeader(selectedFrame: selectedFrame) {
-                    showingAvatarSelection = true
+                    showingInventory = true
                 }
                 
                 xpProgressCard
                 statsOverviewGrid
+                inventorySection
                 achievementsShelfSection
                 referralCardSection
                 
@@ -29,71 +32,101 @@ struct ProfileView: View {
             }
             .padding(.vertical)
         }
+        .safeAreaInset(edge: .bottom) {
+            Color.clear.frame(height: 90)
+        }
         .navigationTitle("Player Profile")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showingAvatarSelection) {
-            AvatarSelectionSheet()
+        .toolbar(.visible, for: .navigationBar)
+        .toolbarBackground(AppTheme.Colors.secondaryBackground.opacity(0.95), for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .sheet(isPresented: $showingInventory) {
+            NavigationStack {
+                InventoryView()
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Done") {
+                                showingInventory = false
+                            }
+                        }
+                    }
+            }
         }
     }
     
     // XP progression bar showing level progression
     private var xpProgressCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Text("LEVEL PROGRESSION")
-                    .font(.caption)
-                    .fontWeight(.heavy)
-                    .foregroundColor(.secondary)
-                Spacer()
-                Text("\(walletService.wallet.xp) / \(walletService.wallet.xpForNextLevel) XP")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundColor(.purple)
+        AppCard(padding: AppTheme.Spacing.small) {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Text("LEVEL PROGRESSION")
+                        .font(.caption)
+                        .fontWeight(.heavy)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    Spacer()
+                    Text("\(walletService.wallet.xp) / \(walletService.wallet.xpForNextLevel) XP")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(AppTheme.Colors.primary)
+                }
+                
+                AppProgressBar(value: Double(walletService.wallet.xp), total: Double(walletService.wallet.xpForNextLevel), color: AppTheme.Colors.primary)
             }
-            
-            ProgressView(value: Double(walletService.wallet.xp), total: Double(walletService.wallet.xpForNextLevel))
-                .tint(.purple)
         }
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 18)
-                .fill(Color(.secondarySystemBackground))
-        )
         .padding(.horizontal)
     }
     
     // Lifetime game statistics grid
     private var statsOverviewGrid: some View {
-        HStack(spacing: 12) {
-            statItem(title: "Games Played", value: "\(historyService.sessions.count)", icon: "gamecontroller.fill", color: .blue)
-            statItem(title: "Total Points", value: "\(historyService.totalCombinedScore)", icon: "star.fill", color: .orange)
-            statItem(title: "Badges", value: "\(unlockedBadgesCount)/\(achievementService.achievements.count)", icon: "medal.fill", color: .purple)
+        HStack(spacing: AppTheme.Spacing.small) {
+            AppStatCard(title: "Games Played", value: "\(historyService.sessions.count)", icon: "gamecontroller.fill", color: AppTheme.Colors.primary)
+            AppStatCard(title: "Total Points", value: "\(historyService.totalCombinedScore)", icon: "star.fill", color: AppTheme.Colors.secondary)
+            AppStatCard(title: "Badges", value: "\(unlockedBadgesCount)/\(achievementService.achievements.count)", icon: "medal.fill", color: AppTheme.Colors.primary)
         }
         .padding(.horizontal)
     }
     
-    private func statItem(title: String, value: String, icon: String, color: Color) -> some View {
-        VStack(spacing: 6) {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundColor(color)
-            Text(value)
-                .font(.system(size: 18, weight: .black, design: .rounded))
-            Text(title)
-                .font(.system(size: 10, weight: .semibold))
-                .foregroundColor(.secondary)
-                .lineLimit(1)
-        }
-        .padding(.vertical, 12)
-        .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.secondarySystemBackground))
-        )
-    }
-    
     private var unlockedBadgesCount: Int {
         achievementService.achievements.filter { $0.isUnlocked }.count
+    }
+    
+    // Explicit Inventory Section
+    private var inventorySection: some View {
+        Button {
+            showingInventory = true
+        } label: {
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(Color.purple.opacity(0.15))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: "backpack.fill")
+                        .font(.title3)
+                        .foregroundColor(.purple)
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("My Inventory")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    Text("View and manage your owned items")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.secondary)
+            }
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color(.secondarySystemBackground))
+            )
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal)
     }
     
     // Achievement badges shelf section

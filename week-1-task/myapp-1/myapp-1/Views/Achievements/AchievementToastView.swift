@@ -10,56 +10,38 @@ struct AchievementToastView: View {
     let onDismiss: () -> Void
     
     var body: some View {
-        HStack(spacing: 12) {
-            ZStack {
-                Circle()
-                    .fill(Color.orange.opacity(0.2))
-                    .frame(width: 44, height: 44)
-                Image(systemName: achievement.iconName)
-                    .font(.system(size: 20))
-                    .foregroundColor(.orange)
-            }
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text("ACHIEVEMENT UNLOCKED!")
-                    .font(.system(size: 10, weight: .black))
-                    .foregroundColor(.orange)
+        AppCard(padding: AppTheme.Spacing.small) {
+            HStack(spacing: AppTheme.Spacing.extraSmall) {
+                ZStack {
+                    Circle()
+                        .fill(AppTheme.Colors.secondary.opacity(0.15))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: achievement.iconName)
+                        .font(.system(size: 20))
+                        .foregroundColor(AppTheme.Colors.secondary)
+                }
                 
-                Text(achievement.title)
-                    .font(.headline)
-                    .fontWeight(.bold)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("ACHIEVEMENT UNLOCKED!")
+                        .font(.system(size: 10, weight: .black))
+                        .foregroundColor(AppTheme.Colors.secondary)
+                    
+                    Text(achievement.title)
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    Text(achievement.description)
+                        .font(.caption2)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                        .lineLimit(1)
+                }
                 
-                Text(achievement.description)
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
+                Spacer()
+                
+                AppChip(text: "+\(achievement.coinReward)", icon: "dollarsign.circle.fill", color: AppTheme.Colors.secondary)
             }
-            
-            Spacer()
-            
-            HStack(spacing: 4) {
-                Image(systemName: "dollarsign.circle.fill")
-                    .font(.caption2)
-                    .foregroundColor(.yellow)
-                Text("+\(achievement.coinReward)")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(.orange)
-            }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(Color.orange.opacity(0.15))
-            .clipShape(Capsule())
         }
-        .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
-                .shadow(color: Color.orange.opacity(0.3), radius: 10, x: 0, y: 5)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.orange.opacity(0.5), lineWidth: 1.5)
-        )
         .padding(.horizontal, 20)
         .onTapGesture {
             onDismiss()

@@ -42,8 +42,9 @@ class MarketplaceService: ObservableObject {
         MarketplaceItem(id: "skin_lightning", name: "Lightning Skin", description: "A shockingly fast target", iconName: "bolt.fill", category: .skins, price: 200, badgeText: "SKIN", isStackable: false)
     ]
     
-    @AppStorage("activeAvatarId") var activeAvatarId = "person.fill"
-    @AppStorage("activeTapFrenzySkinId") var activeTapFrenzySkinId = "hand.tap.fill"
+    @AppStorage("activeAvatarId") var activeAvatarId = "avatar_smile"
+    @AppStorage("activeTapFrenzySkinId") var activeTapFrenzySkinId = "skin_bomb"
+    @AppStorage("activeFrameId") var activeFrameId = "none"
     
     private init() {
         loadInventory()
