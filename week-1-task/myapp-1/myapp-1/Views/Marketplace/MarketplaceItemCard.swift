@@ -12,92 +12,123 @@ struct MarketplaceItemCard: View {
     
     @ObservedObject private var walletService = WalletService.shared
     
+    // UI Wrapper properties
+    private var uiModel: MarketplaceUIWrapper {
+        MarketplaceUIHelper.wrap(item)
+    }
+    
+    @State private var isPressed = false
+    
     var body: some View {
-        HStack(spacing: 14) {
-            ZStack {
-                Circle()
-                    .fill(categoryColor.opacity(0.15))
-                    .frame(width: 52, height: 52)
-                Image(systemName: item.iconName)
-                    .font(.system(size: 24))
-                    .foregroundColor(categoryColor)
-            }
-            
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 6) {
-                    Text(item.name)
-                        .font(.headline)
-                        .fontWeight(.bold)
+        Button {
+            onPurchase()
+        } label: {
+            VStack(spacing: 0) {
+                // Top Half: Artwork & Rarity
+                ZStack(alignment: .topTrailing) {
+                    // Rarity Background Gradient
+                    LinearGradient(
+                        colors: [uiModel.rarity.color.opacity(0.6), uiModel.rarity.color.opacity(0.1)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
                     
-                    if let badge = item.badgeText {
-                        Text(badge)
-                            .font(.system(size: 10, weight: .heavy))
+                    VStack {
+                        Spacer()
+                        Image(systemName: item.iconName)
+                            .font(.system(size: 40))
                             .foregroundColor(.white)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(categoryColor)
-                            .clipShape(Capsule())
+                            .shadow(color: uiModel.rarity.color.opacity(0.8), radius: 8, x: 0, y: 0)
+                        Spacer()
                     }
+                    .frame(maxWidth: .infinity)
+                    
+                    // Badges
+                    VStack(alignment: .trailing, spacing: 6) {
+                        if quantityOwned > 0 {
+                            Text("\(quantityOwned)x")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Capsule().fill(Color.black.opacity(0.6)))
+                        }
+                        if let badge = item.badgeText {
+                            Text(badge)
+                                .font(.system(size: 9, weight: .black))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Capsule().fill(uiModel.rarity.color))
+                        }
+                    }
+                    .padding(8)
                 }
+                .frame(height: 110)
                 
-                Text(item.description)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
-            }
-            
-            Spacer()
-            
-            Button {
-                onPurchase()
-            } label: {
-                VStack(spacing: 2) {
-                    if !item.isStackable && quantityOwned > 0 {
-                        Text("OWNED")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.gray)
-                    } else {
-                        HStack(spacing: 4) {
+                // Bottom Half: Text & Price
+                VStack(spacing: 6) {
+                    Text(item.name)
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                        .lineLimit(1)
+                    
+                    Text(item.description)
+                        .font(.system(size: 10))
+                        .foregroundColor(AppTheme.Colors.secondary)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.center)
+                        .frame(height: 28) // Fixed height for 2 lines
+                    
+                    Spacer(minLength: 0)
+                    
+                    // Purchase Button Area
+                    HStack(spacing: 4) {
+                        if !item.isStackable && quantityOwned > 0 {
+                            Text("OWNED")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundColor(.gray)
+                        } else {
                             Image(systemName: "dollarsign.circle.fill")
                                 .font(.caption)
                                 .foregroundColor(.yellow)
                             Text(walletService.wallet.isDeveloperMode ? "FREE" : "\(item.price)")
                                 .font(.system(size: 14, weight: .bold, design: .rounded))
                         }
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 8)
-                        .background(
-                            Capsule()
-                                .fill(walletService.wallet.isDeveloperMode ? Color.red : Color.blue)
-                        )
-                        
-                        if quantityOwned > 0 {
-                            Text("\(quantityOwned) Owned")
-                                .font(.system(size: 10, weight: .semibold))
-                                .foregroundColor(.secondary)
-                        }
                     }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        Capsule()
+                            .fill(!item.isStackable && quantityOwned > 0 ? Color.gray.opacity(0.3) : (walletService.wallet.isDeveloperMode ? Color.red : Color.blue))
+                    )
                 }
+                .padding(10)
+                .background(Color(.secondarySystemBackground))
             }
-            .buttonStyle(.plain)
-            .disabled(!item.isStackable && quantityOwned > 0)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(uiModel.rarity.color.opacity(0.3), lineWidth: 1)
+            )
+            .shadow(color: Color.black.opacity(0.1), radius: 6, x: 0, y: 3)
+            .scaleEffect(isPressed ? 0.95 : 1.0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isPressed)
         }
-        .padding(14)
-        .background(
-            RoundedRectangle(cornerRadius: 18)
-                .fill(Color(.secondarySystemBackground))
-                .shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 3)
-        )
+        .buttonStyle(MarketplaceCardButtonStyle(isPressed: $isPressed))
+        .disabled(!item.isStackable && quantityOwned > 0)
     }
-    
-    private var categoryColor: Color {
-        switch item.category {
-        case .powerUps: return .green
-        case .boosters: return .orange
-        case .cosmetics: return .purple
-        case .avatars: return .blue
-        case .skins: return .red
-        }
+}
+
+// Custom button style to track press state for animations
+struct MarketplaceCardButtonStyle: ButtonStyle {
+    @Binding var isPressed: Bool
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .onChange(of: configuration.isPressed) { _, newValue in
+                isPressed = newValue
+            }
     }
 }
