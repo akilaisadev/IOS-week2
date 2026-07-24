@@ -170,7 +170,7 @@ struct QuizRushView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
             
-            PrimaryButton(title: "Retry", iconName: "arrow.clockwise", backgroundColor: .purple) {
+            AppButton(title: "Retry", iconName: "arrow.clockwise", backgroundColor: AppTheme.Colors.primary) {
                 hasRecordedHistory = false
                 countdownRemaining = nil
                 isShowingReadyScreen = true
@@ -289,7 +289,7 @@ struct QuizRushView: View {
             Spacer()
             
             if viewModel.selectedAnswer != nil {
-                PrimaryButton(
+                AppButton(
                     title: (viewModel.currentIndex + 1 < viewModel.questions.count) ? "Next Question" : "See Results",
                     iconName: "arrow.right",
                     backgroundColor: .purple

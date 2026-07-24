@@ -177,7 +177,7 @@ struct ResultView: View {
                     .shadow(color: Color.orange.opacity(0.3), radius: 4, x: 0, y: 2)
                 }
                 
-                PrimaryButton(
+                AppButton(
                     title: "Play Again",
                     iconName: "arrow.counterclockwise",
                     backgroundColor: mode.color,
