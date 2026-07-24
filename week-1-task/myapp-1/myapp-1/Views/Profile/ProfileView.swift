@@ -38,58 +38,34 @@ struct ProfileView: View {
     
     // XP progression bar showing level progression
     private var xpProgressCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Text("LEVEL PROGRESSION")
-                    .font(.caption)
-                    .fontWeight(.heavy)
-                    .foregroundColor(.secondary)
-                Spacer()
-                Text("\(walletService.wallet.xp) / \(walletService.wallet.xpForNextLevel) XP")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundColor(.purple)
+        AppCard(padding: AppTheme.Spacing.small) {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Text("LEVEL PROGRESSION")
+                        .font(.caption)
+                        .fontWeight(.heavy)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    Spacer()
+                    Text("\(walletService.wallet.xp) / \(walletService.wallet.xpForNextLevel) XP")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(AppTheme.Colors.primary)
+                }
+                
+                AppProgressBar(value: Double(walletService.wallet.xp), total: Double(walletService.wallet.xpForNextLevel), color: AppTheme.Colors.primary)
             }
-            
-            ProgressView(value: Double(walletService.wallet.xp), total: Double(walletService.wallet.xpForNextLevel))
-                .tint(.purple)
         }
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 18)
-                .fill(Color(.secondarySystemBackground))
-        )
         .padding(.horizontal)
     }
     
     // Lifetime game statistics grid
     private var statsOverviewGrid: some View {
-        HStack(spacing: 12) {
-            statItem(title: "Games Played", value: "\(historyService.sessions.count)", icon: "gamecontroller.fill", color: .blue)
-            statItem(title: "Total Points", value: "\(historyService.totalCombinedScore)", icon: "star.fill", color: .orange)
-            statItem(title: "Badges", value: "\(unlockedBadgesCount)/\(achievementService.achievements.count)", icon: "medal.fill", color: .purple)
+        HStack(spacing: AppTheme.Spacing.small) {
+            AppStatCard(title: "Games Played", value: "\(historyService.sessions.count)", icon: "gamecontroller.fill", color: AppTheme.Colors.primary)
+            AppStatCard(title: "Total Points", value: "\(historyService.totalCombinedScore)", icon: "star.fill", color: AppTheme.Colors.secondary)
+            AppStatCard(title: "Badges", value: "\(unlockedBadgesCount)/\(achievementService.achievements.count)", icon: "medal.fill", color: AppTheme.Colors.primary)
         }
         .padding(.horizontal)
-    }
-    
-    private func statItem(title: String, value: String, icon: String, color: Color) -> some View {
-        VStack(spacing: 6) {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundColor(color)
-            Text(value)
-                .font(.system(size: 18, weight: .black, design: .rounded))
-            Text(title)
-                .font(.system(size: 10, weight: .semibold))
-                .foregroundColor(.secondary)
-                .lineLimit(1)
-        }
-        .padding(.vertical, 12)
-        .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.secondarySystemBackground))
-        )
     }
     
     private var unlockedBadgesCount: Int {

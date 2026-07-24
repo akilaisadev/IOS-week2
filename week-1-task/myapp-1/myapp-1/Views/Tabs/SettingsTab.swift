@@ -69,18 +69,21 @@ struct SettingsTab: View {
     private var profileSection: some View {
         Section {
             NavigationLink(destination: ProfileView()) {
-                HStack(spacing: 12) {
+                HStack(spacing: AppTheme.Spacing.small) {
                     Image(systemName: "person.crop.circle.fill")
-                        .font(.title2)
-                        .foregroundColor(.blue)
+                        .font(.system(size: 40))
+                        .foregroundColor(AppTheme.Colors.primary)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("My Profile & Badges Shelf")
                             .font(.headline)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
                         Text("Level \(walletService.wallet.level) • \(walletService.wallet.xp) XP")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(AppTheme.Colors.secondary)
+                            .fontWeight(.bold)
                     }
                 }
+                .padding(.vertical, 4)
             }
             
             VStack(alignment: .leading, spacing: 6) {
@@ -103,26 +106,26 @@ struct SettingsTab: View {
                 } else if case .saved = saveStatus {
                     HStack(spacing: 5) {
                         Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
+                            .foregroundColor(AppTheme.Colors.success)
                         Text("Saved instantly")
                             .font(.caption)
-                            .foregroundColor(.green)
+                            .foregroundColor(AppTheme.Colors.success)
                     }
                     .transition(.opacity.combined(with: .scale))
                 } else if case .error(let msg) = saveStatus {
                     HStack(spacing: 5) {
                         Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundColor(.red)
+                            .foregroundColor(AppTheme.Colors.error)
                         Text(msg)
                             .font(.caption)
-                            .foregroundColor(.red)
+                            .foregroundColor(AppTheme.Colors.error)
                     }
                     .transition(.opacity.combined(with: .move(edge: .top)))
                 }
             }
             .animation(.spring(response: 0.35, dampingFraction: 0.8), value: saveStatus)
         } header: {
-            Text("Player Profile")
+            Text("Player Profile").font(.subheadline)
         } footer: {
             Text("Your gamer tag is shown on your home dashboard and shared high score cards.")
         }
