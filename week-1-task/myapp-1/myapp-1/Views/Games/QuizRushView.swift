@@ -54,6 +54,12 @@ struct QuizRushView: View {
         .navigationTitle("Quiz Rush")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
+        .onAppear {
+            TabBarManager.shared.hide()
+        }
+        .onDisappear {
+            TabBarManager.shared.show()
+        }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: { showingHistory = true }) {

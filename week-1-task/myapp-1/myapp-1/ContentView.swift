@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var selectedTab = 0
+    @ObservedObject private var tabBarManager = TabBarManager.shared
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -30,22 +31,27 @@ struct ContentView: View {
             .ignoresSafeArea()
             
             // Custom Floating Tab Bar
-            HStack(spacing: 0) {
-                tabButton(icon: "gamecontroller.fill", title: "Home", tag: 0)
-                tabButton(icon: "chart.bar.fill", title: "Stats", tag: 1)
-                tabButton(icon: "map.fill", title: "Map", tag: 2)
-                tabButton(icon: "gearshape.fill", title: "Settings", tag: 3)
+            if !TabBarManager.shared.isHidden {
+                HStack(spacing: 0) {
+                    tabButton(icon: "gamecontroller.fill", title: "Home", tag: 0)
+                    tabButton(icon: "chart.bar.fill", title: "Stats", tag: 1)
+                    tabButton(icon: "map.fill", title: "Map", tag: 2)
+                    tabButton(icon: "gearshape.fill", title: "Settings", tag: 3)
+                }
+                .padding(.vertical, AppTheme.Spacing.extraSmall)
+                .padding(.horizontal, AppTheme.Spacing.small)
+                .background(
+                    Capsule()
+                        .fill(AppTheme.Colors.secondaryBackground)
+                        .appCardShadow()
+                )
+                .padding(.horizontal, AppTheme.Spacing.medium)
+                .padding(.bottom, 24) // Float above bottom edge
+                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
-            .padding(.vertical, AppTheme.Spacing.extraSmall)
-            .padding(.horizontal, AppTheme.Spacing.small)
-            .background(
-                Capsule()
-                    .fill(AppTheme.Colors.secondaryBackground)
-                    .appCardShadow()
-            )
-            .padding(.horizontal, AppTheme.Spacing.medium)
-            .padding(.bottom, 24) // Float above bottom edge
         }
+        .environmentObject(TabBarManager.shared)
+        .onReceive(TabBarManager.shared.$isHidden) { _ in } // Force view update
     }
     
     @ViewBuilder
