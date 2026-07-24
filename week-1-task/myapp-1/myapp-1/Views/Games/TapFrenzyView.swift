@@ -43,14 +43,11 @@ struct TapFrenzyView: View {
         ZStack {
             AnimatedBackground(colors: [Color.blue.opacity(0.15), Color.cyan.opacity(0.15)])
             
-            VStack(spacing: 20) {
-                VStack(spacing: 12) {
+            VStack(spacing: AppTheme.Spacing.small) {
+                VStack(spacing: AppTheme.Spacing.extraSmall) {
                     HStack {
                         ScoreView(score: score, multiplier: comboMultiplier)
-                        Spacer()
-                        
-
-                        
+                        Spacer(minLength: AppTheme.Spacing.small)
                         HighScoreView(highScore: highScore)
                     }
                     
@@ -63,7 +60,7 @@ struct TapFrenzyView: View {
                         .font(.headline)
                         .fontWeight(.bold)
                         .foregroundColor(.yellow)
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, AppTheme.Spacing.small)
                         .padding(.vertical, 8)
                         .background(Color.black.opacity(0.7))
                         .clipShape(Capsule())
@@ -71,11 +68,11 @@ struct TapFrenzyView: View {
                 } else {
                     Text(hasScoreShield ? "🛡️ Score Shield Active!" : "Tap fast! Watch out for RED traps!")
                         .font(.subheadline)
-                        .foregroundColor(hasScoreShield ? .blue : .secondary)
+                        .foregroundColor(hasScoreShield ? .blue : AppTheme.Colors.textSecondary)
                         .frame(height: 36)
                 }
                 
-                Spacer()
+                Spacer(minLength: AppTheme.Spacing.small)
                 
                 if !isGameOver && !isShowingReadyScreen {
                     BoosterHUDView(boosterID: "booster_time_surge", iconName: "bolt.fill", title: "+5s Surge", color: .purple) {
@@ -83,7 +80,7 @@ struct TapFrenzyView: View {
                         triggerBonusMessage("TIME SURGE! +5s")
                         SoundManager.shared.playBonus()
                     }
-                    .padding(.bottom, 10)
+                    .padding(.bottom, AppTheme.Spacing.extraSmall)
                 }
                 
                 if !isGameOver {
@@ -96,6 +93,7 @@ struct TapFrenzyView: View {
                         .scaleEffect(isTrapActive ? 1.05 : 1.0)
                         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: buttonOffset)
                     }
+                    .buttonStyle(AppButtonScaleStyle())
                     .offset(buttonOffset)
                     .disabled(isGameOver)
                 }
