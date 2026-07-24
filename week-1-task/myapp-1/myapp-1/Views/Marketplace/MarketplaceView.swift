@@ -82,8 +82,8 @@ struct MarketplaceView: View {
                             .foregroundColor(.yellow)
                         Text("\(walletService.wallet.coins)")
                             .font(.system(.headline, design: .rounded, weight: .black))
-                            .contentTransition(.numericText())
-                            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: walletService.wallet.coins)
+                            .foregroundColor(.white)
+                            // .contentTransition(.numericText()) // Removed to prevent UINavigationBar crash in previews
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -102,7 +102,6 @@ struct MarketplaceView: View {
             .sheet(item: $previewItem) { item in
                 MarketplacePreviewSheet(
                     item: item,
-                    quantityOwned: marketplaceService.quantity(for: item.id),
                     onPurchase: { handlePurchase(item) }
                 )
                 .presentationDetents([.medium, .large])
@@ -360,11 +359,15 @@ class MarketplaceUIHelper {
 
 struct MarketplacePreviewSheet: View {
     let item: MarketplaceItem
-    let quantityOwned: Int
     let onPurchase: () -> Void
     @Environment(\.dismiss) private var dismiss
     
     @ObservedObject private var walletService = WalletService.shared
+    @ObservedObject private var marketplaceService = MarketplaceService.shared
+    
+    private var quantityOwned: Int {
+        marketplaceService.quantity(for: item.id)
+    }
     
     private var uiModel: MarketplaceUIWrapper {
         MarketplaceUIHelper.wrap(item)
@@ -431,19 +434,25 @@ struct MarketplacePreviewSheet: View {
                     
                     if isEquippable {
                         Button {
-                            if item.category == .avatars { MarketplaceService.shared.activeAvatarId = item.id }
-                            if item.category == .skins { MarketplaceService.shared.activeTapFrenzySkinId = item.id }
-                            if item.category == .cosmetics { MarketplaceService.shared.activeFrameId = item.id }
-                            dismiss()
+                            if isEquipped {
+                                // Unequip
+                                if item.category == .avatars { marketplaceService.activeAvatarId = "default" }
+                                if item.category == .skins { marketplaceService.activeTapFrenzySkinId = "default" }
+                                if item.category == .cosmetics { marketplaceService.activeFrameId = "default" }
+                            } else {
+                                // Equip
+                                if item.category == .avatars { marketplaceService.activeAvatarId = item.id }
+                                if item.category == .skins { marketplaceService.activeTapFrenzySkinId = item.id }
+                                if item.category == .cosmetics { marketplaceService.activeFrameId = item.id }
+                            }
                         } label: {
-                            Text(isEquipped ? "EQUIPPED" : "EQUIP")
+                            Text(isEquipped ? "UNEQUIP" : "EQUIP")
                                 .font(.headline)
-                                .foregroundColor(isEquipped ? .gray : .white)
+                                .foregroundColor(isEquipped ? .red : .white)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 16)
                                 .background(Capsule().fill(isEquipped ? Color(.systemGray5) : AppTheme.Colors.primary))
                         }
-                        .disabled(isEquipped)
                     } else {
                         Text("You already own this item.")
                             .font(.subheadline)
