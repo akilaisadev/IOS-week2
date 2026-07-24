@@ -16,6 +16,7 @@ struct HomeTab: View {
     @AppStorage("playerName") private var playerName = "Player 1"
     @State private var showingOnboarding = false
     @State private var showingMarketplace = false
+    @State private var activeGame: GameMode? = nil
     
     var body: some View {
         NavigationStack {
@@ -105,6 +106,16 @@ struct HomeTab: View {
                     showingOnboarding = true
                 } else {
                     LocationService.shared.requestPermission()
+                }
+            }
+            .fullScreenCover(item: $activeGame) { game in
+                switch game {
+                case .tapFrenzy:
+                    TapFrenzyView()
+                case .lightItUp:
+                    LightItUpView()
+                case .quizRush:
+                    QuizRushView()
                 }
             }
         }
@@ -228,7 +239,9 @@ struct HomeTab: View {
                 .padding(.horizontal)
             
             VStack(spacing: 16) {
-                NavigationLink(destination: TapFrenzyView()) {
+                Button {
+                    activeGame = .tapFrenzy
+                } label: {
                     NavigationCard(
                         title: "Tap Frenzy",
                         subtitle: "Test your reflexes in this fast-paced tapping challenge.",
@@ -238,7 +251,9 @@ struct HomeTab: View {
                 }
                 .buttonStyle(.plain)
                 
-                NavigationLink(destination: LightItUpView()) {
+                Button {
+                    activeGame = .lightItUp
+                } label: {
                     NavigationCard(
                         title: "Light It Up",
                         subtitle: "Memorize and repeat the glowing patterns to survive.",
@@ -248,7 +263,9 @@ struct HomeTab: View {
                 }
                 .buttonStyle(.plain)
                 
-                NavigationLink(destination: QuizRushView()) {
+                Button {
+                    activeGame = .quizRush
+                } label: {
                     NavigationCard(
                         title: "Quiz Rush",
                         subtitle: "Race against the clock in this exciting live trivia game!",
