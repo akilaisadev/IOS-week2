@@ -90,7 +90,7 @@ struct HomeTab: View {
             }
             .blur(radius: showingOnboarding ? 8 : 0)
             .disabled(showingOnboarding)
-            .navigationBarHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
             .sheet(isPresented: $showingMarketplace) {
                 MarketplaceView()
             }
