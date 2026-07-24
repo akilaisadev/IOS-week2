@@ -33,5 +33,4 @@ enum GameMode: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-// backward compatibility alias
 typealias GameType = GameMode

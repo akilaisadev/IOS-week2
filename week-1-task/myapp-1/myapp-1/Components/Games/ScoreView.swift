@@ -27,7 +27,6 @@ struct ScoreView: View {
             
             Spacer()
             
-            // Shows a multiplier badge if the combo multiplier is greater than 1.
             if multiplier > 1 {
                 HStack(spacing: 4) {
                     Image(systemName: "flame.fill")
@@ -42,7 +41,6 @@ struct ScoreView: View {
                 .clipShape(Capsule())
             }
             
-            // Shows a streak badge if streak tracking is active.
             if let streak = streak, streak > 0 {
                 HStack(spacing: 4) {
                     Image(systemName: "bolt.fill")
@@ -60,8 +58,12 @@ struct ScoreView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
-                .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
+                .fill(.ultraThinMaterial)
+                .shadow(color: Color.black.opacity(0.12), radius: 10, x: 0, y: 5)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.white.opacity(0.2), lineWidth: 1)
         )
     }
 }

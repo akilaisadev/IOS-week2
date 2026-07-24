@@ -58,7 +58,6 @@ struct StatsTab: View {
         }
     }
     
-    // mode selection picker at top of screen
     private var modePickerView: some View {
         Picker("Filter Mode", selection: $selectedMode) {
             ForEach(ModeSelection.allCases) { selection in
@@ -69,7 +68,6 @@ struct StatsTab: View {
         .padding(.horizontal, 4)
     }
     
-    // view displayed when no games have been recorded yet
     private var emptyStateView: some View {
         VStack(spacing: 16) {
             Image(systemName: "chart.bar.xaxis")
@@ -93,7 +91,6 @@ struct StatsTab: View {
         .padding(.top, 20)
     }
     
-    // dynamic 6-card summary metrics grid including time played metrics
     private var summaryMetricsGrid: some View {
         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
             if let mode = selectedMode.gameMode {
@@ -174,7 +171,6 @@ struct StatsTab: View {
         }
     }
     
-    // container switching between overview charts and dedicated mode charts
     @ViewBuilder
     private var chartsContainerView: some View {
         if let mode = selectedMode.gameMode {
@@ -187,7 +183,6 @@ struct StatsTab: View {
         }
     }
     
-    // dedicated bar chart showing recent attempt score progression for a specific game mode
     private func dedicatedModeChartView(for mode: GameMode) -> some View {
         let history = statsVM.historySessions(for: mode)
         
@@ -234,7 +229,6 @@ struct StatsTab: View {
         .cornerRadius(12)
     }
     
-    // dedicated bar chart showing session duration progression for a specific game mode
     private func dedicatedModeTimeChartView(for mode: GameMode) -> some View {
         let history = statsVM.historySessions(for: mode)
         
@@ -281,7 +275,6 @@ struct StatsTab: View {
         .cornerRadius(12)
     }
     
-    // bar chart comparing personal best scores across game modes
     private var bestScoresChartView: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -319,7 +312,6 @@ struct StatsTab: View {
         .cornerRadius(12)
     }
     
-    // bar chart comparing total points accumulated per game mode
     private var totalPointsChartView: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -357,7 +349,6 @@ struct StatsTab: View {
         .cornerRadius(12)
     }
     
-    // bar chart comparing total time played per game mode in games overview
     private var totalTimePlayedChartView: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -396,7 +387,6 @@ struct StatsTab: View {
         .cornerRadius(12)
     }
     
-    // list of recently completed game sessions filtered by mode
     private var recentGamesView: some View {
         let sessions = statsVM.recentSessions(for: selectedMode.gameMode)
         
@@ -460,7 +450,6 @@ struct StatsTab: View {
         .cornerRadius(12)
     }
     
-    // breakdown of games played, time duration, and total scores per mode
     private var modeBreakdownView: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Mode Breakdown")
@@ -498,7 +487,6 @@ struct StatsTab: View {
         .cornerRadius(12)
     }
     
-    // helper to create summary cards
     private func metricCard(title: String, value: String, icon: String, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {

@@ -33,28 +33,38 @@ struct CountdownOverlayView: View {
     
     var body: some View {
         ZStack {
-            Color.black.opacity(0.45)
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .ignoresSafeArea()
+            
+            Color.black.opacity(0.4)
                 .ignoresSafeArea()
             
             ZStack {
                 Circle()
-                    .fill(displayColor.opacity(0.25))
-                    .frame(width: 220, height: 220)
-                    .scaleEffect(isScaled ? 1.2 : 0.8)
-                    .opacity(isScaled ? 0.3 : 0.8)
+                    .fill(displayColor.opacity(0.2))
+                    .frame(width: 200, height: 200)
+                    .scaleEffect(isScaled ? 1.3 : 0.8)
+                    .opacity(isScaled ? 0.0 : 1.0)
+                    .animation(.easeOut(duration: 0.8), value: isScaled)
                 
                 Circle()
-                    .stroke(displayColor.opacity(0.6), lineWidth: 6)
-                    .frame(width: 170, height: 170)
-                    .scaleEffect(isScaled ? 1.05 : 0.95)
+                    .fill(Color.white.opacity(0.15))
+                    .frame(width: 140, height: 140)
+                    .background(Circle().fill(.ultraThinMaterial))
+                    .shadow(color: displayColor.opacity(0.4), radius: 20, x: 0, y: 10)
+                
+                Circle()
+                    .stroke(displayColor.opacity(0.8), lineWidth: 2)
+                    .frame(width: 140, height: 140)
                 
                 Text(displayText)
-                    .font(.system(size: countdown == 0 ? 70 : 90, weight: .black, design: .rounded))
+                    .font(.system(size: countdown == 0 ? 55 : 65, weight: .heavy, design: .rounded))
                     .foregroundColor(.white)
-                    .shadow(color: displayColor.opacity(0.8), radius: 15, x: 0, y: 5)
+                    .shadow(color: displayColor, radius: 10, x: 0, y: 0)
             }
             .id(countdown)
-            .scaleEffect(isScaled ? 1.0 : 0.5)
+            .scaleEffect(isScaled ? 1.0 : 0.4)
             .opacity(isScaled ? 1.0 : 0.0)
             .onAppear {
                 triggerPulse()

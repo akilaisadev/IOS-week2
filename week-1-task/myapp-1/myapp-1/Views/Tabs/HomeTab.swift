@@ -9,10 +9,13 @@ import SwiftUI
 
 struct HomeTab: View {
     @ObservedObject private var historyService = HistoryService.shared
+    @ObservedObject private var walletService = WalletService.shared
+    @ObservedObject private var streakService = StreakService.shared
     @AppStorage("moveTrophyRoomToBottom") private var moveTrophyRoomToBottom = false
     @AppStorage("hasEnteredPlayerDetails") private var hasEnteredPlayerDetails = false
     @AppStorage("playerName") private var playerName = "Player 1"
     @State private var showingOnboarding = false
+    @State private var showingMarketplace = false
     
     var body: some View {
         NavigationStack {
@@ -21,30 +24,77 @@ struct HomeTab: View {
                 
                 ScrollView {
                     VStack(spacing: 24) {
-                        // Title Header
-                        titleHeader
+                        HStack(spacing: 10) {
+                            StreakBadge(streakDays: streakService.currentStreak)
+                            
+                            Spacer()
+                            
+                            Button {
+                                showingMarketplace = true
+                            } label: {
+                                Image(systemName: "cart.fill")
+                                    .font(.system(size: 15, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .padding(8)
+                                    .background(Color.blue)
+                                    .clipShape(Circle())
+                                    .shadow(color: Color.blue.opacity(0.3), radius: 4, x: 0, y: 2)
+                            }
+                            
+                            CoinBadge(coins: walletService.wallet.coins) {
+                                showingMarketplace = true
+                            }
+                        }
+                        .padding(.horizontal)
+                        .padding(.top, 8)
                         
-                        // Conditional layout based on moveTrophyRoomToBottom setting
+                        if let banner = streakService.streakBannerMessage {
+                            HStack {
+                                Text(banner)
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.white)
+                                Spacer()
+                                Button {
+                                    streakService.dismissBanner()
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundColor(.white.opacity(0.8))
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background(LinearGradient(colors: [.orange, .red], startPoint: .leading, endPoint: .trailing))
+                            .cornerRadius(14)
+                            .padding(.horizontal)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                        }
+                        
+                        titleHeader
                         if moveTrophyRoomToBottom {
                             gamesListSection
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
-                            trophyRoomCard
+                            quickStatsGrid
                                 .transition(.move(edge: .top).combined(with: .opacity))
                         } else {
-                            trophyRoomCard
+                            quickStatsGrid
                                 .transition(.move(edge: .top).combined(with: .opacity))
                             gamesListSection
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
                         }
                         
-                        Spacer(minLength: 40)
+                        Spacer(minLength: 90)
                     }
+                    .padding(.bottom, 90)
                     .animation(.spring(response: 0.45, dampingFraction: 0.8), value: moveTrophyRoomToBottom)
                 }
             }
             .blur(radius: showingOnboarding ? 8 : 0)
             .disabled(showingOnboarding)
             .navigationBarHidden(true)
+            .sheet(isPresented: $showingMarketplace) {
+                MarketplaceView()
+            }
             .sheet(isPresented: $showingOnboarding, onDismiss: {
                 LocationService.shared.requestPermission()
             }) {
@@ -60,8 +110,6 @@ struct HomeTab: View {
             }
         }
     }
-    
-    // Title Header Section
     private var titleHeader: some View {
         VStack(spacing: 6) {
             Image(systemName: "gamecontroller.fill")
@@ -77,11 +125,38 @@ struct HomeTab: View {
                 .font(.subheadline)
                 .fontWeight(.medium)
                 .foregroundColor(.secondary)
+            
+            NavigationLink(destination: ProfileView()) {
+                HStack(spacing: 6) {
+                    Text("LEVEL \(walletService.wallet.level)")
+                        .font(.system(size: 11, weight: .black, design: .rounded))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(LinearGradient(colors: [.blue, .purple], startPoint: .leading, endPoint: .trailing))
+                        .clipShape(Capsule())
+                    
+                    Text("\(walletService.wallet.xp) XP")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.secondary)
+                    
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(.secondary)
+                }
+                .padding(.top, 2)
+            }
+            .buttonStyle(.plain)
         }
         .padding(.top, 16)
     }
+    private var quickStatsGrid: some View {
+        VStack(spacing: 12) {
+            trophyRoomCard
+            achievementsCard
+        }
+    }
     
-    // Trophy Room / Leaderboard Hero Banner
     private var trophyRoomCard: some View {
         NavigationLink(destination: LeaderboardView()) {
             HStack(spacing: 16) {
@@ -95,7 +170,7 @@ struct HomeTab: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Trophy Room & Leaderboard")
+                    Text("Trophy Room")
                         .font(.headline)
                         .fontWeight(.bold)
                         .foregroundColor(.primary)
@@ -127,10 +202,53 @@ struct HomeTab: View {
         .padding(.horizontal)
     }
     
-    // Game Navigation Cards Section
+    private var achievementsCard: some View {
+        NavigationLink(destination: AchievementsView()) {
+            HStack(spacing: 16) {
+                ZStack {
+                    Circle()
+                        .fill(Color.orange.opacity(0.25))
+                        .frame(width: 58, height: 58)
+                    Image(systemName: "medal.fill")
+                        .font(.system(size: 28))
+                        .foregroundColor(.orange)
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Game Achievements")
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .foregroundColor(.primary)
+                    
+                    Text("\(AchievementService.shared.achievements.filter { $0.isUnlocked }.count) / \(AchievementService.shared.achievements.count) Badges Unlocked")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.orange)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.headline)
+                    .foregroundColor(.secondary)
+            }
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color(.systemBackground))
+                    .shadow(color: Color.orange.opacity(0.15), radius: 8, x: 0, y: 4)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(Color.orange.opacity(0.3), lineWidth: 1.5)
+            )
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal)
+    }
     private var gamesListSection: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("MY GAMES")
+            Text("MINI GAMES")
                 .font(.caption)
                 .fontWeight(.heavy)
                 .foregroundColor(.secondary)
@@ -140,7 +258,7 @@ struct HomeTab: View {
                 NavigationLink(destination: TapFrenzyView()) {
                     NavigationCard(
                         title: "Tap Frenzy",
-                        subtitle: "High-speed reflex challenge with combo multipliers & traps.",
+                        subtitle: "Test your reflexes in this fast-paced tapping challenge.",
                         iconName: "hand.tap.fill",
                         accentColor: .blue
                     )
@@ -150,7 +268,7 @@ struct HomeTab: View {
                 NavigationLink(destination: LightItUpView()) {
                     NavigationCard(
                         title: "Light It Up",
-                        subtitle: "Grid reflex game featuring 4 difficulty tiers & 3-life system.",
+                        subtitle: "Memorize and repeat the glowing patterns to survive.",
                         iconName: "sparkles",
                         accentColor: .orange
                     )
@@ -160,7 +278,7 @@ struct HomeTab: View {
                 NavigationLink(destination: QuizRushView()) {
                     NavigationCard(
                         title: "Quiz Rush",
-                        subtitle: "Async/await live trivia questions powered by OpenTDB.",
+                        subtitle: "Race against the clock in this exciting live trivia game!",
                         iconName: "questionmark.bubble.fill",
                         accentColor: .purple
                     )
@@ -175,7 +293,5 @@ struct HomeTab: View {
 #Preview {
     HomeTab()
 }
-
-// backward compatibility alias
 typealias HomeView = HomeTab
 

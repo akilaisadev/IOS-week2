@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LeaderboardView: View {
     @ObservedObject private var historyService = HistoryService.shared
+    @ObservedObject private var walletService = WalletService.shared
     @AppStorage("tapFrenzyHighScore") private var tapHighScore = 0
     @AppStorage("lightItUpHighScore") private var lightHighScore = 0
     @AppStorage("quizRushHighScore") private var quizHighScore = 0
@@ -18,8 +19,22 @@ struct LeaderboardView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                // Total Combined Score Hero Card
-                VStack(spacing: 20) {
+                VStack(spacing: 16) {
+                    HStack(spacing: 8) {
+                        Text("LEVEL \(walletService.wallet.level)")
+                            .font(.system(size: 12, weight: .black, design: .rounded))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(LinearGradient(colors: [.blue, .purple], startPoint: .leading, endPoint: .trailing))
+                            .clipShape(Capsule())
+                        
+                        Text("\(walletService.wallet.xp) Total XP")
+                            .font(.caption)
+                            .fontWeight(.bold)
+                            .foregroundColor(.secondary)
+                    }
+                    
                     Image(systemName: "crown.fill")
                         .font(.system(size: 50))
                         .foregroundColor(.yellow)
@@ -44,8 +59,6 @@ struct LeaderboardView: View {
                         .shadow(color: Color.black.opacity(0.08), radius: 10, x: 0, y: 5)
                 )
                 .padding(.horizontal)
-                
-                // High Scores Breakdown per Game Mode
                 VStack(alignment: .leading, spacing: 14) {
                     Text("GAME HIGH SCORES")
                         .font(.caption)
@@ -60,8 +73,6 @@ struct LeaderboardView: View {
                     }
                     .padding(.horizontal)
                 }
-                
-                // Recent Activity Log section
                 VStack(alignment: .leading, spacing: 14) {
                     HStack {
                         Text("RECENT ACTIVITY LOG")
@@ -146,8 +157,6 @@ struct LeaderboardView: View {
             Text("This will delete all saved session logs from local storage.")
         }
     }
-    
-    // Helper view for displaying individual game mode high score badges
     private func highScoreRow(title: String, icon: String, color: Color, score: Int) -> some View {
         HStack {
             Image(systemName: icon)

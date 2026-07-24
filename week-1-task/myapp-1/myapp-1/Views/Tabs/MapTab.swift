@@ -13,8 +13,6 @@ struct MapTab: View {
     @ObservedObject private var historyService = HistoryService.shared
     @State private var selectedMode: ModeSelection = .all
     @State private var selectedSession: GameSession? = nil
-    
-    // default camera position around Colombo (6.9271, 79.8612)
     @State private var cameraPosition: MapCameraPosition = .region(
         MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 6.9271, longitude: 79.8612),
@@ -25,11 +23,9 @@ struct MapTab: View {
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
-                // interactive map with annotations
                 mapView
                 
                 VStack(spacing: 12) {
-                    // mode filter picker at top
                     modePickerView
                     
                     if sessionsWithLocation.isEmpty {
@@ -38,21 +34,18 @@ struct MapTab: View {
                     
                     Spacer()
                     
-                    // floating recenter button
                     HStack {
                         Spacer()
                         recenterButton
                     }
                     .padding(.horizontal)
-                    
-                    // selected session detail callout overlay
                     if let session = selectedSession {
                         sessionCalloutCard(for: session)
                             .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
                 }
                 .padding(.top, 8)
-                .padding(.bottom, 16)
+                .padding(.bottom, 80)
             }
             .navigationTitle("Map")
             .navigationBarTitleDisplayMode(.inline)
@@ -65,8 +58,6 @@ struct MapTab: View {
             }
         }
     }
-    
-    // filter sessions that have valid latitude and longitude for selected mode
     private var sessionsWithLocation: [GameSession] {
         let all = historyService.sessions.filter { $0.hasValidLocation && $0.coordinate != nil }
         if let mode = selectedMode.gameMode {
@@ -74,39 +65,44 @@ struct MapTab: View {
         }
         return all
     }
-    
-    // interactive map view plotting sessions
     private var mapView: some View {
         Map(position: $cameraPosition) {
+            MapPolyline(coordinates: sessionsWithLocation.compactMap { $0.coordinate })
+                .stroke(Color.purple.opacity(0.5), style: StrokeStyle(lineWidth: 4, lineCap: .round, dash: [8, 8]))
+            
             ForEach(sessionsWithLocation) { session in
                 if let coordinate = session.coordinate {
+                    let isSelected = (selectedSession?.id == session.id)
+                    
                     Annotation(session.mode.title, coordinate: coordinate) {
                         Button {
-                            withAnimation {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                                 selectedSession = session
                             }
                         } label: {
                             VStack(spacing: 0) {
                                 Image(systemName: session.mode.iconName)
-                                    .font(.caption)
+                                    .font(.system(size: isSelected ? 20 : 14))
                                     .foregroundColor(.white)
-                                    .padding(8)
+                                    .padding(isSelected ? 12 : 8)
                                     .background(
                                         Circle()
                                             .fill(session.mode.color)
                                             .overlay(
                                                 Circle()
-                                                    .stroke(selectedSession?.id == session.id ? Color.primary : Color.white, lineWidth: selectedSession?.id == session.id ? 3 : 1.5)
+                                                    .stroke(Color.white, lineWidth: isSelected ? 3 : 1.5)
                                             )
+                                            .shadow(color: session.mode.color.opacity(0.5), radius: isSelected ? 8 : 4, x: 0, y: isSelected ? 4 : 2)
                                     )
-                                    .shadow(radius: 4)
                                 
                                 Image(systemName: "triangle.fill")
-                                    .font(.system(size: 10))
+                                    .font(.system(size: isSelected ? 14 : 10))
                                     .foregroundColor(session.mode.color)
                                     .rotationEffect(.degrees(180))
-                                    .offset(y: -3)
+                                    .offset(y: -2)
                             }
+                            .scaleEffect(isSelected ? 1.1 : 1.0)
+                            .animation(.spring(), value: isSelected)
                         }
                     }
                 }
@@ -114,8 +110,6 @@ struct MapTab: View {
         }
         .ignoresSafeArea(edges: .bottom)
     }
-    
-    // mode filter picker inside styled container
     private var modePickerView: some View {
         Picker("Filter Mode", selection: $selectedMode) {
             ForEach(ModeSelection.allCases) { selection in
@@ -125,13 +119,17 @@ struct MapTab: View {
         .pickerStyle(.segmented)
         .padding(.horizontal)
         .padding(.vertical, 6)
-        .background(Color(.systemBackground).opacity(0.9))
-        .cornerRadius(10)
-        .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(.ultraThinMaterial)
+                .shadow(color: Color.black.opacity(0.1), radius: 6, x: 0, y: 3)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+        )
         .padding(.horizontal)
     }
-    
-    // overlay displayed when no mapped sessions match filter
     private var emptyStateOverlay: some View {
         VStack(spacing: 8) {
             HStack {
@@ -153,8 +151,6 @@ struct MapTab: View {
         .shadow(radius: 4)
         .padding(.horizontal)
     }
-    
-    // button to recenter map on mapped sessions or default coordinates
     private var recenterButton: some View {
         Button {
             withAnimation {
@@ -170,8 +166,6 @@ struct MapTab: View {
                 .shadow(radius: 4)
         }
     }
-    
-    // detail callout card for the selected game session pin
     private func sessionCalloutCard(for session: GameSession) -> some View {
         HStack(spacing: 14) {
             Image(systemName: session.mode.iconName)
@@ -213,13 +207,17 @@ struct MapTab: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(14)
-        .shadow(color: Color.black.opacity(0.15), radius: 6, x: 0, y: 3)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(.ultraThinMaterial)
+                .shadow(color: Color.black.opacity(0.12), radius: 10, x: 0, y: 5)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+        )
         .padding(.horizontal)
     }
-    
-    // center camera region around mapped sessions or default location
     private func recenterMap() {
         if let firstSession = sessionsWithLocation.first, let coordinate = firstSession.coordinate {
             withAnimation {
@@ -229,7 +227,6 @@ struct MapTab: View {
                 ))
             }
         } else {
-            // fallback to Colombo coordinates
             withAnimation {
                 cameraPosition = .region(MKCoordinateRegion(
                     center: CLLocationCoordinate2D(latitude: 6.9271, longitude: 79.8612),

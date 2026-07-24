@@ -29,6 +29,19 @@ struct PlayerOnboardingView: View {
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
+                    
+                    HStack(spacing: 6) {
+                        Image(systemName: "dollarsign.circle.fill")
+                            .foregroundColor(.yellow)
+                        Text("100 Welcome Coins Awarded!")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundColor(.yellow)
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 6)
+                    .background(Color.black.opacity(0.75))
+                    .clipShape(Capsule())
+                    .padding(.top, 4)
                 }
                 .padding(.horizontal)
                 

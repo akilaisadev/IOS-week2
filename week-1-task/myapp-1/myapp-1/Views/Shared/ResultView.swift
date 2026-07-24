@@ -18,6 +18,7 @@ struct ResultView: View {
     @State private var showingActions = false
     @State private var canInteract = false
     @AppStorage("playerName") private var playerName = "Player 1"
+    @ObservedObject private var achievementService = AchievementService.shared
     
     var isNewBest: Bool {
         score >= highScore && score > 0
@@ -33,24 +34,36 @@ struct ResultView: View {
     }
     
     var body: some View {
-        ZStack {
-            if !showingActions {
-                scoreScreen
-                    .transition(.opacity)
-            } else {
-                actionsScreen
-                    .transition(.opacity)
+        ZStack(alignment: .top) {
+            VStack {
+                if let ach = achievementService.recentlyUnlocked {
+                    AchievementToastView(achievement: ach) {
+                        achievementService.dismissToast()
+                    }
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .padding(.top, 10)
+                }
+                
+                ZStack {
+                    if !showingActions {
+                        scoreScreen
+                            .transition(.opacity)
+                    } else {
+                        actionsScreen
+                            .transition(.opacity)
+                    }
+                }
+                .padding(20)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color(.systemBackground))
+                        .shadow(color: Color.black.opacity(0.18), radius: 20, x: 0, y: 10)
+                )
+                .padding(.horizontal, 28)
+                .frame(maxWidth: 400)
+                .animation(.easeInOut(duration: 0.22), value: showingActions)
             }
         }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color(.systemBackground))
-                .shadow(color: Color.black.opacity(0.18), radius: 20, x: 0, y: 10)
-        )
-        .padding(.horizontal, 28)
-        .frame(maxWidth: 400)
-        .animation(.easeInOut(duration: 0.22), value: showingActions)
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 canInteract = true
@@ -58,7 +71,6 @@ struct ResultView: View {
         }
     }
     
-    // initial stage displaying high score badge and safe continuation
     private var scoreScreen: some View {
         VStack(spacing: 16) {
             VStack(spacing: 6) {
@@ -96,10 +108,8 @@ struct ResultView: View {
         }
     }
     
-    // second stage containing navigation actions and native ShareLink
     private var actionsScreen: some View {
         VStack(spacing: 16) {
-            // top bar with back navigation
             HStack {
                 Button {
                     showingActions = false
@@ -130,7 +140,6 @@ struct ResultView: View {
             }
             .padding(.bottom, 2)
             
-            // compact summary bar
             HStack {
                 Text("Final Score: \(score)")
                     .font(.headline)
@@ -149,9 +158,7 @@ struct ResultView: View {
             .background(Color(.secondarySystemBackground))
             .cornerRadius(10)
             
-            // action buttons container including native ShareLink
             VStack(spacing: 10) {
-                // native share button
                 ShareLink(
                     item: shareText,
                     subject: Text("\(mode.title) Score: \(score) pts"),
@@ -170,7 +177,6 @@ struct ResultView: View {
                     .shadow(color: Color.orange.opacity(0.3), radius: 4, x: 0, y: 2)
                 }
                 
-                // play again primary button
                 PrimaryButton(
                     title: "Play Again",
                     iconName: "arrow.counterclockwise",
@@ -178,7 +184,6 @@ struct ResultView: View {
                     action: onPlayAgain
                 )
                 
-                // view history secondary action
                 if let onViewHistory = onViewHistory {
                     Button(action: onViewHistory) {
                         HStack {
@@ -191,7 +196,6 @@ struct ResultView: View {
                     }
                 }
                 
-                // return home action
                 Button(action: onHome) {
                     HStack {
                         Image(systemName: "house.fill")

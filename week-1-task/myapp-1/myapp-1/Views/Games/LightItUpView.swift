@@ -2,8 +2,6 @@
 //  LightItUpView.swift
 //  myapp-1
 //
-//  Week 2 assignment: Grid reflex game with 4 progressive difficulty levels,
-//  level-up animations, flash overlays, duration settings, 3-life system, and session history.
 //
 
 import SwiftUI
@@ -31,14 +29,14 @@ struct LightItUpView: View {
     @State private var cardTimeRemaining: Double = 1.5
     @State private var tickCounter = 0
     
-    // Persist high score specifically for Light It Up
     @AppStorage("lightItUpHighScore") private var highScore = 0
     
-    // History sheet & recording state
     @State private var showingHistory = false
     @State private var hasRecordedHistory = false
     
-    // Timer firing every 0.1 seconds for precise card light timing and countdown
+    @ObservedObject private var powerUpService = PowerUpService.shared
+    @ObservedObject private var marketplaceService = MarketplaceService.shared
+    
     let gameTimer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
     
     var body: some View {
@@ -46,26 +44,36 @@ struct LightItUpView: View {
             AnimatedBackground(colors: [Color.orange.opacity(0.18), Color.yellow.opacity(0.15)])
             
             VStack(spacing: 16) {
-                // Top header bar: Score, High Score, Timer, Lives & Level Badge
                 VStack(spacing: 12) {
-                    // Row 1: Balanced Score & High Score
                     HStack {
                         ScoreView(score: score)
                         Spacer()
+                        
+                        if !isGameOver && !isShowingReadyScreen {
+                            BoosterHUDView(boosterID: "booster_time_surge", iconName: "bolt.fill", title: "+5s Surge", color: .purple) {
+                                timeRemaining += 5
+                                SoundManager.shared.playBonus()
+                            }
+                        }
+                        
                         HighScoreView(highScore: highScore)
                     }
                     
-                    // Row 2: Full-Width Timer Bar for maximum readability
                     TimerView(timeRemaining: Int(ceil(Double(timeRemaining))), totalTime: selectedDuration)
                     
-                    // Row 3: Perfectly Aligned 3-Life Heart Display & Single-Line Level Pill
                     HStack {
-                        // 3-Life System Heart Display
                         HStack(spacing: 6) {
                             ForEach(1...3, id: \.self) { heart in
                                 Image(systemName: heart <= lives ? "heart.fill" : "heart")
                                     .foregroundColor(heart <= lives ? .red : .gray.opacity(0.3))
                                     .font(.title3)
+                            }
+                            
+                            if lives < 3 && !isGameOver && !isShowingReadyScreen {
+                                BoosterHUDView(boosterID: "booster_life_refill", iconName: "heart.fill", title: "+1 Life", color: .red) {
+                                    lives = min(3, lives + 1)
+                                    SoundManager.shared.playBonus()
+                                }
                             }
                         }
                         .padding(.horizontal, 14)
@@ -75,8 +83,6 @@ struct LightItUpView: View {
                         .shadow(color: Color.orange.opacity(0.12), radius: 4, x: 0, y: 2)
                         
                         Spacer()
-                        
-                        // Single-line Level Badge
                         HStack(spacing: 6) {
                             Image(systemName: "star.fill")
                                 .foregroundColor(levelColor)
@@ -99,8 +105,6 @@ struct LightItUpView: View {
                     }
                 }
                 .padding(.horizontal)
-                
-                // Level-Up Celebration Banner
                 if let banner = levelUpBanner {
                     Text(banner)
                         .font(.headline)
@@ -114,8 +118,6 @@ struct LightItUpView: View {
                 }
                 
                 Spacer()
-                
-                // Interactive Card Grid
                 if !isGameOver {
                     LazyVGrid(
                         columns: Array(repeating: GridItem(.flexible()), count: gridColumns),
@@ -143,8 +145,6 @@ struct LightItUpView: View {
                 }
                 
                 Spacer()
-                
-                // Duration configuration picker
                 HStack {
                     Text("Duration:")
                         .font(.subheadline)
@@ -185,19 +185,26 @@ struct LightItUpView: View {
             }
             
             if isShowingReadyScreen {
-                ReadyPromptView(
-                    title: "GET READY!",
-                    subtitle: "Memorize and tap the lit target cards before their light expires! Don't tap dark tiles!",
-                    iconName: "bolt.fill",
-                    themeColor: .orange,
-                    onReady: {
-                        withAnimation {
-                            isShowingReadyScreen = false
-                            countdownRemaining = 3
-                            tickCounter = 0
+                VStack(spacing: 16) {
+                    ReadyPromptView(
+                        title: "GET READY!",
+                        subtitle: "Memorize and tap the lit target cards before their light expires! Don't tap dark tiles!",
+                        iconName: "bolt.fill",
+                        themeColor: .orange,
+                        onReady: {
+                            if powerUpService.activePowerUp == .timeFreezer {
+                                timeRemaining += 5
+                            }
+                            withAnimation {
+                                isShowingReadyScreen = false
+                                countdownRemaining = 3
+                                tickCounter = 0
+                            }
                         }
-                    }
-                )
+                    )
+                    
+                    PowerUpSelectionView()
+                }
                 .transition(.opacity.combined(with: .scale))
             } else if let countdown = countdownRemaining {
                 CountdownOverlayView(countdown: countdown, themeColor: .orange)

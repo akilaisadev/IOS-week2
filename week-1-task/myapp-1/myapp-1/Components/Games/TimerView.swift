@@ -11,13 +11,11 @@ struct TimerView: View {
     let timeRemaining: Int
     let totalTime: Int
     
-    // Calculates percentage remaining for progress bar
     private var progress: Double {
         guard totalTime > 0 else { return 0 }
         return Double(timeRemaining) / Double(totalTime)
     }
     
-    // Changes color to red when 3 or fewer seconds remain
     private var timerColor: Color {
         if timeRemaining <= 3 {
             return .red
@@ -43,7 +41,6 @@ struct TimerView: View {
                     .foregroundColor(timerColor)
             }
             
-            // Progress bar showing remaining time
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     Capsule()
@@ -61,8 +58,12 @@ struct TimerView: View {
         .padding(12)
         .background(
             RoundedRectangle(cornerRadius: 14)
-                .fill(Color(.systemBackground))
-                .shadow(color: Color.black.opacity(0.06), radius: 5, x: 0, y: 2)
+                .fill(.ultraThinMaterial)
+                .shadow(color: Color.black.opacity(0.12), radius: 8, x: 0, y: 4)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(Color.white.opacity(0.2), lineWidth: 1)
         )
     }
 }

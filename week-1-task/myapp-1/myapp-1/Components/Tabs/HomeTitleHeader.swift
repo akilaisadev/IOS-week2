@@ -46,7 +46,7 @@ struct TrophyRoomCard: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Trophy Room & Leaderboard")
+                    Text("Trophy Room")
                         .font(.headline)
                         .fontWeight(.bold)
                         .foregroundColor(.primary)

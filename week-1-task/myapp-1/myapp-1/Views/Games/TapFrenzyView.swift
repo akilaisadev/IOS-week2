@@ -1,9 +1,5 @@
 //
-//  TapFrenzyView.swift
-//  myapp-1
-//
-//  Week 1 assignment: Fast-paced reflex game with 10-second timer, combo multipliers,
-//  traps, moving targets, shrinking button size, bonus bursts, and dedicated session history.
+//  TapFrenzyView.swift 
 //
 
 import SwiftUI
@@ -32,9 +28,14 @@ struct TapFrenzyView: View {
     @State private var totalTaps = 0
     
     @State private var bonusMessage: String? = nil
-    
     @State private var showingHistory = false
     @State private var hasRecordedHistory = false
+    @State private var isShowingTimeSurgePrompt = false
+    @State private var hasUsedTimeSurge = false
+    
+    @State private var hasScoreShield = false
+    @ObservedObject private var powerUpService = PowerUpService.shared
+    @ObservedObject private var marketplaceService = MarketplaceService.shared
     
     let gameTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
@@ -43,11 +44,13 @@ struct TapFrenzyView: View {
             AnimatedBackground(colors: [Color.blue.opacity(0.15), Color.cyan.opacity(0.15)])
             
             VStack(spacing: 20) {
-                // Top Header: Score, High Score, and Timer components
                 VStack(spacing: 12) {
                     HStack {
                         ScoreView(score: score, multiplier: comboMultiplier)
                         Spacer()
+                        
+
+                        
                         HighScoreView(highScore: highScore)
                     }
                     
@@ -55,7 +58,6 @@ struct TapFrenzyView: View {
                 }
                 .padding(.horizontal)
                 
-                // Bonus Burst notification text
                 if let message = bonusMessage {
                     Text(message)
                         .font(.headline)
@@ -67,30 +69,29 @@ struct TapFrenzyView: View {
                         .clipShape(Capsule())
                         .transition(.scale.combined(with: .opacity))
                 } else {
-                    Text("Tap fast! Watch out for RED traps!")
+                    Text(hasScoreShield ? "🛡️ Score Shield Active!" : "Tap fast! Watch out for RED traps!")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(hasScoreShield ? .blue : .secondary)
                         .frame(height: 36)
                 }
                 
                 Spacer()
                 
-                // Main Interactive Tap Button
+                if !isGameOver && !isShowingReadyScreen {
+                    BoosterHUDView(boosterID: "booster_time_surge", iconName: "bolt.fill", title: "+5s Surge", color: .purple) {
+                        timeRemaining += 5
+                        triggerBonusMessage("TIME SURGE! +5s")
+                        SoundManager.shared.playBonus()
+                    }
+                    .padding(.bottom, 10)
+                }
+                
                 if !isGameOver {
                     Button(action: handleButtonTap) {
-                        VStack(spacing: 4) {
-                            Image(systemName: isTrapActive ? "exclamationmark.octagon.fill" : "hand.tap.fill")
-                                .font(.system(size: buttonDiameter * 0.25))
-                            
-                            Text(isTrapActive ? "TRAP!" : "TAP!")
-                                .font(.system(size: buttonDiameter * 0.18, weight: .black, design: .rounded))
-                        }
-                        .foregroundColor(.white)
-                        .frame(width: buttonDiameter, height: buttonDiameter)
-                        .background(
-                            Circle()
-                                .fill(isTrapActive ? Color.red : Color.blue)
-                                .shadow(color: (isTrapActive ? Color.red : Color.blue).opacity(0.5), radius: 15, x: 0, y: 8)
+                        TapFrenzyBallView(
+                            buttonDiameter: buttonDiameter,
+                            isTrapActive: isTrapActive,
+                            activeSkinId: marketplaceService.activeTapFrenzySkinId
                         )
                         .scaleEffect(isTrapActive ? 1.05 : 1.0)
                         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: buttonOffset)
@@ -121,19 +122,60 @@ struct TapFrenzyView: View {
             }
             
             if isShowingReadyScreen {
-                ReadyPromptView(
-                    title: "GET READY!",
-                    subtitle: "Tap the circle as fast as you can to chain combos! Watch out for red traps!",
-                    iconName: "hand.tap.fill",
-                    themeColor: .blue,
-                    onReady: {
+                VStack(spacing: 16) {
+                    ReadyPromptView(
+                        title: "GET READY!",
+                        subtitle: "Tap the circle as fast as you can to chain combos! Watch out for red traps!",
+                        iconName: "hand.tap.fill",
+                        themeColor: .blue,
+                        onReady: {
+                            if powerUpService.activePowerUp == .timeFreezer {
+                                timeRemaining += 5
+                            }
+                            if powerUpService.activePowerUp == .scoreShield {
+                                hasScoreShield = true
+                            }
+                            withAnimation {
+                                isShowingReadyScreen = false
+                                countdownRemaining = 3
+                            }
+                        }
+                    )
+                    
+                    PowerUpSelectionView()
+                }
+                .transition(.opacity.combined(with: .scale))
+            } else if isShowingTimeSurgePrompt {
+                VStack(spacing: 16) {
+                    ReadyPromptView(
+                        title: "TIME'S UP!",
+                        subtitle: "Use a Time Surge to keep playing for +5 seconds?",
+                        iconName: "bolt.fill",
+                        themeColor: .purple,
+                        onReady: {
+                            if MarketplaceService.shared.consumeItem(id: "booster_time_surge") {
+                                timeRemaining += 5
+                                hasUsedTimeSurge = true
+                                triggerBonusMessage("TIME SURGE! +5s")
+                                SoundManager.shared.playBonus()
+                                withAnimation {
+                                    isShowingTimeSurgePrompt = false
+                                }
+                            }
+                        }
+                    )
+                    
+                    Button("No Thanks") {
                         withAnimation {
-                            isShowingReadyScreen = false
-                            countdownRemaining = 3
+                            isShowingTimeSurgePrompt = false
+                            isGameOver = true
                         }
                     }
-                )
-                .transition(.opacity.combined(with: .scale))
+                    .font(.headline)
+                    .foregroundColor(.gray)
+                    .padding(.top, 10)
+                }
+                .transition(.scale)
             } else if let countdown = countdownRemaining {
                 CountdownOverlayView(countdown: countdown, themeColor: .blue)
             }
@@ -156,7 +198,6 @@ struct TapFrenzyView: View {
         }
     }
     
-    // Calculates dynamic button size based on total taps
     private var buttonDiameter: CGFloat {
         let baseSize: CGFloat = 210
         let shrinkAmount = CGFloat(totalTaps) * 4
@@ -167,8 +208,14 @@ struct TapFrenzyView: View {
         guard !isGameOver, !isShowingReadyScreen, countdownRemaining == nil else { return }
         let now = Date()
         
-        // If tapped while red trap is active, penalize points
         if isTrapActive {
+            if hasScoreShield {
+                hasScoreShield = false
+                isTrapActive = false
+                triggerBonusMessage("SHIELD BLOCKED TRAP!")
+                SoundManager.shared.playBonus()
+                return
+            }
             score = max(0, score - 3)
             comboCount = 0
             comboMultiplier = 1
@@ -196,7 +243,6 @@ struct TapFrenzyView: View {
         
         score += 1 * comboMultiplier
         
-        // Every 10 taps awards a bonus burst
         if totalTaps % 10 == 0 {
             score += 5
             timeRemaining += 1
@@ -208,7 +254,6 @@ struct TapFrenzyView: View {
             SoundManager.shared.playTap()
         }
         
-        // Move button to a random safe position inside the play area
         withAnimation(.easeInOut(duration: 0.2)) {
             buttonOffset = CGSize(
                 width: CGFloat.random(in: -90...90),
@@ -238,6 +283,13 @@ struct TapFrenzyView: View {
         }
         
         if timeRemaining == 0 {
+            if !hasUsedTimeSurge && MarketplaceService.shared.quantity(for: "booster_time_surge") > 0 {
+                withAnimation {
+                    isShowingTimeSurgePrompt = true
+                }
+                return
+            }
+            
             withAnimation {
                 isGameOver = true
             }

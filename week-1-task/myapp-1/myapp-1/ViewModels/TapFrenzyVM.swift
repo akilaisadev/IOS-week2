@@ -17,7 +17,6 @@ class TapFrenzyVM: ObservableObject {
     @Published var isTrapActive = false
     @Published var bonusMessage: String? = nil
     
-    // reset game state for a new round
     func resetGame() {
         score = 0
         timeRemaining = 10

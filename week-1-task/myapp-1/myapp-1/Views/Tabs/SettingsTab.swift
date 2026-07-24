@@ -22,13 +22,22 @@ struct SettingsTab: View {
     @State private var saveStatus: SaveStatus = .idle
     @State private var saveTask: DispatchWorkItem? = nil
     
+    @ObservedObject private var walletService = WalletService.shared
+    
     var body: some View {
         NavigationStack {
             ZStack {
                 AnimatedBackground()
                 
                 Form {
+                    WalletHeaderView()
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets())
+                        .padding(.bottom, 8)
+                    
                     profileSection
+                    referralSection
+                    developerSection
                     notificationsSection
                     audioSection
                     layoutSection
@@ -57,10 +66,23 @@ struct SettingsTab: View {
             }
         }
     }
-    
-    // section allowing player profile management with validation & instant animated save feedback
     private var profileSection: some View {
         Section {
+            NavigationLink(destination: ProfileView()) {
+                HStack(spacing: 12) {
+                    Image(systemName: "person.crop.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.blue)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("My Profile & Badges Shelf")
+                            .font(.headline)
+                        Text("Level \(walletService.wallet.level) • \(walletService.wallet.xp) XP")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            
             VStack(alignment: .leading, spacing: 6) {
                 TextField("Gamer Tag (2-16 chars)", text: $inputTag)
                     .onChange(of: inputTag) { _, newValue in
@@ -69,8 +91,6 @@ struct SettingsTab: View {
                     .onSubmit {
                         forceSaveOnExit()
                     }
-                
-                // Animated feedback row right under the textbox
                 if case .saving = saveStatus {
                     HStack(spacing: 6) {
                         ProgressView()
@@ -148,8 +168,46 @@ struct SettingsTab: View {
         }
         withAnimation { saveStatus = .idle }
     }
+    private var referralSection: some View {
+        Section {
+            NavigationLink(destination: ReferralView()) {
+                Label("Referral & Rewards", systemImage: "person.2.gift.fill")
+            }
+        } header: {
+            Text("Rewards & Referral")
+        } footer: {
+            Text("Invite friends using your unique referral code to earn 50 bonus GameCoins.")
+        }
+    }
     
-    // section managing local daily challenge reminders
+    private var developerSection: some View {
+        Section {
+            Toggle(isOn: Binding(
+                get: { walletService.wallet.isDeveloperMode },
+                set: { _ in walletService.toggleDeveloperMode() }
+            )) {
+                Label("Developer Mode (Free Marketplace)", systemImage: "hammer.fill")
+            }
+            .tint(.red)
+            
+            if walletService.wallet.isDeveloperMode {
+                Button {
+                    walletService.grantDevCoins()
+                } label: {
+                    HStack {
+                        Label("Grant +10,000 Test Coins", systemImage: "plus.circle.fill")
+                            .foregroundColor(.orange)
+                        Spacer()
+                    }
+                }
+            }
+        } header: {
+            Text("Developer & Testing Controls")
+        } footer: {
+            Text("Developer Mode grants free purchases in the marketplace for quick testing.")
+        }
+    }
+    
     private var notificationsSection: some View {
         Section {
             Toggle(isOn: $notificationService.isEnabled) {
@@ -183,8 +241,6 @@ struct SettingsTab: View {
             Text("Receive a daily reminder to play your favorite game mode and beat your personal best.")
         }
     }
-    
-    // section controlling audio and haptic feedback
     private var audioSection: some View {
         Section {
             Toggle(isOn: $soundManager.isMuted) {
@@ -197,8 +253,6 @@ struct SettingsTab: View {
             Text("Control game sound effects when playing rounds.")
         }
     }
-    
-    // section controlling home screen card ordering
     private var layoutSection: some View {
         Section {
             Toggle(isOn: $moveTrophyRoomToBottom) {
@@ -208,11 +262,9 @@ struct SettingsTab: View {
         } header: {
             Text("Home Layout")
         } footer: {
-            Text("When enabled, the Trophy Room & Leaderboard card is moved to the bottom below the games list. When off, it returns to the top.")
+            Text("When enabled, the Trophy Room card is moved to the bottom below the games list. When off, it returns to the top.")
         }
     }
-    
-    // section for managing persistent storage and resetting history
     private var dataSection: some View {
         Section {
             Button(role: .destructive) {
@@ -229,8 +281,6 @@ struct SettingsTab: View {
             Text("Permanently erase all stored game records, high scores, and map pins.")
         }
     }
-    
-    // section detailing project information
     private var aboutSection: some View {
         Section {
             HStack {
