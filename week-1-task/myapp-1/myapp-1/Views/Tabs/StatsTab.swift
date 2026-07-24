@@ -52,6 +52,9 @@ struct StatsTab: View {
                     }
                     .padding()
                 }
+                .safeAreaInset(edge: .bottom) {
+                    Color.clear.frame(height: 90)
+                }
             }
             .navigationTitle("Stats")
             .navigationBarTitleDisplayMode(.inline)

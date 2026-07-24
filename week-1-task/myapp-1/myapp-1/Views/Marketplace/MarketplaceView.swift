@@ -72,6 +72,8 @@ struct MarketplaceView: View {
             }
             .navigationTitle("Marketplace")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(AppTheme.Colors.secondaryBackground.opacity(0.95), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     // Animated Coin Header

@@ -29,8 +29,13 @@ struct ProfileView: View {
             }
             .padding(.vertical)
         }
+        .safeAreaInset(edge: .bottom) {
+            Color.clear.frame(height: 90)
+        }
         .navigationTitle("Player Profile")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(AppTheme.Colors.secondaryBackground.opacity(0.95), for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .sheet(isPresented: $showingAvatarSelection) {
             AvatarSelectionSheet()
         }
