@@ -11,21 +11,17 @@ struct TapFrenzyBallView: View {
     let activeSkinId: String
     
     var body: some View {
-        let activeSkinItem = MarketplaceService.shared.catalogue.first(where: { $0.id == activeSkinId })
-        let activeIcon = activeSkinItem?.iconName ?? "hand.tap.fill"
+        let activeIcon = MarketplaceService.shared.catalogue.first(where: { $0.id == activeSkinId })?.iconName ?? "hand.tap.fill"
         
         VStack(spacing: 4) {
             if isTrapActive {
                 Image(systemName: "exclamationmark.octagon.fill")
-                    .font(.system(size: buttonDiameter * 0.25))
-            } else if let item = activeSkinItem, !item.isSystemImage {
-                Image(item.iconName)
                     .resizable()
                     .scaledToFit()
                     .frame(width: buttonDiameter * 0.4, height: buttonDiameter * 0.4)
             } else {
-                Image(systemName: activeIcon)
-                    .font(.system(size: buttonDiameter * 0.25))
+                CustomArtworkResolver(itemId: activeSkinId, iconName: activeIcon)
+                    .frame(width: buttonDiameter * 0.4, height: buttonDiameter * 0.4)
             }
             
             Text(isTrapActive ? "TRAP!" : "TAP!")

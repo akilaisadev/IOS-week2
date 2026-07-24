@@ -35,18 +35,10 @@ struct MarketplaceItemCard: View {
                     
                     VStack {
                         Spacer()
-                        if !item.isSystemImage {
-                            Image(item.iconName)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 45, height: 45)
-                                .shadow(color: uiModel.rarity.color.opacity(0.8), radius: 8, x: 0, y: 0)
-                        } else {
-                            Image(systemName: item.iconName)
-                                .font(.system(size: 40))
-                                .foregroundColor(.white)
-                                .shadow(color: uiModel.rarity.color.opacity(0.8), radius: 8, x: 0, y: 0)
-                        }
+                        CustomArtworkResolver(itemId: item.id, iconName: item.iconName)
+                            .frame(width: 40, height: 40)
+                            .foregroundColor(.white)
+                            .shadow(color: uiModel.rarity.color.opacity(0.8), radius: 8, x: 0, y: 0)
                         Spacer()
                     }
                     .frame(maxWidth: .infinity)

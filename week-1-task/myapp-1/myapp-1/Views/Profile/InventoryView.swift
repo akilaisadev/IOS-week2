@@ -124,16 +124,9 @@ struct InventoryItemCard: View {
                     .fill(isActive ? AppTheme.Colors.primary.opacity(0.15) : AppTheme.Colors.secondaryBackground)
                     .frame(height: 100)
                 
-                if !item.isSystemImage {
-                    Image(item.iconName)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 60, height: 60)
-                } else {
-                    Image(systemName: item.iconName)
-                        .font(.system(size: 40))
-                        .foregroundColor(isActive ? AppTheme.Colors.primary : AppTheme.Colors.textPrimary)
-                }
+                CustomArtworkResolver(itemId: item.id, iconName: item.iconName)
+                    .frame(width: 40, height: 40)
+                    .foregroundColor(isActive ? AppTheme.Colors.primary : AppTheme.Colors.textPrimary)
             }
             .overlay(
                 RoundedRectangle(cornerRadius: AppTheme.Radius.button)

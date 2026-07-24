@@ -24,5 +24,4 @@ struct MarketplaceItem: Identifiable, Codable, Equatable {
     let price: Int
     let badgeText: String?
     var isStackable: Bool = false
-    var isSystemImage: Bool = true
 }

@@ -24,18 +24,11 @@ struct ProfileAvatarHeader: View {
                     .fill(Color(.systemBackground))
                     .frame(width: 80, height: 80)
                 
-                let activeAvatarItem = marketplaceService.catalogue.first(where: { $0.id == marketplaceService.activeAvatarId })
+                let activeAvatar = marketplaceService.catalogue.first(where: { $0.id == marketplaceService.activeAvatarId })?.iconName ?? "person.fill"
                 
-                if let item = activeAvatarItem, !item.isSystemImage {
-                    Image(item.iconName)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 50, height: 50)
-                } else {
-                    Image(systemName: activeAvatarItem?.iconName ?? "person.fill")
-                        .font(.system(size: 35))
-                        .foregroundColor(.primary)
-                }
+                CustomArtworkResolver(itemId: marketplaceService.activeAvatarId, iconName: activeAvatar)
+                    .frame(width: 50, height: 50)
+                    .foregroundColor(.primary)
                 
                 VStack {
                     Spacer()
