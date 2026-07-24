@@ -44,44 +44,51 @@ struct TapFrenzyView: View {
             AnimatedBackground(colors: [Color.blue.opacity(0.15), Color.cyan.opacity(0.15)])
             
             VStack(spacing: AppTheme.Spacing.small) {
-                VStack(spacing: AppTheme.Spacing.extraSmall) {
-                    HStack {
-                        ScoreView(score: score, multiplier: comboMultiplier)
-                        Spacer(minLength: AppTheme.Spacing.small)
-                        HighScoreView(highScore: highScore)
+                VStack(spacing: AppTheme.Spacing.small) {
+                    VStack(spacing: AppTheme.Spacing.extraSmall) {
+                        HStack {
+                            ScoreView(score: score, multiplier: comboMultiplier)
+                            Spacer(minLength: AppTheme.Spacing.small)
+                            HighScoreView(highScore: highScore)
+                        }
+                        
+                        TimerView(timeRemaining: timeRemaining, totalTime: 10)
                     }
+                    .padding(.horizontal)
                     
-                    TimerView(timeRemaining: timeRemaining, totalTime: 10)
-                }
-                .padding(.horizontal)
-                
-                if let message = bonusMessage {
-                    Text(message)
-                        .font(.headline)
-                        .fontWeight(.bold)
-                        .foregroundColor(.yellow)
-                        .padding(.horizontal, AppTheme.Spacing.small)
-                        .padding(.vertical, 8)
-                        .background(Color.black.opacity(0.7))
-                        .clipShape(Capsule())
-                        .transition(.scale.combined(with: .opacity))
-                } else {
-                    Text(hasScoreShield ? "🛡️ Score Shield Active!" : "Tap fast! Watch out for RED traps!")
-                        .font(.subheadline)
-                        .foregroundColor(hasScoreShield ? .blue : AppTheme.Colors.textSecondary)
-                        .frame(height: 36)
-                }
-                
-                Spacer(minLength: AppTheme.Spacing.small)
-                
-                if !isGameOver && !isShowingReadyScreen {
-                    BoosterHUDView(boosterID: "booster_time_surge", iconName: "bolt.fill", title: "+5s Surge", color: .purple) {
-                        timeRemaining += 5
-                        triggerBonusMessage("TIME SURGE! +5s")
-                        SoundManager.shared.playBonus()
+                    ZStack {
+                        if let message = bonusMessage {
+                            Text(message)
+                                .font(.headline)
+                                .fontWeight(.bold)
+                                .foregroundColor(.yellow)
+                                .padding(.horizontal, AppTheme.Spacing.small)
+                                .padding(.vertical, 8)
+                                .background(Color.black.opacity(0.7))
+                                .clipShape(Capsule())
+                                .transition(.scale.combined(with: .opacity))
+                        } else {
+                            Text(hasScoreShield ? "🛡️ Score Shield Active!" : "Tap fast! Watch out for RED traps!")
+                                .font(.subheadline)
+                                .foregroundColor(hasScoreShield ? .blue : AppTheme.Colors.textSecondary)
+                        }
                     }
-                    .padding(.bottom, AppTheme.Spacing.extraSmall)
+                    .frame(height: 40)
+                    
+                    ZStack {
+                        if !isGameOver && !isShowingReadyScreen {
+                            BoosterHUDView(boosterID: "booster_time_surge", iconName: "bolt.fill", title: "+5s Surge", color: .purple) {
+                                timeRemaining += 5
+                                triggerBonusMessage("TIME SURGE! +5s")
+                                SoundManager.shared.playBonus()
+                            }
+                        }
+                    }
+                    .frame(height: 44)
                 }
+                .frame(height: 180, alignment: .top)
+                
+                Spacer(minLength: 0)
                 
                 if !isGameOver {
                     Button(action: handleButtonTap) {

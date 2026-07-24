@@ -47,15 +47,7 @@ struct LightItUpView: View {
                 VStack(spacing: AppTheme.Spacing.extraSmall) {
                     HStack {
                         ScoreView(score: score)
-                        Spacer(minLength: AppTheme.Spacing.small)
-                        
-                        if !isGameOver && !isShowingReadyScreen {
-                            BoosterHUDView(boosterID: "booster_time_surge", iconName: "bolt.fill", title: "+5s Surge", color: .purple) {
-                                timeRemaining += 5
-                                SoundManager.shared.playBonus()
-                            }
-                        }
-                        
+                        Spacer()
                         HighScoreView(highScore: highScore)
                     }
                     
@@ -67,13 +59,6 @@ struct LightItUpView: View {
                                 Image(systemName: heart <= lives ? "heart.fill" : "heart")
                                     .foregroundColor(heart <= lives ? AppTheme.Colors.error : Color.gray.opacity(0.3))
                                     .font(.title3)
-                            }
-                            
-                            if lives < 3 && !isGameOver && !isShowingReadyScreen {
-                                BoosterHUDView(boosterID: "booster_life_refill", iconName: "heart.fill", title: "+1 Life", color: AppTheme.Colors.error) {
-                                    lives = min(3, lives + 1)
-                                    SoundManager.shared.playBonus()
-                                }
                             }
                         }
                         .padding(.horizontal, AppTheme.Spacing.small)
@@ -91,19 +76,46 @@ struct LightItUpView: View {
                 }
                 .padding(.horizontal)
                 
-                if let banner = levelUpBanner {
-                    Text(banner)
-                        .font(.headline)
-                        .fontWeight(.heavy)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, AppTheme.Spacing.medium)
-                        .padding(.vertical, AppTheme.Spacing.extraSmall)
-                        .background(levelColor)
-                        .clipShape(Capsule())
-                        .transition(.scale.combined(with: .opacity))
+                ZStack {
+                    if let banner = levelUpBanner {
+                        Text(banner)
+                            .font(.headline)
+                            .fontWeight(.heavy)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, AppTheme.Spacing.medium)
+                            .padding(.vertical, AppTheme.Spacing.extraSmall)
+                            .background(levelColor)
+                            .clipShape(Capsule())
+                            .transition(.scale.combined(with: .opacity))
+                    }
                 }
+                .frame(height: 40)
                 
-                Spacer(minLength: AppTheme.Spacing.small)
+                HStack(spacing: AppTheme.Spacing.small) {
+                    if !isGameOver && !isShowingReadyScreen {
+                        ZStack {
+                            BoosterHUDView(boosterID: "booster_time_surge", iconName: "bolt.fill", title: "+5s Surge", color: .purple) {
+                                timeRemaining += 5
+                                SoundManager.shared.playBonus()
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        
+                        ZStack {
+                            if lives < 3 {
+                                BoosterHUDView(boosterID: "booster_life_refill", iconName: "heart.fill", title: "+1 Life", color: AppTheme.Colors.error) {
+                                    lives = min(3, lives + 1)
+                                    SoundManager.shared.playBonus()
+                                }
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                }
+                .frame(height: 44)
+                .padding(.horizontal)
+                
+                Spacer(minLength: 0)
                 
                 if !isGameOver {
                     LazyVGrid(
