@@ -28,7 +28,7 @@ struct ContentView: View {
                     .tag(3)
             }
             .tabViewStyle(.page(indexDisplayMode: .never)) // Swipeable tabs
-            .ignoresSafeArea()
+            
             
             // Custom Floating Tab Bar
             if !TabBarManager.shared.isHidden {
