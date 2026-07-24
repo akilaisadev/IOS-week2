@@ -148,6 +148,7 @@ struct LeaderboardView: View {
         }
         .navigationTitle("Trophy Room")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.visible, for: .navigationBar)
         .alert("Clear All History?", isPresented: $showingClearAlert) {
             Button("Cancel", role: .cancel) { }
             Button("Clear", role: .destructive) {

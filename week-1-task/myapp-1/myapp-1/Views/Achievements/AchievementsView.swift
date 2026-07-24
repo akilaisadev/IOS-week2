@@ -34,6 +34,7 @@ struct AchievementsView: View {
         }
         .navigationTitle("Achievements")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.visible, for: .navigationBar)
     }
     
     private var unlockedCount: Int {
