@@ -48,6 +48,8 @@ struct SettingsTab: View {
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(AppTheme.Colors.secondaryBackground.opacity(0.95), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .alert("Reset All Statistics?", isPresented: $showingResetAlert) {
                 Button("Reset All", role: .destructive) {
                     withAnimation {

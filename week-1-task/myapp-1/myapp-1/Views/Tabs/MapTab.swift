@@ -49,6 +49,8 @@ struct MapTab: View {
             }
             .navigationTitle("Map")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(AppTheme.Colors.secondaryBackground.opacity(0.95), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .onAppear {
                 recenterMap()
             }
