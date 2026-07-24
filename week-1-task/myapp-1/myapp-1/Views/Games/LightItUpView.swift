@@ -316,7 +316,7 @@ struct LightItUpView: View {
     }
     
     private func handleTimerTick() {
-        guard !isGameOver, !isShowingReadyScreen else { return }
+        guard !isGameOver, !isShowingReadyScreen, !isShowingRevivePrompt else { return }
         
         if let countdown = countdownRemaining {
             tickCounter += 1

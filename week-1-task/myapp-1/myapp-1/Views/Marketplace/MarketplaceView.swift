@@ -345,7 +345,7 @@ class MarketplaceUIHelper {
         case "frame_gold": rarity = .legendary; game = .global; isFeatured = true
         case "frame_neon": rarity = .epic; game = .global
         case "frame_galaxy": rarity = .legendary; game = .global
-        case "skin_bomb": rarity = .epic; game = .tapFrenzy
+        case "skin_bomb": rarity = .epic; game = .tapFrenzy; isFeatured = true
         case "skin_lightning": rarity = .legendary; game = .tapFrenzy; isFeatured = true
         case "avatar_brain", "avatar_mustache": rarity = .epic; game = .global
         case "avatar_hare", "avatar_bird": rarity = .rare; game = .global
@@ -421,19 +421,44 @@ struct MarketplacePreviewSheet: View {
             
             VStack(spacing: 12) {
                 if !item.isStackable && quantityOwned > 0 {
-                    Text("You already own this item.")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                    let isEquippable = item.category == .avatars || item.category == .skins || item.category == .cosmetics
+                    let isEquipped: Bool = {
+                        if item.category == .avatars { return MarketplaceService.shared.activeAvatarId == item.id }
+                        if item.category == .skins { return MarketplaceService.shared.activeTapFrenzySkinId == item.id }
+                        if item.category == .cosmetics { return MarketplaceService.shared.activeFrameId == item.id }
+                        return false
+                    }()
                     
-                    Button {
-                        dismiss()
-                    } label: {
-                        Text("Dismiss")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(Capsule().fill(Color.gray))
+                    if isEquippable {
+                        Button {
+                            if item.category == .avatars { MarketplaceService.shared.activeAvatarId = item.id }
+                            if item.category == .skins { MarketplaceService.shared.activeTapFrenzySkinId = item.id }
+                            if item.category == .cosmetics { MarketplaceService.shared.activeFrameId = item.id }
+                            dismiss()
+                        } label: {
+                            Text(isEquipped ? "EQUIPPED" : "EQUIP")
+                                .font(.headline)
+                                .foregroundColor(isEquipped ? .gray : .white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(Capsule().fill(isEquipped ? Color(.systemGray5) : AppTheme.Colors.primary))
+                        }
+                        .disabled(isEquipped)
+                    } else {
+                        Text("You already own this item.")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        
+                        Button {
+                            dismiss()
+                        } label: {
+                            Text("Dismiss")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(Capsule().fill(Color.gray))
+                        }
                     }
                 } else {
                     if quantityOwned > 0 {
