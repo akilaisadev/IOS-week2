@@ -151,36 +151,28 @@ struct TapFrenzyView: View {
                 }
                 .transition(.opacity.combined(with: .scale))
             } else if isShowingTimeSurgePrompt {
-                VStack(spacing: 16) {
-                    ReadyPromptView(
-                        title: "TIME'S UP!",
-                        subtitle: "Use a Time Surge to keep playing for +5 seconds?",
-                        iconName: "bolt.fill",
-                        themeColor: .purple,
-                        onReady: {
-                            if MarketplaceService.shared.consumeItem(id: "booster_time_surge") {
-                                timeRemaining += 5
-                                hasUsedTimeSurge = true
-                                triggerBonusMessage("TIME SURGE! +5s")
-                                SoundManager.shared.playBonus()
-                                withAnimation {
-                                    isShowingTimeSurgePrompt = false
-                                }
-                            }
-                        }
-                    )
-                    
-                    Button("No Thanks") {
+                ReviveOverlayView(
+                    requiredBoosterID: "booster_time_surge",
+                    boosterName: "Time Surge",
+                    boosterIcon: "bolt.fill",
+                    boosterColor: .purple,
+                    onRevive: {
+                        timeRemaining += 5
+                        hasUsedTimeSurge = true
+                        triggerBonusMessage("TIME SURGE! +5s")
+                        SoundManager.shared.playBonus()
                         withAnimation {
                             isShowingTimeSurgePrompt = false
-                            isGameOver = true
+                        }
+                    },
+                    onSkip: {
+                        withAnimation {
+                            isShowingTimeSurgePrompt = false
+                            endGame()
                         }
                     }
-                    .font(.headline)
-                    .foregroundColor(.gray)
-                    .padding(.top, 10)
-                }
-                .transition(.scale)
+                )
+                .transition(.opacity.combined(with: .scale))
             } else if let countdown = countdownRemaining {
                 CountdownOverlayView(countdown: countdown, themeColor: .blue)
             }
@@ -294,29 +286,13 @@ struct TapFrenzyView: View {
         }
         
         if timeRemaining == 0 {
-            if !hasUsedTimeSurge && MarketplaceService.shared.quantity(for: "booster_time_surge") > 0 {
+            if !hasUsedTimeSurge {
                 withAnimation {
                     isShowingTimeSurgePrompt = true
                 }
                 return
             }
-            
-            withAnimation {
-                isGameOver = true
-            }
-            SoundManager.shared.playGameOver()
-            if score > highScore {
-                highScore = score
-            }
-            if !hasRecordedHistory {
-                hasRecordedHistory = true
-                HistoryService.shared.addSession(
-                    mode: .tapFrenzy,
-                    score: score,
-                    latitude: LocationService.shared.currentLatitude,
-                    longitude: LocationService.shared.currentLongitude
-                )
-            }
+            endGame()
             return
         }
         
@@ -363,6 +339,26 @@ struct TapFrenzyView: View {
             isGameOver = false
             countdownRemaining = nil
             isShowingReadyScreen = true
+            isShowingTimeSurgePrompt = false
+        }
+    }
+    
+    private func endGame() {
+        withAnimation {
+            isGameOver = true
+        }
+        SoundManager.shared.playGameOver()
+        if score > highScore {
+            highScore = score
+        }
+        if !hasRecordedHistory {
+            hasRecordedHistory = true
+            HistoryService.shared.addSession(
+                mode: .tapFrenzy,
+                score: score,
+                latitude: LocationService.shared.currentLatitude,
+                longitude: LocationService.shared.currentLongitude
+            )
         }
     }
 }

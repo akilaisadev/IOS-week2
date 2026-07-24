@@ -8,16 +8,18 @@ struct ProfileView: View {
     @ObservedObject private var historyService = HistoryService.shared
     @ObservedObject private var referralService = ReferralService.shared
     @AppStorage("playerName") private var playerName = "Player 1"
+    @ObservedObject private var marketplaceService = MarketplaceService.shared
+    @State private var showingInventory = false
     
-    @State private var selectedFrame: AvatarFrameStyle = .defaultFrame
-    
-    @State private var showingAvatarSelection = false
+    private var selectedFrame: AvatarFrameStyle {
+        AvatarFrameStyle.allCases.first(where: { $0.itemID == marketplaceService.activeFrameId }) ?? .defaultFrame
+    }
     
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
                 ProfileAvatarHeader(selectedFrame: selectedFrame) {
-                    showingAvatarSelection = true
+                    showingInventory = true
                 }
                 
                 xpProgressCard
@@ -36,8 +38,17 @@ struct ProfileView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(AppTheme.Colors.secondaryBackground.opacity(0.95), for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
-        .sheet(isPresented: $showingAvatarSelection) {
-            AvatarSelectionSheet()
+        .sheet(isPresented: $showingInventory) {
+            NavigationStack {
+                InventoryView()
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Done") {
+                                showingInventory = false
+                            }
+                        }
+                    }
+            }
         }
     }
     

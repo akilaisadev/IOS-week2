@@ -11,9 +11,22 @@ struct TapFrenzyBallView: View {
     let activeSkinId: String
     
     var body: some View {
+        let activeSkinItem = MarketplaceService.shared.catalogue.first(where: { $0.id == activeSkinId })
+        let activeIcon = activeSkinItem?.iconName ?? "hand.tap.fill"
+        
         VStack(spacing: 4) {
-            Image(systemName: isTrapActive ? "exclamationmark.octagon.fill" : activeSkinId)
-                .font(.system(size: buttonDiameter * 0.25))
+            if isTrapActive {
+                Image(systemName: "exclamationmark.octagon.fill")
+                    .font(.system(size: buttonDiameter * 0.25))
+            } else if let item = activeSkinItem, !item.isSystemImage {
+                Image(item.iconName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: buttonDiameter * 0.4, height: buttonDiameter * 0.4)
+            } else {
+                Image(systemName: activeIcon)
+                    .font(.system(size: buttonDiameter * 0.25))
+            }
             
             Text(isTrapActive ? "TRAP!" : "TAP!")
                 .font(.system(size: buttonDiameter * 0.18, weight: .black, design: .rounded))
@@ -28,12 +41,12 @@ struct TapFrenzyBallView: View {
     }
     
     private var skinColor: Color {
-        if activeSkinId == "flame.fill" {
+        if activeSkinId == "skin_bomb" {
             return .black
-        } else if activeSkinId == "bolt.fill" {
+        } else if activeSkinId == "skin_lightning" {
             return .yellow
         } else {
-            return .blue // default hand.tap
+            return .blue // default
         }
     }
 }

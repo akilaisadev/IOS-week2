@@ -34,6 +34,14 @@ struct LightItUpView: View {
     @State private var showingHistory = false
     @State private var hasRecordedHistory = false
     
+    @State private var isShowingRevivePrompt = false
+    @State private var deathReason: DeathReason? = nil
+    
+    enum DeathReason {
+        case timeout
+        case outOfLives
+    }
+    
     @ObservedObject private var powerUpService = PowerUpService.shared
     @ObservedObject private var marketplaceService = MarketplaceService.shared
     
@@ -205,6 +213,42 @@ struct LightItUpView: View {
                     PowerUpSelectionView()
                 }
                 .transition(.opacity.combined(with: .scale))
+            } else if isShowingRevivePrompt, let reason = deathReason {
+                if reason == .timeout {
+                    ReviveOverlayView(
+                        requiredBoosterID: "booster_time_surge",
+                        boosterName: "Time Surge",
+                        boosterIcon: "bolt.fill",
+                        boosterColor: .purple,
+                        onRevive: {
+                            timeRemaining += 5
+                            withAnimation { isShowingRevivePrompt = false }
+                            SoundManager.shared.playBonus()
+                        },
+                        onSkip: {
+                            withAnimation { isShowingRevivePrompt = false }
+                            finalizeGameOver()
+                        }
+                    )
+                    .transition(.opacity.combined(with: .scale))
+                } else {
+                    ReviveOverlayView(
+                        requiredBoosterID: "booster_life_refill",
+                        boosterName: "Life Refill",
+                        boosterIcon: "heart.fill",
+                        boosterColor: AppTheme.Colors.error,
+                        onRevive: {
+                            lives = 1
+                            withAnimation { isShowingRevivePrompt = false }
+                            SoundManager.shared.playBonus()
+                        },
+                        onSkip: {
+                            withAnimation { isShowingRevivePrompt = false }
+                            finalizeGameOver()
+                        }
+                    )
+                    .transition(.opacity.combined(with: .scale))
+                }
             } else if let countdown = countdownRemaining {
                 CountdownOverlayView(countdown: countdown, themeColor: .orange)
             }
@@ -307,20 +351,27 @@ struct LightItUpView: View {
         }
         
         if timeRemaining == 0 {
-            triggerGameOver()
+            triggerGameOver(reason: .timeout)
             return
         }
         
         cardTimeRemaining -= 0.1
         if cardTimeRemaining <= 0 {
             loseLife(reason: "Time Expired!")
-            if !isGameOver {
+            if !isGameOver && !isShowingRevivePrompt {
                 spawnNewLitCards()
             }
         }
     }
     
-    private func triggerGameOver() {
+    private func triggerGameOver(reason: DeathReason) {
+        deathReason = reason
+        withAnimation {
+            isShowingRevivePrompt = true
+        }
+    }
+    
+    private func finalizeGameOver() {
         withAnimation {
             isGameOver = true
         }
@@ -358,7 +409,7 @@ struct LightItUpView: View {
         triggerFlash(.red)
         
         if lives <= 0 {
-            triggerGameOver()
+            triggerGameOver(reason: .outOfLives)
         } else {
             SoundManager.shared.playCardWrong()
         }
@@ -398,6 +449,7 @@ struct LightItUpView: View {
         levelUpBanner = nil
         flashColor = .clear
         hasRecordedHistory = false
+        isShowingRevivePrompt = false
         withAnimation {
             isGameOver = false
             countdownRemaining = nil

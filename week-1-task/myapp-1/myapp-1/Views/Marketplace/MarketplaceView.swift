@@ -380,10 +380,18 @@ struct MarketplacePreviewSheet: View {
                     )
                     .frame(width: 150, height: 150)
                 
-                Image(systemName: item.iconName)
-                    .font(.system(size: 70))
-                    .foregroundColor(.white)
-                    .shadow(color: uiModel.rarity.color, radius: 15, x: 0, y: 0)
+                if !item.isSystemImage {
+                    Image(item.iconName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 80, height: 80)
+                        .shadow(color: uiModel.rarity.color, radius: 15, x: 0, y: 0)
+                } else {
+                    Image(systemName: item.iconName)
+                        .font(.system(size: 70))
+                        .foregroundColor(.white)
+                        .shadow(color: uiModel.rarity.color, radius: 15, x: 0, y: 0)
+                }
             }
             .padding(.top, 40)
             

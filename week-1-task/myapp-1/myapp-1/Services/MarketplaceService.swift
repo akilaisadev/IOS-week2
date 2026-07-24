@@ -27,7 +27,7 @@ class MarketplaceService: ObservableObject {
         
         // Avatars (10)
         MarketplaceItem(id: "avatar_smile", name: "Smiley", description: "Classic smiling face", iconName: "face.smiling.fill", category: .avatars, price: 50, badgeText: "AVATAR", isStackable: false),
-        MarketplaceItem(id: "avatar_tortoise", name: "Tortoise", description: "Slow but steady wins the race", iconName: "tortoise.fill", category: .avatars, price: 75, badgeText: "AVATAR", isStackable: false),
+        MarketplaceItem(id: "avatar_tortoise", name: "Tortoise", description: "Slow but steady wins the race", iconName: "realistic_tortoise", category: .avatars, price: 75, badgeText: "AVATAR", isStackable: false, isSystemImage: false),
         MarketplaceItem(id: "avatar_ladybug", name: "Ladybug", description: "Bring some good luck", iconName: "ladybug.fill", category: .avatars, price: 75, badgeText: "AVATAR", isStackable: false),
         MarketplaceItem(id: "avatar_ant", name: "Ant", description: "Hard worker", iconName: "ant.fill", category: .avatars, price: 75, badgeText: "AVATAR", isStackable: false),
         MarketplaceItem(id: "avatar_hare", name: "Hare", description: "Fast and furious", iconName: "hare.fill", category: .avatars, price: 100, badgeText: "AVATAR", isStackable: false),
@@ -38,12 +38,13 @@ class MarketplaceService: ObservableObject {
         MarketplaceItem(id: "avatar_brain", name: "Brain", description: "Big brain energy", iconName: "brain", category: .avatars, price: 200, badgeText: "AVATAR", isStackable: false),
         
         // Tap Frenzy Skins
-        MarketplaceItem(id: "skin_bomb", name: "Bomb Skin", description: "An explosive tap target", iconName: "flame.fill", category: .skins, price: 150, badgeText: "SKIN", isStackable: false),
+        MarketplaceItem(id: "skin_bomb", name: "Bomb Skin", description: "An explosive tap target", iconName: "realistic_bomb", category: .skins, price: 150, badgeText: "SKIN", isStackable: false, isSystemImage: false),
         MarketplaceItem(id: "skin_lightning", name: "Lightning Skin", description: "A shockingly fast target", iconName: "bolt.fill", category: .skins, price: 200, badgeText: "SKIN", isStackable: false)
     ]
     
-    @AppStorage("activeAvatarId") var activeAvatarId = "person.fill"
-    @AppStorage("activeTapFrenzySkinId") var activeTapFrenzySkinId = "hand.tap.fill"
+    @AppStorage("activeAvatarId") var activeAvatarId = "avatar_smile"
+    @AppStorage("activeTapFrenzySkinId") var activeTapFrenzySkinId = "skin_bomb"
+    @AppStorage("activeFrameId") var activeFrameId = "none"
     
     private init() {
         loadInventory()
