@@ -146,9 +146,14 @@ struct LeaderboardView: View {
             }
             .padding(.top)
         }
+        .safeAreaInset(edge: .bottom) {
+            Color.clear.frame(height: 90)
+        }
         .navigationTitle("Trophy Room")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.visible, for: .navigationBar)
+        .toolbarBackground(AppTheme.Colors.secondaryBackground.opacity(0.95), for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .alert("Clear All History?", isPresented: $showingClearAlert) {
             Button("Cancel", role: .cancel) { }
             Button("Clear", role: .destructive) {

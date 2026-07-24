@@ -32,9 +32,14 @@ struct AchievementsView: View {
                 .padding(.bottom, 20)
             }
         }
+        .safeAreaInset(edge: .bottom) {
+            Color.clear.frame(height: 90)
+        }
         .navigationTitle("Achievements")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.visible, for: .navigationBar)
+        .toolbarBackground(AppTheme.Colors.secondaryBackground.opacity(0.95), for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
     }
     
     private var unlockedCount: Int {
