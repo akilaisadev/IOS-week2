@@ -12,7 +12,7 @@ struct BoosterHUDView: View {
     let color: Color
     let action: () -> Void
     
-    @StateObject private var marketplaceService = MarketplaceService.shared
+    @ObservedObject private var marketplaceService = MarketplaceService.shared
     
     var body: some View {
         let count = marketplaceService.quantity(for: boosterID)

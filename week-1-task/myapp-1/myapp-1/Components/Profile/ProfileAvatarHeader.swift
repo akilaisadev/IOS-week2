@@ -6,8 +6,8 @@
 import SwiftUI
 
 struct ProfileAvatarHeader: View {
-    @StateObject private var walletService = WalletService.shared
-    @StateObject private var marketplaceService = MarketplaceService.shared
+    @ObservedObject private var walletService = WalletService.shared
+    @ObservedObject private var marketplaceService = MarketplaceService.shared
     @AppStorage("playerName") private var playerName = "Player 1"
     
     let selectedFrame: AvatarFrameStyle

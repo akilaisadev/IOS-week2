@@ -6,7 +6,7 @@
 import SwiftUI
 
 struct CoinHistoryView: View {
-    @StateObject private var walletService = WalletService.shared
+    @ObservedObject private var walletService = WalletService.shared
     
     var body: some View {
         ScrollView {

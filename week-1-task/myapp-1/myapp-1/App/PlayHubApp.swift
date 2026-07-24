@@ -9,10 +9,10 @@ import SwiftUI
 
 @main
 struct PlayHubApp: App {
-    @StateObject private var notificationService = NotificationService.shared
-    @StateObject private var walletService = WalletService.shared
-    @StateObject private var marketplaceService = MarketplaceService.shared
-    @StateObject private var streakService = StreakService.shared
+    @ObservedObject private var notificationService = NotificationService.shared
+    @ObservedObject private var walletService = WalletService.shared
+    @ObservedObject private var marketplaceService = MarketplaceService.shared
+    @ObservedObject private var streakService = StreakService.shared
     
     init() {
         let appearance = UINavigationBarAppearance()

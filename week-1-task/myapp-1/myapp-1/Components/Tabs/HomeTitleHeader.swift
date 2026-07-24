@@ -31,7 +31,7 @@ struct HomeTitleHeader: View {
 }
 
 struct TrophyRoomCard: View {
-    @StateObject var historyService = HistoryService.shared
+    @ObservedObject var historyService = HistoryService.shared
     
     var body: some View {
         NavigationLink(destination: LeaderboardView()) {

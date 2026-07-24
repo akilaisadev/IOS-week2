@@ -18,7 +18,7 @@ struct ResultView: View {
     @State private var showingActions = false
     @State private var canInteract = false
     @AppStorage("playerName") private var playerName = "Player 1"
-    @StateObject private var achievementService = AchievementService.shared
+    @ObservedObject private var achievementService = AchievementService.shared
     
     var isNewBest: Bool {
         score >= highScore && score > 0

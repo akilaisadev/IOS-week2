@@ -6,8 +6,8 @@
 import SwiftUI
 
 struct PowerUpSelectionView: View {
-    @StateObject private var powerUpService = PowerUpService.shared
-    @StateObject private var marketplaceService = MarketplaceService.shared
+    @ObservedObject private var powerUpService = PowerUpService.shared
+    @ObservedObject private var marketplaceService = MarketplaceService.shared
     
     var body: some View {
         VStack(spacing: 12) {

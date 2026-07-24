@@ -12,8 +12,8 @@ struct SettingsTab: View {
         case idle, saving, saved, error(String)
     }
     
-    @StateObject private var notificationService = NotificationService.shared
-    @StateObject private var soundManager = SoundManager.shared
+    @ObservedObject private var notificationService = NotificationService.shared
+    @ObservedObject private var soundManager = SoundManager.shared
     @State private var showingResetAlert = false
     @AppStorage("moveTrophyRoomToBottom") private var moveTrophyRoomToBottom = false
     @AppStorage("playerName") private var playerName = "Player 1"
@@ -22,7 +22,7 @@ struct SettingsTab: View {
     @State private var saveStatus: SaveStatus = .idle
     @State private var saveTask: DispatchWorkItem? = nil
     
-    @StateObject private var walletService = WalletService.shared
+    @ObservedObject private var walletService = WalletService.shared
     
     var body: some View {
         NavigationStack {

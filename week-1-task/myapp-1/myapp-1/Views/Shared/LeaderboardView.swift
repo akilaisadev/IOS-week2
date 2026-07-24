@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct LeaderboardView: View {
-    @StateObject private var historyService = HistoryService.shared
-    @StateObject private var walletService = WalletService.shared
+    @ObservedObject private var historyService = HistoryService.shared
+    @ObservedObject private var walletService = WalletService.shared
     @AppStorage("tapFrenzyHighScore") private var tapHighScore = 0
     @AppStorage("lightItUpHighScore") private var lightHighScore = 0
     @AppStorage("quizRushHighScore") private var quizHighScore = 0

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HistorySheetView: View {
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var historyService = HistoryService.shared
+    @ObservedObject private var historyService = HistoryService.shared
     
     let gameType: GameType?
     

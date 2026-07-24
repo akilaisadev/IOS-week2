@@ -47,15 +47,15 @@ struct AppTheme {
     // MARK: - Shadows
     struct Shadows {
         // Reduced shadow intensity for premium look
-        static func card(color: Color = Color.black) -> ViewModifier {
+        static func card(color: Color = Color.black) -> ShadowModifier {
             ShadowModifier(color: color.opacity(0.04), radius: 8, x: 0, y: 4)
         }
         
-        static func button(color: Color) -> ViewModifier {
+        static func button(color: Color) -> ShadowModifier {
             ShadowModifier(color: color.opacity(0.2), radius: 6, x: 0, y: 3)
         }
         
-        static func heavy(color: Color = Color.black) -> ViewModifier {
+        static func heavy(color: Color = Color.black) -> ShadowModifier {
             ShadowModifier(color: color.opacity(0.08), radius: 16, x: 0, y: 8)
         }
     }

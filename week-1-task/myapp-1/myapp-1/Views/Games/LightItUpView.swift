@@ -34,8 +34,8 @@ struct LightItUpView: View {
     @State private var showingHistory = false
     @State private var hasRecordedHistory = false
     
-    @StateObject private var powerUpService = PowerUpService.shared
-    @StateObject private var marketplaceService = MarketplaceService.shared
+    @ObservedObject private var powerUpService = PowerUpService.shared
+    @ObservedObject private var marketplaceService = MarketplaceService.shared
     
     let gameTimer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
     

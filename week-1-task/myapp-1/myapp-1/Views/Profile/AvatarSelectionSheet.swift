@@ -7,7 +7,7 @@ import SwiftUI
 
 struct AvatarSelectionSheet: View {
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var marketplaceService = MarketplaceService.shared
+    @ObservedObject private var marketplaceService = MarketplaceService.shared
     
     var body: some View {
         NavigationStack {

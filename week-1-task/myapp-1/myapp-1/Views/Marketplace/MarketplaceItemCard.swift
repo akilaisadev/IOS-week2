@@ -10,7 +10,7 @@ struct MarketplaceItemCard: View {
     let quantityOwned: Int
     let onPurchase: () -> Void
     
-    @StateObject private var walletService = WalletService.shared
+    @ObservedObject private var walletService = WalletService.shared
     
     var body: some View {
         HStack(spacing: 14) {

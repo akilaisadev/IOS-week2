@@ -6,8 +6,8 @@
 import SwiftUI
 
 struct ReferralView: View {
-    @StateObject private var walletService = WalletService.shared
-    @StateObject private var referralService = ReferralService.shared
+    @ObservedObject private var walletService = WalletService.shared
+    @ObservedObject private var referralService = ReferralService.shared
     
     @State private var inputCode = ""
     @State private var alertMessage: String? = nil
