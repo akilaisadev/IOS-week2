@@ -98,13 +98,15 @@ struct InventoryView: View {
     
     private func equip(item: MarketplaceItem) {
         withAnimation {
+            let isAlreadyActive = isActive(item: item)
+            
             switch item.category {
             case .avatars:
-                marketplaceService.activeAvatarId = item.id
+                marketplaceService.activeAvatarId = isAlreadyActive ? "default" : item.id
             case .skins:
-                marketplaceService.activeTapFrenzySkinId = item.id
+                marketplaceService.activeTapFrenzySkinId = isAlreadyActive ? "default" : item.id
             case .cosmetics:
-                marketplaceService.activeFrameId = item.id
+                marketplaceService.activeFrameId = isAlreadyActive ? "none" : item.id
             default:
                 break
             }
@@ -138,16 +140,15 @@ struct InventoryItemCard: View {
                 .lineLimit(1)
             
             Button(action: onEquip) {
-                Text(isActive ? "EQUIPPED" : "EQUIP")
+                Text(isActive ? "UNEQUIP" : "EQUIP")
                     .font(.caption)
                     .fontWeight(.bold)
-                    .foregroundColor(isActive ? AppTheme.Colors.primary : .white)
+                    .foregroundColor(isActive ? .red : .white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
-                    .background(isActive ? AppTheme.Colors.primary.opacity(0.15) : Color.blue)
+                    .background(isActive ? Color.red.opacity(0.15) : Color.blue)
                     .clipShape(Capsule())
             }
-            .disabled(isActive)
         }
         .padding(AppTheme.Spacing.small)
         .background(Color(.systemBackground))
