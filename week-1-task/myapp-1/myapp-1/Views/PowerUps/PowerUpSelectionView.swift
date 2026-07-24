@@ -17,45 +17,60 @@ struct PowerUpSelectionView: View {
                 .foregroundColor(.secondary)
             
             HStack(spacing: 10) {
-                ForEach(PowerUpType.allCases) { type in
-                    let qty = quantity(for: type)
-                    let isActive = powerUpService.activePowerUp == type
-                    
-                    Button {
-                        if isActive {
-                            powerUpService.clearActivePowerUp()
-                        } else if qty > 0 {
-                            _ = powerUpService.activatePowerUp(type)
-                        }
-                    } label: {
-                        VStack(spacing: 6) {
-                            Image(systemName: type.iconName)
-                                .font(.title2)
-                                .foregroundColor(isActive ? .white : (qty > 0 ? type.themeColor : .gray))
-                            
-                            Text(type.rawValue)
-                                .font(.system(size: 11, weight: .bold))
-                                .foregroundColor(isActive ? .white : (qty > 0 ? .primary : .gray))
-                                .lineLimit(1)
-                            
-                            Text(qty > 0 ? "\(qty) Left" : "0 Owned")
-                                .font(.system(size: 9, weight: .semibold))
-                                .foregroundColor(isActive ? .white.opacity(0.8) : .secondary)
-                        }
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 8)
-                        .frame(maxWidth: .infinity)
-                        .background(
-                            RoundedRectangle(cornerRadius: 14)
-                                .fill(isActive ? type.themeColor : Color(.secondarySystemBackground))
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14)
-                                .stroke(isActive ? Color.white : (qty > 0 ? type.themeColor.opacity(0.4) : Color.clear), lineWidth: 1.5)
-                        )
+                let availableTypes = PowerUpType.allCases.filter { quantity(for: $0) > 0 || powerUpService.activePowerUp == $0 }
+                
+                if availableTypes.isEmpty {
+                    VStack(spacing: 8) {
+                        Image(systemName: "cart.badge.plus")
+                            .font(.title)
+                            .foregroundColor(.gray)
+                        Text("No Power-Ups in Inventory.\nVisit Marketplace to buy some!")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
                     }
-                    .buttonStyle(.plain)
-                    .disabled(qty == 0 && !isActive)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                } else {
+                    ForEach(availableTypes) { type in
+                        let qty = quantity(for: type)
+                        let isActive = powerUpService.activePowerUp == type
+                        
+                        Button {
+                            if isActive {
+                                powerUpService.clearActivePowerUp()
+                            } else if qty > 0 {
+                                _ = powerUpService.activatePowerUp(type)
+                            }
+                        } label: {
+                            VStack(spacing: 6) {
+                                Image(systemName: type.iconName)
+                                    .font(.title2)
+                                    .foregroundColor(isActive ? .white : type.themeColor)
+                                
+                                Text(type.rawValue)
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundColor(isActive ? .white : .primary)
+                                    .lineLimit(1)
+                                
+                                Text(isActive ? "Equipped" : "\(qty) Left")
+                                    .font(.system(size: 9, weight: .semibold))
+                                    .foregroundColor(isActive ? .white.opacity(0.8) : .secondary)
+                            }
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 8)
+                            .frame(maxWidth: .infinity)
+                            .background(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .fill(isActive ? type.themeColor : Color(.secondarySystemBackground))
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .stroke(isActive ? Color.white : type.themeColor.opacity(0.4), lineWidth: 1.5)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
             }
         }

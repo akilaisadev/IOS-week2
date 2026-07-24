@@ -24,6 +24,7 @@ struct ProfileView: View {
                 
                 xpProgressCard
                 statsOverviewGrid
+                inventorySection
                 achievementsShelfSection
                 referralCardSection
                 
@@ -87,6 +88,45 @@ struct ProfileView: View {
     
     private var unlockedBadgesCount: Int {
         achievementService.achievements.filter { $0.isUnlocked }.count
+    }
+    
+    // Explicit Inventory Section
+    private var inventorySection: some View {
+        Button {
+            showingInventory = true
+        } label: {
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(Color.purple.opacity(0.15))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: "backpack.fill")
+                        .font(.title3)
+                        .foregroundColor(.purple)
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("My Inventory")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    Text("View and manage your owned items")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.secondary)
+            }
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color(.secondarySystemBackground))
+            )
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal)
     }
     
     // Achievement badges shelf section
