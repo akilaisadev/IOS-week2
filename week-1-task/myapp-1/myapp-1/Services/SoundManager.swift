@@ -208,7 +208,6 @@ class SoundManager: NSObject, ObservableObject {
                     case .sawtooth:
                         val = 2.0 * (t * freq - floor(t * freq + 0.5))
                     }
-                    val = 0.0
                 }
                 
                 // Apply envelope (attack and decay) to eliminate clicks/pops

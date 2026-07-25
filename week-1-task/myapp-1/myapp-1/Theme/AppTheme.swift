@@ -27,7 +27,7 @@ struct AppTheme {
         static let secondaryGradient = LinearGradient(colors: [Color.orange.opacity(0.8), Color.orange], startPoint: .topLeading, endPoint: .bottomTrailing)
     }
     
-    // MARK: - Spacing (8-point grid)
+    // MARK: - Spacing 
     struct Spacing {
         static let extraSmall: CGFloat = 8
         static let small: CGFloat = 16

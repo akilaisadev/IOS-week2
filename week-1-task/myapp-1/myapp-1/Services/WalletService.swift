@@ -83,11 +83,16 @@ class WalletService: ObservableObject {
     
     func toggleDeveloperMode() {
         wallet.isDeveloperMode.toggle()
+        if !wallet.isDeveloperMode {
+            wallet.coins = max(0, wallet.coins - wallet.devCoinsGranted)
+            wallet.devCoinsGranted = 0
+        }
         save()
     }
     
     func grantDevCoins() {
         wallet.coins += 10000
+        wallet.devCoinsGranted += 10000
         save()
     }
     
