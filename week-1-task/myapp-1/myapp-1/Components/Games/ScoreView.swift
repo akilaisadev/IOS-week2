@@ -13,58 +13,30 @@ struct ScoreView: View {
     var streak: Int? = nil
     
     var body: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("SCORE")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundColor(.secondary)
+        AppCard {
+            HStack(spacing: AppTheme.Spacing.small) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("SCORE")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    Text("\(score)")
+                        .font(.system(size: 32, weight: .heavy, design: .rounded))
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                }
                 
-                Text("\(score)")
-                    .font(.system(size: 32, weight: .heavy, design: .rounded))
-                    .foregroundColor(.primary)
-            }
-            
-            Spacer()
-            
-            if multiplier > 1 {
-                HStack(spacing: 4) {
-                    Image(systemName: "flame.fill")
-                    Text("\(multiplier)x COMBO")
-                        .fontWeight(.bold)
+                Spacer()
+                
+                if multiplier > 1 {
+                    AppChip(text: "\(multiplier)x COMBO", icon: "flame.fill", color: AppTheme.Colors.secondary)
                 }
-                .font(.subheadline)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
-                .background(Color.orange.opacity(0.1))
-                .foregroundColor(.orange)
-                .clipShape(Capsule())
-            }
-            
-            if let streak = streak, streak > 0 {
-                HStack(spacing: 4) {
-                    Image(systemName: "bolt.fill")
-                    Text("\(streak) STREAK")
-                        .fontWeight(.bold)
+                
+                if let streak = streak, streak > 0 {
+                    AppChip(text: "\(streak) STREAK", icon: "bolt.fill", color: AppTheme.Colors.primary)
                 }
-                .font(.subheadline)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
-                .background(Color.yellow.opacity(0.1))
-                .foregroundColor(.blue)
-                .clipShape(Capsule())
             }
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.ultraThinMaterial)
-                .shadow(color: Color.black.opacity(0.12), radius: 10, x: 0, y: 5)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.white.opacity(0.2), lineWidth: 1)
-        )
     }
 }
 

@@ -53,13 +53,13 @@ struct ResultView: View {
                             .transition(.opacity)
                     }
                 }
-                .padding(20)
+                .padding(AppTheme.Spacing.medium)
                 .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(Color(.systemBackground))
-                        .shadow(color: Color.black.opacity(0.18), radius: 20, x: 0, y: 10)
+                    RoundedRectangle(cornerRadius: AppTheme.Radius.dialog)
+                        .fill(AppTheme.Colors.secondaryBackground)
+                        .appCardShadow()
                 )
-                .padding(.horizontal, 28)
+                .padding(.horizontal, AppTheme.Spacing.large)
                 .frame(maxWidth: 400)
                 .animation(.easeInOut(duration: 0.22), value: showingActions)
             }
@@ -177,7 +177,7 @@ struct ResultView: View {
                     .shadow(color: Color.orange.opacity(0.3), radius: 4, x: 0, y: 2)
                 }
                 
-                PrimaryButton(
+                AppButton(
                     title: "Play Again",
                     iconName: "arrow.counterclockwise",
                     backgroundColor: mode.color,

@@ -34,6 +34,14 @@ struct LightItUpView: View {
     @State private var showingHistory = false
     @State private var hasRecordedHistory = false
     
+    @State private var isShowingRevivePrompt = false
+    @State private var deathReason: DeathReason? = nil
+    
+    enum DeathReason {
+        case timeout
+        case outOfLives
+    }
+    
     @ObservedObject private var powerUpService = PowerUpService.shared
     @ObservedObject private var marketplaceService = MarketplaceService.shared
     
@@ -43,19 +51,11 @@ struct LightItUpView: View {
         ZStack {
             AnimatedBackground(colors: [Color.orange.opacity(0.18), Color.yellow.opacity(0.15)])
             
-            VStack(spacing: 16) {
-                VStack(spacing: 12) {
+            VStack(spacing: AppTheme.Spacing.small) {
+                VStack(spacing: AppTheme.Spacing.extraSmall) {
                     HStack {
                         ScoreView(score: score)
                         Spacer()
-                        
-                        if !isGameOver && !isShowingReadyScreen {
-                            BoosterHUDView(boosterID: "booster_time_surge", iconName: "bolt.fill", title: "+5s Surge", color: .purple) {
-                                timeRemaining += 5
-                                SoundManager.shared.playBonus()
-                            }
-                        }
-                        
                         HighScoreView(highScore: highScore)
                     }
                     
@@ -65,77 +65,84 @@ struct LightItUpView: View {
                         HStack(spacing: 6) {
                             ForEach(1...3, id: \.self) { heart in
                                 Image(systemName: heart <= lives ? "heart.fill" : "heart")
-                                    .foregroundColor(heart <= lives ? .red : .gray.opacity(0.3))
+                                    .foregroundColor(heart <= lives ? AppTheme.Colors.error : Color.gray.opacity(0.3))
                                     .font(.title3)
                             }
-                            
-                            if lives < 3 && !isGameOver && !isShowingReadyScreen {
-                                BoosterHUDView(boosterID: "booster_life_refill", iconName: "heart.fill", title: "+1 Life", color: .red) {
+                        }
+                        .padding(.horizontal, AppTheme.Spacing.small)
+                        .padding(.vertical, 8)
+                        .background(
+                            Capsule()
+                                .fill(AppTheme.Colors.secondaryBackground)
+                                .appCardShadow()
+                        )
+                        
+                        Spacer()
+                        
+                        AppChip(text: "Level \(currentLevel): \(levelName)", icon: "star.fill", color: levelColor, isActive: true)
+                    }
+                }
+                .padding(.horizontal)
+                
+                ZStack {
+                    if let banner = levelUpBanner {
+                        Text(banner)
+                            .font(.headline)
+                            .fontWeight(.heavy)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, AppTheme.Spacing.medium)
+                            .padding(.vertical, AppTheme.Spacing.extraSmall)
+                            .background(levelColor)
+                            .clipShape(Capsule())
+                            .transition(.scale.combined(with: .opacity))
+                    }
+                }
+                .frame(height: 40)
+                
+                HStack(spacing: AppTheme.Spacing.small) {
+                    if !isGameOver && !isShowingReadyScreen {
+                        ZStack {
+                            BoosterHUDView(boosterID: "booster_time_surge", iconName: "bolt.fill", title: "+5s Surge", color: .purple) {
+                                timeRemaining += 5
+                                SoundManager.shared.playBonus()
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        
+                        ZStack {
+                            if lives < 3 {
+                                BoosterHUDView(boosterID: "booster_life_refill", iconName: "heart.fill", title: "+1 Life", color: AppTheme.Colors.error) {
                                     lives = min(3, lives + 1)
                                     SoundManager.shared.playBonus()
                                 }
                             }
                         }
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 8)
-                        .background(Color(.systemBackground))
-                        .cornerRadius(14)
-                        .shadow(color: Color.orange.opacity(0.12), radius: 4, x: 0, y: 2)
-                        
-                        Spacer()
-                        HStack(spacing: 6) {
-                            Image(systemName: "star.fill")
-                                .foregroundColor(levelColor)
-                            Text("Level \(currentLevel): \(levelName)")
-                                .font(.subheadline)
-                                .fontWeight(.bold)
-                                .foregroundColor(levelColor)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.85)
-                        }
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 8)
-                        .background(Color(.systemBackground))
-                        .cornerRadius(14)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14)
-                                .stroke(levelColor.opacity(0.4), lineWidth: 1.5)
-                        )
-                        .shadow(color: levelColor.opacity(0.15), radius: 4, x: 0, y: 2)
+                        .frame(maxWidth: .infinity)
                     }
                 }
+                .frame(height: 44)
                 .padding(.horizontal)
-                if let banner = levelUpBanner {
-                    Text(banner)
-                        .font(.headline)
-                        .fontWeight(.heavy)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 8)
-                        .background(levelColor)
-                        .clipShape(Capsule())
-                        .transition(.scale.combined(with: .opacity))
-                }
                 
-                Spacer()
+                Spacer(minLength: 0)
+                
                 if !isGameOver {
                     LazyVGrid(
-                        columns: Array(repeating: GridItem(.flexible()), count: gridColumns),
-                        spacing: 16
+                        columns: Array(repeating: GridItem(.flexible(), spacing: AppTheme.Spacing.small), count: gridColumns),
+                        spacing: AppTheme.Spacing.small
                     ) {
                         ForEach(0..<cardCount, id: \.self) { index in
                             let isLit = activeCards.contains(index)
                             
-                            RoundedRectangle(cornerRadius: 18)
-                                .fill(isLit ? AnyShapeStyle(levelColor) : AnyShapeStyle(Color(.systemBackground)))
+                            RoundedRectangle(cornerRadius: AppTheme.Radius.button)
+                                .fill(isLit ? AnyShapeStyle(levelColor) : AnyShapeStyle(AppTheme.Colors.secondaryBackground))
                                 .frame(height: cardHeight)
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 18)
-                                        .stroke(isLit ? Color.white : Color.orange.opacity(0.25), lineWidth: isLit ? 3 : 1.5)
+                                    RoundedRectangle(cornerRadius: AppTheme.Radius.button)
+                                        .stroke(isLit ? Color.white.opacity(0.5) : Color.clear, lineWidth: isLit ? 2 : 0)
                                 )
-                                .shadow(color: isLit ? levelColor.opacity(0.6) : Color.orange.opacity(0.12), radius: isLit ? 12 : 6, x: 0, y: isLit ? 6 : 3)
+                                .shadow(color: isLit ? levelColor.opacity(0.4) : Color.black.opacity(0.04), radius: isLit ? 8 : 4, x: 0, y: isLit ? 4 : 2)
                                 .scaleEffect(isLit ? 1.05 : 1.0)
-                                .animation(.spring(response: 0.25), value: isLit)
+                                .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isLit)
                                 .onTapGesture {
                                     handleCardTap(at: index)
                                 }
@@ -206,6 +213,42 @@ struct LightItUpView: View {
                     PowerUpSelectionView()
                 }
                 .transition(.opacity.combined(with: .scale))
+            } else if isShowingRevivePrompt, let reason = deathReason {
+                if reason == .timeout {
+                    ReviveOverlayView(
+                        requiredBoosterID: "booster_time_surge",
+                        boosterName: "Time Surge",
+                        boosterIcon: "bolt.fill",
+                        boosterColor: .purple,
+                        onRevive: {
+                            timeRemaining += 5
+                            withAnimation { isShowingRevivePrompt = false }
+                            SoundManager.shared.playBonus()
+                        },
+                        onSkip: {
+                            withAnimation { isShowingRevivePrompt = false }
+                            finalizeGameOver()
+                        }
+                    )
+                    .transition(.opacity.combined(with: .scale))
+                } else {
+                    ReviveOverlayView(
+                        requiredBoosterID: "booster_life_refill",
+                        boosterName: "Life Refill",
+                        boosterIcon: "heart.fill",
+                        boosterColor: AppTheme.Colors.error,
+                        onRevive: {
+                            lives = 1
+                            withAnimation { isShowingRevivePrompt = false }
+                            SoundManager.shared.playBonus()
+                        },
+                        onSkip: {
+                            withAnimation { isShowingRevivePrompt = false }
+                            finalizeGameOver()
+                        }
+                    )
+                    .transition(.opacity.combined(with: .scale))
+                }
             } else if let countdown = countdownRemaining {
                 CountdownOverlayView(countdown: countdown, themeColor: .orange)
             }
@@ -213,6 +256,12 @@ struct LightItUpView: View {
         .navigationTitle("Light It Up")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
+        .onAppear {
+            TabBarManager.shared.hide()
+        }
+        .onDisappear {
+            TabBarManager.shared.show()
+        }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: { showingHistory = true }) {
@@ -267,7 +316,7 @@ struct LightItUpView: View {
     }
     
     private func handleTimerTick() {
-        guard !isGameOver, !isShowingReadyScreen else { return }
+        guard !isGameOver, !isShowingReadyScreen, !isShowingRevivePrompt else { return }
         
         if let countdown = countdownRemaining {
             tickCounter += 1
@@ -302,20 +351,27 @@ struct LightItUpView: View {
         }
         
         if timeRemaining == 0 {
-            triggerGameOver()
+            triggerGameOver(reason: .timeout)
             return
         }
         
         cardTimeRemaining -= 0.1
         if cardTimeRemaining <= 0 {
             loseLife(reason: "Time Expired!")
-            if !isGameOver {
+            if !isGameOver && !isShowingRevivePrompt {
                 spawnNewLitCards()
             }
         }
     }
     
-    private func triggerGameOver() {
+    private func triggerGameOver(reason: DeathReason) {
+        deathReason = reason
+        withAnimation {
+            isShowingRevivePrompt = true
+        }
+    }
+    
+    private func finalizeGameOver() {
         withAnimation {
             isGameOver = true
         }
@@ -353,7 +409,7 @@ struct LightItUpView: View {
         triggerFlash(.red)
         
         if lives <= 0 {
-            triggerGameOver()
+            triggerGameOver(reason: .outOfLives)
         } else {
             SoundManager.shared.playCardWrong()
         }
@@ -393,6 +449,7 @@ struct LightItUpView: View {
         levelUpBanner = nil
         flashColor = .clear
         hasRecordedHistory = false
+        isShowingRevivePrompt = false
         withAnimation {
             isGameOver = false
             countdownRemaining = nil

@@ -12,6 +12,7 @@ struct PlayerWallet: Codable, Equatable {
     var referralCode: String = ""
     var referralsCompleted: Int = 0
     var isDeveloperMode: Bool = false
+    var devCoinsGranted: Int = 0
     
     var xpForNextLevel: Int {
         level * 100

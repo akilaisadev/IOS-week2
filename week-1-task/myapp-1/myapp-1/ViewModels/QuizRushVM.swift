@@ -2,7 +2,6 @@
 //  QuizRushVM.swift
 //  myapp-1
 //
-//  view model managing trivia questions and score for quiz rush
 //
 
 import SwiftUI
@@ -23,19 +22,19 @@ class QuizRushVM: ObservableObject {
     @Published var isAnswerCorrect: Bool? = nil
     @AppStorage("quizRushHighScore") var highScore = 0
     
+    @Published var selectedGenreId: Int? = nil
+    
     private let service: TriviaService
     
     init(service: TriviaService? = nil) {
         self.service = service ?? .shared
-        Task {
-            await loadQuestions()
-        }
     }
     var currentQuestion: TriviaQuestion? {
         guard currentIndex < questions.count else { return nil }
         return questions[currentIndex]
     }
-    func loadQuestions() async {
+    func loadQuestions(genreId: Int? = nil) async {
+        self.selectedGenreId = genreId
         isLoading = true
         errorMessage = nil
         isGameOver = false
@@ -46,7 +45,7 @@ class QuizRushVM: ObservableObject {
         isAnswerCorrect = nil
         
         do {
-            questions = try await service.fetchQuestions()
+            questions = try await service.fetchQuestions(genreId: genreId)
             isLoading = false
         } catch {
             isLoading = false
@@ -90,7 +89,7 @@ class QuizRushVM: ObservableObject {
     }
     func restartGame() {
         Task {
-            await loadQuestions()
+            await loadQuestions(genreId: selectedGenreId)
         }
     }
 }

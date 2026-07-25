@@ -43,48 +43,52 @@ struct TapFrenzyView: View {
         ZStack {
             AnimatedBackground(colors: [Color.blue.opacity(0.15), Color.cyan.opacity(0.15)])
             
-            VStack(spacing: 20) {
-                VStack(spacing: 12) {
-                    HStack {
-                        ScoreView(score: score, multiplier: comboMultiplier)
-                        Spacer()
+            VStack(spacing: AppTheme.Spacing.small) {
+                VStack(spacing: AppTheme.Spacing.small) {
+                    VStack(spacing: AppTheme.Spacing.extraSmall) {
+                        HStack {
+                            ScoreView(score: score, multiplier: comboMultiplier)
+                            Spacer(minLength: AppTheme.Spacing.small)
+                            HighScoreView(highScore: highScore)
+                        }
                         
-
-                        
-                        HighScoreView(highScore: highScore)
+                        TimerView(timeRemaining: timeRemaining, totalTime: 10)
                     }
+                    .padding(.horizontal)
                     
-                    TimerView(timeRemaining: timeRemaining, totalTime: 10)
-                }
-                .padding(.horizontal)
-                
-                if let message = bonusMessage {
-                    Text(message)
-                        .font(.headline)
-                        .fontWeight(.bold)
-                        .foregroundColor(.yellow)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(Color.black.opacity(0.7))
-                        .clipShape(Capsule())
-                        .transition(.scale.combined(with: .opacity))
-                } else {
-                    Text(hasScoreShield ? "🛡️ Score Shield Active!" : "Tap fast! Watch out for RED traps!")
-                        .font(.subheadline)
-                        .foregroundColor(hasScoreShield ? .blue : .secondary)
-                        .frame(height: 36)
-                }
-                
-                Spacer()
-                
-                if !isGameOver && !isShowingReadyScreen {
-                    BoosterHUDView(boosterID: "booster_time_surge", iconName: "bolt.fill", title: "+5s Surge", color: .purple) {
-                        timeRemaining += 5
-                        triggerBonusMessage("TIME SURGE! +5s")
-                        SoundManager.shared.playBonus()
+                    ZStack {
+                        if let message = bonusMessage {
+                            Text(message)
+                                .font(.headline)
+                                .fontWeight(.bold)
+                                .foregroundColor(.yellow)
+                                .padding(.horizontal, AppTheme.Spacing.small)
+                                .padding(.vertical, 8)
+                                .background(Color.black.opacity(0.7))
+                                .clipShape(Capsule())
+                                .transition(.scale.combined(with: .opacity))
+                        } else {
+                            Text(hasScoreShield ? "🛡️ Score Shield Active!" : "Tap fast! Watch out for RED traps!")
+                                .font(.subheadline)
+                                .foregroundColor(hasScoreShield ? .blue : AppTheme.Colors.textSecondary)
+                        }
                     }
-                    .padding(.bottom, 10)
+                    .frame(height: 40)
+                    
+                    ZStack {
+                        if !isGameOver && !isShowingReadyScreen {
+                            BoosterHUDView(boosterID: "booster_time_surge", iconName: "bolt.fill", title: "+5s Surge", color: .purple) {
+                                timeRemaining += 5
+                                triggerBonusMessage("TIME SURGE! +5s")
+                                SoundManager.shared.playBonus()
+                            }
+                        }
+                    }
+                    .frame(height: 44)
                 }
+                .frame(height: 180, alignment: .top)
+                
+                Spacer(minLength: 0)
                 
                 if !isGameOver {
                     Button(action: handleButtonTap) {
@@ -96,6 +100,7 @@ struct TapFrenzyView: View {
                         .scaleEffect(isTrapActive ? 1.05 : 1.0)
                         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: buttonOffset)
                     }
+                    .buttonStyle(AppButtonScaleStyle())
                     .offset(buttonOffset)
                     .disabled(isGameOver)
                 }
@@ -146,36 +151,28 @@ struct TapFrenzyView: View {
                 }
                 .transition(.opacity.combined(with: .scale))
             } else if isShowingTimeSurgePrompt {
-                VStack(spacing: 16) {
-                    ReadyPromptView(
-                        title: "TIME'S UP!",
-                        subtitle: "Use a Time Surge to keep playing for +5 seconds?",
-                        iconName: "bolt.fill",
-                        themeColor: .purple,
-                        onReady: {
-                            if MarketplaceService.shared.consumeItem(id: "booster_time_surge") {
-                                timeRemaining += 5
-                                hasUsedTimeSurge = true
-                                triggerBonusMessage("TIME SURGE! +5s")
-                                SoundManager.shared.playBonus()
-                                withAnimation {
-                                    isShowingTimeSurgePrompt = false
-                                }
-                            }
-                        }
-                    )
-                    
-                    Button("No Thanks") {
+                ReviveOverlayView(
+                    requiredBoosterID: "booster_time_surge",
+                    boosterName: "Time Surge",
+                    boosterIcon: "bolt.fill",
+                    boosterColor: .purple,
+                    onRevive: {
+                        timeRemaining += 5
+                        hasUsedTimeSurge = true
+                        triggerBonusMessage("TIME SURGE! +5s")
+                        SoundManager.shared.playBonus()
                         withAnimation {
                             isShowingTimeSurgePrompt = false
-                            isGameOver = true
+                        }
+                    },
+                    onSkip: {
+                        withAnimation {
+                            isShowingTimeSurgePrompt = false
+                            endGame()
                         }
                     }
-                    .font(.headline)
-                    .foregroundColor(.gray)
-                    .padding(.top, 10)
-                }
-                .transition(.scale)
+                )
+                .transition(.opacity.combined(with: .scale))
             } else if let countdown = countdownRemaining {
                 CountdownOverlayView(countdown: countdown, themeColor: .blue)
             }
@@ -183,6 +180,12 @@ struct TapFrenzyView: View {
         .navigationTitle("Tap Frenzy")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
+        .onAppear {
+            TabBarManager.shared.hide()
+        }
+        .onDisappear {
+            TabBarManager.shared.show()
+        }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: { showingHistory = true }) {
@@ -283,29 +286,13 @@ struct TapFrenzyView: View {
         }
         
         if timeRemaining == 0 {
-            if !hasUsedTimeSurge && MarketplaceService.shared.quantity(for: "booster_time_surge") > 0 {
+            if !hasUsedTimeSurge {
                 withAnimation {
                     isShowingTimeSurgePrompt = true
                 }
                 return
             }
-            
-            withAnimation {
-                isGameOver = true
-            }
-            SoundManager.shared.playGameOver()
-            if score > highScore {
-                highScore = score
-            }
-            if !hasRecordedHistory {
-                hasRecordedHistory = true
-                HistoryService.shared.addSession(
-                    mode: .tapFrenzy,
-                    score: score,
-                    latitude: LocationService.shared.currentLatitude,
-                    longitude: LocationService.shared.currentLongitude
-                )
-            }
+            endGame()
             return
         }
         
@@ -352,6 +339,26 @@ struct TapFrenzyView: View {
             isGameOver = false
             countdownRemaining = nil
             isShowingReadyScreen = true
+            isShowingTimeSurgePrompt = false
+        }
+    }
+    
+    private func endGame() {
+        withAnimation {
+            isGameOver = true
+        }
+        SoundManager.shared.playGameOver()
+        if score > highScore {
+            highScore = score
+        }
+        if !hasRecordedHistory {
+            hasRecordedHistory = true
+            HistoryService.shared.addSession(
+                mode: .tapFrenzy,
+                score: score,
+                latitude: LocationService.shared.currentLatitude,
+                longitude: LocationService.shared.currentLongitude
+            )
         }
     }
 }

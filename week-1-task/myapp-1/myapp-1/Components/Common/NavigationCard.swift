@@ -14,41 +14,38 @@ struct NavigationCard: View {
     let accentColor: Color
     
     var body: some View {
-        HStack(spacing: 16) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(accentColor.opacity(0.18))
-                    .frame(width: 64, height: 64)
+        AppCard(padding: AppTheme.Spacing.small) {
+            HStack(spacing: AppTheme.Spacing.small) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: AppTheme.Radius.button)
+                        .fill(accentColor.opacity(0.18))
+                        .frame(width: 56, height: 56)
+                    
+                    Image(systemName: iconName)
+                        .font(.system(size: 26))
+                        .foregroundColor(accentColor)
+                }
                 
-                Image(systemName: iconName)
-                    .font(.system(size: 30))
-                    .foregroundColor(accentColor)
-            }
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .foregroundColor(.primary)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    Text(subtitle)
+                        .font(.subheadline)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                        .lineLimit(2)
+                }
                 
-                Text(subtitle)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.headline)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
             }
-            
-            Spacer()
-            
-            Image(systemName: "chevron.right")
-                .font(.headline)
-                .foregroundColor(.secondary)
+            .padding(AppTheme.Spacing.extraSmall)
         }
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color(.systemBackground))
-                .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
-        )
     }
 }
 

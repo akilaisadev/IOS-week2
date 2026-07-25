@@ -42,8 +42,9 @@ class MarketplaceService: ObservableObject {
         MarketplaceItem(id: "skin_lightning", name: "Lightning Skin", description: "A shockingly fast target", iconName: "bolt.fill", category: .skins, price: 200, badgeText: "SKIN", isStackable: false)
     ]
     
-    @AppStorage("activeAvatarId") var activeAvatarId = "person.fill"
-    @AppStorage("activeTapFrenzySkinId") var activeTapFrenzySkinId = "hand.tap.fill"
+    @AppStorage("activeAvatarId") var activeAvatarId = "default"
+    @AppStorage("activeTapFrenzySkinId") var activeTapFrenzySkinId = "default"
+    @AppStorage("activeFrameId") var activeFrameId = "default"
     
     private init() {
         loadInventory()
@@ -67,6 +68,10 @@ class MarketplaceService: ObservableObject {
     // Purchases marketplace item using WalletService balance
     func purchase(_ item: MarketplaceItem) -> Bool {
         if !item.isStackable && (ownedItems[item.id] ?? 0) > 0 {
+            return false
+        }
+        
+        if item.isStackable && (ownedItems[item.id] ?? 0) >= 10 {
             return false
         }
         

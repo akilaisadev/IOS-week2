@@ -11,7 +11,7 @@ struct HighScoreView: View {
     let highScore: Int
     
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: AppTheme.Spacing.extraSmall) {
             Image(systemName: "trophy.fill")
                 .foregroundColor(.yellow)
             
@@ -19,14 +19,14 @@ struct HighScoreView: View {
                 Text("HIGH SCORE")
                     .font(.caption2)
                     .fontWeight(.bold)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
                 
                 Text("\(highScore)")
                     .font(.system(size: 18, weight: .bold, design: .rounded))
             }
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 8)
+        .padding(.horizontal, AppTheme.Spacing.small)
+        .padding(.vertical, AppTheme.Spacing.extraSmall)
         .background(
             Capsule()
                 .fill(Color.yellow.opacity(0.15))

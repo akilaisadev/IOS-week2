@@ -52,9 +52,14 @@ struct StatsTab: View {
                     }
                     .padding()
                 }
+                .safeAreaInset(edge: .bottom) {
+                    Color.clear.frame(height: 90)
+                }
             }
             .navigationTitle("Stats")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(AppTheme.Colors.secondaryBackground.opacity(0.95), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
         }
     }
     
@@ -92,76 +97,76 @@ struct StatsTab: View {
     }
     
     private var summaryMetricsGrid: some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+        LazyVGrid(columns: [GridItem(.flexible(), spacing: AppTheme.Spacing.small), GridItem(.flexible(), spacing: AppTheme.Spacing.small)], spacing: AppTheme.Spacing.small) {
             if let mode = selectedMode.gameMode {
-                metricCard(
+                AppStatCard(
                     title: "Games Played",
                     value: "\(statsVM.gamesPlayed(for: mode))",
                     icon: mode.iconName,
                     color: mode.color
                 )
-                metricCard(
+                AppStatCard(
                     title: "Total Points",
                     value: "\(statsVM.totalPoints(for: mode))",
                     icon: "star.fill",
                     color: .purple
                 )
-                metricCard(
+                AppStatCard(
                     title: "Personal Best",
                     value: "\(statsVM.bestScore(for: mode))",
                     icon: "trophy.fill",
                     color: .orange
                 )
-                metricCard(
+                AppStatCard(
                     title: "Avg Score",
                     value: "\(statsVM.averageScore(for: mode))",
                     icon: "chart.line.uptrend.xyaxis",
                     color: .green
                 )
-                metricCard(
+                AppStatCard(
                     title: "Total Time",
                     value: statsVM.formattedTimePlayed(for: mode),
                     icon: "clock.fill",
                     color: .indigo
                 )
-                metricCard(
+                AppStatCard(
                     title: "Avg Duration",
                     value: statsVM.formattedAverageDuration(for: mode),
                     icon: "timer",
                     color: .cyan
                 )
             } else {
-                metricCard(
+                AppStatCard(
                     title: "Total Games",
                     value: "\(statsVM.totalGames)",
                     icon: "gamecontroller.fill",
                     color: .blue
                 )
-                metricCard(
+                AppStatCard(
                     title: "Total Points",
                     value: "\(statsVM.totalPoints)",
                     icon: "star.fill",
                     color: .purple
                 )
-                metricCard(
+                AppStatCard(
                     title: "Avg Score",
                     value: "\(statsVM.averageScore)",
                     icon: "chart.line.uptrend.xyaxis",
                     color: .green
                 )
-                metricCard(
+                AppStatCard(
                     title: "Favorite Mode",
                     value: statsVM.favoriteMode?.title ?? "None",
                     icon: statsVM.favoriteMode?.iconName ?? "heart.fill",
                     color: statsVM.favoriteMode?.color ?? .orange
                 )
-                metricCard(
+                AppStatCard(
                     title: "Time Played",
                     value: statsVM.formattedTimePlayed(for: nil),
                     icon: "clock.fill",
                     color: .indigo
                 )
-                metricCard(
+                AppStatCard(
                     title: "Avg Duration",
                     value: statsVM.formattedAverageDuration(for: nil),
                     icon: "timer",
@@ -487,28 +492,7 @@ struct StatsTab: View {
         .cornerRadius(12)
     }
     
-    private func metricCard(title: String, value: String, icon: String, color: Color) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Image(systemName: icon)
-                    .foregroundColor(color)
-                Text(title)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
-            }
-            
-            Text(value)
-                .font(.title3)
-                .fontWeight(.bold)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
-        .background(Color(.secondarySystemBackground))
-        .cornerRadius(12)
-    }
+
 }
 
 #Preview {

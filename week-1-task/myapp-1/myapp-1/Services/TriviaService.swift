@@ -30,10 +30,15 @@ enum TriviaServiceError: Error, LocalizedError {
 class TriviaService {
     static let shared = TriviaService()
     
-    private let endpointURL = "https://opentdb.com/api.php?amount=10&type=multiple"
+    private let baseURL = "https://opentdb.com/api.php?amount=10&type=multiple"
     
-    func fetchQuestions() async throws -> [TriviaQuestion] {
-        guard let url = URL(string: endpointURL) else {
+    func fetchQuestions(genreId: Int? = nil) async throws -> [TriviaQuestion] {
+        var urlString = baseURL
+        if let genreId = genreId {
+            urlString += "&category=\(genreId)"
+        }
+        
+        guard let url = URL(string: urlString) else {
             throw TriviaServiceError.invalidURL
         }
         

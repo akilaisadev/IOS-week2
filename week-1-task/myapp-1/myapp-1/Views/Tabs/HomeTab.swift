@@ -16,6 +16,7 @@ struct HomeTab: View {
     @AppStorage("playerName") private var playerName = "Player 1"
     @State private var showingOnboarding = false
     @State private var showingMarketplace = false
+    @State private var activeGame: GameMode? = nil
     
     var body: some View {
         NavigationStack {
@@ -83,15 +84,14 @@ struct HomeTab: View {
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
                         }
                         
-                        Spacer(minLength: 90)
                     }
-                    .padding(.bottom, 90)
+                    .padding(.bottom, 120)
                     .animation(.spring(response: 0.45, dampingFraction: 0.8), value: moveTrophyRoomToBottom)
                 }
             }
             .blur(radius: showingOnboarding ? 8 : 0)
             .disabled(showingOnboarding)
-            .navigationBarHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
             .sheet(isPresented: $showingMarketplace) {
                 MarketplaceView()
             }
@@ -108,143 +108,127 @@ struct HomeTab: View {
                     LocationService.shared.requestPermission()
                 }
             }
+            .fullScreenCover(item: $activeGame) { game in
+                switch game {
+                case .tapFrenzy:
+                    TapFrenzyView()
+                case .lightItUp:
+                    LightItUpView()
+                case .quizRush:
+                    QuizRushView()
+                }
+            }
         }
     }
     private var titleHeader: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: AppTheme.Spacing.extraSmall) {
             Image(systemName: "gamecontroller.fill")
-                .font(.system(size: 50))
-                .foregroundStyle(
-                    LinearGradient(colors: [.blue, .purple], startPoint: .topLeading, endPoint: .bottomTrailing)
-                )
+                .font(.system(size: 48))
+                .foregroundStyle(AppTheme.Colors.primaryGradient)
             
             Text("GameHub")
-                .font(.system(size: 36, weight: .heavy, design: .rounded))
+                .font(.system(size: 32, weight: .heavy, design: .rounded))
             
             Text(playerName == "Player 1" || playerName.isEmpty ? "iOS Mini-Game Collection" : "Welcome back, \(playerName)!")
                 .font(.subheadline)
                 .fontWeight(.medium)
-                .foregroundColor(.secondary)
+                .foregroundColor(AppTheme.Colors.textSecondary)
             
             NavigationLink(destination: ProfileView()) {
-                HStack(spacing: 6) {
-                    Text("LEVEL \(walletService.wallet.level)")
-                        .font(.system(size: 11, weight: .black, design: .rounded))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                        .background(LinearGradient(colors: [.blue, .purple], startPoint: .leading, endPoint: .trailing))
-                        .clipShape(Capsule())
+                HStack(spacing: AppTheme.Spacing.extraSmall) {
+                    AppChip(text: "LEVEL \(walletService.wallet.level)", color: AppTheme.Colors.primary, isActive: true)
                     
                     Text("\(walletService.wallet.xp) XP")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(AppTheme.Colors.textSecondary)
                     
                     Image(systemName: "chevron.right")
                         .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
                 }
-                .padding(.top, 2)
+                .padding(.top, AppTheme.Spacing.extraSmall)
             }
             .buttonStyle(.plain)
         }
-        .padding(.top, 16)
+        .padding(.top, AppTheme.Spacing.small)
     }
+    
     private var quickStatsGrid: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: AppTheme.Spacing.small) {
             trophyRoomCard
             achievementsCard
         }
+        .padding(.horizontal, AppTheme.Spacing.medium)
     }
     
     private var trophyRoomCard: some View {
         NavigationLink(destination: LeaderboardView()) {
-            HStack(spacing: 16) {
-                ZStack {
-                    Circle()
-                        .fill(Color.yellow.opacity(0.25))
-                        .frame(width: 58, height: 58)
-                    Image(systemName: "trophy.fill")
-                        .font(.system(size: 28))
-                        .foregroundColor(.yellow)
-                }
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Trophy Room")
-                        .font(.headline)
-                        .fontWeight(.bold)
-                        .foregroundColor(.primary)
+            AppCard(padding: AppTheme.Spacing.medium) {
+                HStack(spacing: AppTheme.Spacing.small) {
+                    ZStack {
+                        Circle()
+                            .fill(Color.yellow.opacity(0.15))
+                            .frame(width: 50, height: 50)
+                        Image(systemName: "trophy.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(.yellow)
+                    }
                     
-                    Text("Total Combined Score: \(historyService.totalCombinedScore) PTS")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.orange)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Trophy Room")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("Total Combined Score: \(historyService.totalCombinedScore) PTS")
+                            .font(.subheadline)
+                            .foregroundColor(AppTheme.Colors.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .font(.headline)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
                 }
-                
-                Spacer()
-                
-                Image(systemName: "chevron.right")
-                    .font(.headline)
-                    .foregroundColor(.secondary)
             }
-            .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color(.systemBackground))
-                    .shadow(color: Color.yellow.opacity(0.2), radius: 10, x: 0, y: 4)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .stroke(Color.yellow.opacity(0.4), lineWidth: 1.5)
-            )
         }
         .buttonStyle(.plain)
-        .padding(.horizontal)
     }
     
     private var achievementsCard: some View {
         NavigationLink(destination: AchievementsView()) {
-            HStack(spacing: 16) {
-                ZStack {
-                    Circle()
-                        .fill(Color.orange.opacity(0.25))
-                        .frame(width: 58, height: 58)
-                    Image(systemName: "medal.fill")
-                        .font(.system(size: 28))
-                        .foregroundColor(.orange)
-                }
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Game Achievements")
-                        .font(.headline)
-                        .fontWeight(.bold)
-                        .foregroundColor(.primary)
+            AppCard(padding: AppTheme.Spacing.medium) {
+                HStack(spacing: AppTheme.Spacing.small) {
+                    ZStack {
+                        Circle()
+                            .fill(AppTheme.Colors.secondary.opacity(0.15))
+                            .frame(width: 50, height: 50)
+                        Image(systemName: "medal.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(AppTheme.Colors.secondary)
+                    }
                     
-                    Text("\(AchievementService.shared.achievements.filter { $0.isUnlocked }.count) / \(AchievementService.shared.achievements.count) Badges Unlocked")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.orange)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Game Achievements")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("\(AchievementService.shared.achievements.filter { $0.isUnlocked }.count) / \(AchievementService.shared.achievements.count) Badges Unlocked")
+                            .font(.subheadline)
+                            .foregroundColor(AppTheme.Colors.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .font(.headline)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
                 }
-                
-                Spacer()
-                
-                Image(systemName: "chevron.right")
-                    .font(.headline)
-                    .foregroundColor(.secondary)
             }
-            .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color(.systemBackground))
-                    .shadow(color: Color.orange.opacity(0.15), radius: 8, x: 0, y: 4)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .stroke(Color.orange.opacity(0.3), lineWidth: 1.5)
-            )
         }
         .buttonStyle(.plain)
-        .padding(.horizontal)
     }
     private var gamesListSection: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -255,7 +239,9 @@ struct HomeTab: View {
                 .padding(.horizontal)
             
             VStack(spacing: 16) {
-                NavigationLink(destination: TapFrenzyView()) {
+                Button {
+                    activeGame = .tapFrenzy
+                } label: {
                     NavigationCard(
                         title: "Tap Frenzy",
                         subtitle: "Test your reflexes in this fast-paced tapping challenge.",
@@ -265,7 +251,9 @@ struct HomeTab: View {
                 }
                 .buttonStyle(.plain)
                 
-                NavigationLink(destination: LightItUpView()) {
+                Button {
+                    activeGame = .lightItUp
+                } label: {
                     NavigationCard(
                         title: "Light It Up",
                         subtitle: "Memorize and repeat the glowing patterns to survive.",
@@ -275,7 +263,9 @@ struct HomeTab: View {
                 }
                 .buttonStyle(.plain)
                 
-                NavigationLink(destination: QuizRushView()) {
+                Button {
+                    activeGame = .quizRush
+                } label: {
                     NavigationCard(
                         title: "Quiz Rush",
                         subtitle: "Race against the clock in this exciting live trivia game!",

@@ -47,6 +47,17 @@ PlayHub is a native iOS application built with SwiftUI as part of the iOS develo
 * **Celebratory Result View**: Dynamically detects when a player achieves a new personal best (`ScoreBadge`) and updates visual styling accordingly.
 * **Native ShareLink Integration**: Uses SwiftUI `ShareLink` to generate formatted achievement strings (`"I just scored 150 points in Tap Frenzy on PlayHub! Can you beat my score?"`) that can be shared via Messages, Mail, or social applications.
 
+### 6. Marketplace (`Views/Marketplace/`)
+* **In-Game Economy**: Uses coins earned from games to purchase items, powered by `MarketplaceService`.
+* **Stackables**: Players can purchase and stack Power Ups (Double Coins, Score Shield, Time Freezer) and Boosters (Life Refill, Time Surge, Reveal Answer).
+* **Permanents**: Players can unlock premium Profile Frames (Gold Crown, Neon Cyber) and Tap Frenzy Skins.
+* **Avatars**: 10 unique, unlockable custom Avatars (e.g., Smiley, Tortoise, Brain).
+
+### 7. Player Profile (`Views/Profile/`)
+* **Meta-Progression**: Real-time display of Level, Total XP, and current Coin Balance from `WalletService`.
+* **Identity Customization**: Dynamic Avatar selection sheet allowing players to equip any unlocked marketplace avatar and premium cosmetic frames.
+* **Achievements integration**: Direct access to a unified Trophy Cabinet showcasing unlocked badges and achievements (e.g. "Marketplace Spender" achievement).
+
 ---
 
 ## Project Directory Structure

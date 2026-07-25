@@ -32,16 +32,16 @@ struct HistorySheetView: View {
                     .ignoresSafeArea()
                 
                 if filteredRecords.isEmpty {
-                    VStack(spacing: 16) {
+                    VStack(spacing: AppTheme.Spacing.small) {
                         Image(systemName: "clock.arrow.circlepath")
                             .font(.system(size: 50))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
                         Text("No Game Records Yet")
                             .font(.title3)
                             .fontWeight(.semibold)
                         Text("Complete a round of \(gameType?.rawValue ?? "any game") to start logging your history!")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 40)
                     }

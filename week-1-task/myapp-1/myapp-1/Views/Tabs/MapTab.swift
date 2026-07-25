@@ -49,6 +49,8 @@ struct MapTab: View {
             }
             .navigationTitle("Map")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(AppTheme.Colors.secondaryBackground.opacity(0.95), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .onAppear {
                 recenterMap()
             }
@@ -167,55 +169,48 @@ struct MapTab: View {
         }
     }
     private func sessionCalloutCard(for session: GameSession) -> some View {
-        HStack(spacing: 14) {
-            Image(systemName: session.mode.iconName)
-                .font(.title2)
-                .foregroundColor(session.mode.color)
-                .frame(width: 44, height: 44)
-                .background(session.mode.color.opacity(0.15))
-                .clipShape(Circle())
-            
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text(session.mode.title)
-                        .font(.headline)
-                    Spacer()
-                    Text("\(session.score) pts")
-                        .font(.headline)
-                        .foregroundColor(session.mode.color)
+        AppCard(padding: AppTheme.Spacing.small) {
+            HStack(spacing: AppTheme.Spacing.small) {
+                Image(systemName: session.mode.iconName)
+                    .font(.title2)
+                    .foregroundColor(session.mode.color)
+                    .frame(width: 44, height: 44)
+                    .background(session.mode.color.opacity(0.15))
+                    .clipShape(Circle())
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text(session.mode.title)
+                            .font(.headline)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        Spacer()
+                        Text("\(session.score) pts")
+                            .font(.headline)
+                            .foregroundColor(session.mode.color)
+                    }
+                    
+                    Text(session.formattedDate)
+                        .font(.caption)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    if let lat = session.latitude, let lon = session.longitude {
+                        Text("Coordinates: \(String(format: "%.4f", lat)), \(String(format: "%.4f", lon))")
+                            .font(.caption2)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
                 }
                 
-                Text(session.formattedDate)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                
-                if let lat = session.latitude, let lon = session.longitude {
-                    Text("Coordinates: \(String(format: "%.4f", lat)), \(String(format: "%.4f", lon))")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
+                Button {
+                    withAnimation {
+                        selectedSession = nil
+                    }
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title3)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
                 }
-            }
-            
-            Button {
-                withAnimation {
-                    selectedSession = nil
-                }
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.title3)
-                    .foregroundColor(.secondary)
             }
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.ultraThinMaterial)
-                .shadow(color: Color.black.opacity(0.12), radius: 10, x: 0, y: 5)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.white.opacity(0.2), lineWidth: 1)
-        )
         .padding(.horizontal)
     }
     private func recenterMap() {
