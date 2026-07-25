@@ -1,5 +1,6 @@
 # PlayHub - iOS Coursework Project
 
+**Index Number:** cobsccomp251p-071
 PlayHub is a native iOS application built with SwiftUI as part of the iOS development coursework. The application integrates three interactive mini-games into a unified arcade platform featuring persistent gameplay tracking, interactive map visualization, dynamic statistical charts, local notifications, and native social sharing.
 
 ---
@@ -23,6 +24,14 @@ PlayHub is a native iOS application built with SwiftUI as part of the iOS develo
 | Xcode & iOS Simulator Integration |
 | :---: |
 | <img src="images/xcode-preview.png" width="720" alt="Xcode IDE & Simulator Preview"> |
+
+### Additional Screenshots
+
+| | | |
+| :---: | :---: | :---: |
+| <img src="images/Screenshot 2026-07-25 at 20.43.15.png" width="240"> | <img src="images/Screenshot 2026-07-25 at 20.43.35.png" width="240"> | <img src="images/Screenshot 2026-07-25 at 20.44.02.png" width="240"> |
+| <img src="images/Screenshot 2026-07-25 at 20.47.07.png" width="240"> | <img src="images/Screenshot 2026-07-25 at 20.48.17.png" width="240"> | <img src="images/Screenshot 2026-07-25 at 20.48.40.png" width="240"> |
+| <img src="images/Screenshot 2026-07-25 at 20.48.58.png" width="240"> | <img src="images/Screenshot 2026-07-25 at 20.49.16.png" width="240"> | <img src="images/Screenshot 2026-07-25 at 21.08.42.png" width="240"> |
 
 ---
 
@@ -76,51 +85,27 @@ PlayHub is a native iOS application built with SwiftUI as part of the iOS develo
 ```text
 myapp-1/
 ├── App/
-│   └── PlayHubApp.swift             # Application entry point and service initialization
+├── Assets.xcassets/
 ├── Components/
-│   ├── AnimatedBackground.swift     # Reusable dynamic animated gradient background
-│   ├── GameOverView.swift           # Reusable game over modal and overlay
-│   ├── HighScoreView.swift          # High score display badge component
-│   ├── LevelBadge.swift             # Level difficulty indicator badge
-│   ├── NavigationCard.swift         # Reusable interactive card for home navigation
-│   ├── PrimaryButton.swift          # Styled primary action button component
-│   ├── ReadyPromptView.swift        # Pre-game countdown and ready prompt overlay
-│   ├── ScoreView.swift              # Real-time score display component
-│   └── TimerView.swift              # Real-time countdown timer component
-├── ContentView.swift                # Main tab view container orchestrating the 4 core tabs
+│   ├── Common/
+│   ├── Games/
+│   ├── Overlays/
+│   ├── Profile/
+│   └── Tabs/
 ├── Models/
-│   ├── GameMode.swift               # Game type enumeration, colors, and icons
-│   ├── GameSession.swift            # Codable model representing completed games with coordinates
-│   └── TriviaQuestion.swift         # Trivia question data structure and answer option models
 ├── Services/
-│   ├── HistoryService.swift         # Singleton managing session persistence and filtering
-│   ├── LocationService.swift        # CoreLocation wrapper tracking real-time coordinates
-│   ├── NotificationService.swift    # UserNotifications wrapper managing daily challenge schedules
-│   ├── SoundManager.swift           # Synthesized PCM WAV audio and haptic feedback controller
-│   └── TriviaService.swift          # Service responsible for fetching and decoding live trivia questions
+├── Theme/
 ├── Utilities/
-│   └── HTMLEntityDecoder.swift      # Utility helper for decoding HTML entities in trivia questions
 ├── ViewModels/
-│   ├── LightItUpVM.swift            # State machine and sequence logic for Light It Up
-│   ├── QuizRushVM.swift             # Question progression and timer logic for Quiz Rush
-│   ├── StatsVM.swift                # Analytics data filtering, chart calculations, and summary metrics
-│   └── TapFrenzyVM.swift            # Reflex arcade timing, combo, and trap calculations
 └── Views/
+    ├── Achievements/
     ├── Games/
-    │   ├── LightItUpView.swift      # Grid interface for sequence memorization
-    │   ├── QuizRushView.swift       # Multiple-choice trivia interface
-    │   └── TapFrenzyView.swift      # Interactive reflex target play area
+    ├── Marketplace/
+    ├── PowerUps/
+    ├── Profile/
+    ├── Referral/
     ├── Shared/
-    │   ├── HistorySheetView.swift   # Modal list displaying past session scores
-    │   ├── LeaderboardView.swift    # High score rankings display
-    │   ├── PlayerOnboardingView.swift # Onboarding screen for gamer tag and location setup
-    │   ├── ResultView.swift         # Post-game summary card and native ShareLink
-    │   └── ScoreBadge.swift         # Reusable score display and personal best indicator
     └── Tabs/
-        ├── HomeTab.swift            # Game selection lobby and navigation cards
-        ├── MapTab.swift             # MapKit view plotting geolocated game sessions
-        ├── SettingsTab.swift        # User preferences, audio mute, and daily notification setup
-        └── StatsTab.swift           # SwiftUI Charts analytics and metric breakdowns
 ```
 
 ---
