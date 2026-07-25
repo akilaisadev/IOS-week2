@@ -17,7 +17,8 @@ struct QuizRushView: View {
     @State private var cardRotation: Double = 0
     @State private var flashColor: Color = .clear
     @State private var streakBanner: String? = nil
-    @State private var isShowingReadyScreen = true
+    @State private var isShowingGenreSelection = true
+    @State private var isShowingReadyScreen = false
     @State private var countdownRemaining: Int? = nil
     
     let gameTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -26,14 +27,17 @@ struct QuizRushView: View {
         ZStack {
             AnimatedBackground(colors: [Color.purple.opacity(0.18), Color.indigo.opacity(0.18)])
             mainContent()
-                .blur(radius: (isShowingReadyScreen || countdownRemaining != nil) ? 8 : 0)
-                .disabled(isShowingReadyScreen || countdownRemaining != nil)
+                .blur(radius: (isShowingReadyScreen || countdownRemaining != nil || isShowingGenreSelection) ? 8 : 0)
+                .disabled(isShowingReadyScreen || countdownRemaining != nil || isShowingGenreSelection)
             
             flashColor.opacity(0.35)
                 .ignoresSafeArea()
                 .allowsHitTesting(false)
             
-            if isShowingReadyScreen {
+            if isShowingGenreSelection {
+                genreSelectionView
+                    .transition(.opacity.combined(with: .scale))
+            } else if isShowingReadyScreen {
                 ReadyPromptView(
                     title: "GET READY!",
                     subtitle: "Answer 10 fast trivia questions! Chain streaks for massive bonus points!",
@@ -106,7 +110,7 @@ struct QuizRushView: View {
     }
     
     private func handleTimerTick() {
-        guard !viewModel.isLoading, viewModel.errorMessage == nil, !viewModel.isGameOver, !isShowingReadyScreen, viewModel.selectedAnswer == nil else { return }
+        guard !viewModel.isLoading, viewModel.errorMessage == nil, !viewModel.isGameOver, !isShowingReadyScreen, !isShowingGenreSelection, viewModel.selectedAnswer == nil else { return }
         
         if let countdown = countdownRemaining {
             if countdown > 0 {
@@ -179,7 +183,8 @@ struct QuizRushView: View {
             AppButton(title: "Retry", iconName: "arrow.clockwise", backgroundColor: AppTheme.Colors.primary) {
                 hasRecordedHistory = false
                 countdownRemaining = nil
-                isShowingReadyScreen = true
+                isShowingReadyScreen = false
+                isShowingGenreSelection = true
                 viewModel.restartGame()
             }
             .frame(width: 200)
@@ -385,7 +390,8 @@ struct QuizRushView: View {
             onPlayAgain: {
                 hasRecordedHistory = false
                 countdownRemaining = nil
-                isShowingReadyScreen = true
+                isShowingReadyScreen = false
+                isShowingGenreSelection = true
                 viewModel.restartGame()
             },
             onHome: { dismiss() },
@@ -498,6 +504,55 @@ struct QuizRushView: View {
                 }
             }
         }
+    }
+    
+    private var genreSelectionView: some View {
+        VStack(spacing: 20) {
+            Text("Select Genre")
+                .font(.system(size: 32, weight: .heavy, design: .rounded))
+                .foregroundColor(.primary)
+                .padding(.top, 40)
+            
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                    ForEach(TriviaGenre.allCases) { genre in
+                        Button(action: {
+                            withAnimation {
+                                isShowingGenreSelection = false
+                                isShowingReadyScreen = true
+                            }
+                            Task {
+                                await viewModel.loadQuestions(genreId: genre == .any ? nil : genre.id)
+                            }
+                        }) {
+                            VStack(spacing: 12) {
+                                Image(systemName: genre.iconName)
+                                    .font(.system(size: 32))
+                                    .foregroundColor(genre.color)
+                                Text(genre.name)
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.primary)
+                                    .multilineTextAlignment(.center)
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity, minHeight: 120)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color(.systemBackground))
+                                    .shadow(color: genre.color.opacity(0.3), radius: 8, x: 0, y: 4)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(genre.color.opacity(0.5), lineWidth: 2)
+                            )
+                        }
+                    }
+                }
+                .padding()
+            }
+        }
+        .background(AnimatedBackground(colors: [Color.purple.opacity(0.18), Color.indigo.opacity(0.18)]).ignoresSafeArea())
     }
 }
 
